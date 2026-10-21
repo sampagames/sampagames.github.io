@@ -1,0 +1,507 @@
+<!doctype html><html><head>
+<script>window.ADKIT_CONFIG={};</script>
+<script src="../../adkit-web.js" data-pkg="com.sampagames.dusurkatla"></script>
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Drop &amp; Double: 2048 Merge – Play Free Online | Sampa Games</title>
+<meta name="description" content="Drop a number, pop the pairs, double it. Fast, colorful number merging. Play free in your browser, then get it on Google Play.">
+<link rel="canonical" href="https://sampagames.github.io/g/dusur-katla/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Outfit:wght@400;600&display=swap">
+<style>
+/* Layout: tek ekranlık arcade kutusu — üstte skor şeridi, altta 5×7 kuyu, kuyunun üstünde nişan alınan kare */
+:root{
+  --bg:#15111f; --board:#211a33; --slot:#2c2445; --ink:#f6f0ff; --muted:#a597c7; --accent:#ffcf4a;
+  --display:'Bungee', Impact, 'Arial Black', system-ui, sans-serif;
+  --body:'Outfit', system-ui, -apple-system, sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);margin:0;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.app{height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px 16px}
+header{width:min(100%,420px);display:flex;justify-content:space-between;align-items:center;gap:10px}
+h1{font-family:var(--display);font-weight:400;font-size:20px;line-height:1;margin:0;color:var(--accent)}
+.stats{display:flex;gap:14px;align-items:center}
+.stat{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.stat b{font-family:var(--display);font-weight:400;font-size:17px;font-variant-numeric:tabular-nums}
+.stat span{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.mini{width:30px;height:30px;border-radius:7px;display:grid;place-items:center;font-family:var(--display);font-size:11px;color:#1a1326;background:var(--tc)}
+#stage{flex:1;min-height:0;width:100%;display:flex;align-items:flex-end;justify-content:center;cursor:pointer}
+#wrap{position:relative}
+#board{position:relative;background:var(--board);border-radius:14px}
+.slot{position:absolute;background:var(--slot);border-radius:8px}
+#lane{position:absolute;top:0;left:0;border-radius:10px;background:rgba(255,207,74,.10);transition:transform .1s ease-out}
+.tile{position:absolute;left:0;top:0;width:var(--cell);height:var(--cell);transition-property:transform;transition-timing-function:ease-in;will-change:transform}
+.tile .face{width:100%;height:100%;border-radius:10px;display:grid;place-items:center;font-family:var(--display);color:#1a1326;background:var(--tc);box-shadow:inset 0 -4px 0 rgba(0,0,0,.22),0 3px 0 rgba(0,0,0,.35)}
+.tile.cur .face{box-shadow:0 0 0 3px var(--accent),inset 0 -4px 0 rgba(0,0,0,.22)}
+.tile.pop .face{animation:pop .24s ease-out}
+.tile.born .face{animation:born .2s ease-out}
+@keyframes pop{40%{transform:scale(1.22)}100%{transform:scale(1)}}
+@keyframes born{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+#board.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.spark{position:absolute;width:9px;height:9px;border-radius:50%;pointer-events:none;animation:fly .5s ease-out forwards}
+@keyframes fly{to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+.combo{position:absolute;left:50%;top:30%;transform:translateX(-50%);font-family:var(--display);font-size:26px;color:var(--accent);text-shadow:0 3px 0 #000;pointer-events:none;animation:rise .8s ease-out forwards;white-space:nowrap}
+@keyframes rise{from{opacity:0;transform:translate(-50%,10px) scale(.8)}20%{opacity:1;transform:translate(-50%,0) scale(1.1)}to{opacity:0;transform:translate(-50%,-40px)}}
+.hint{font-size:12px;color:var(--muted);text-align:center;max-width:420px;margin:0}
+#swap{display:flex;align-items:center;gap:8px;font:600 14px var(--body);background:#2f9e6e;color:#fff;border-radius:12px;padding:10px 16px}
+#swap:disabled{opacity:.45}
+#over{position:fixed;inset:0;background:rgba(10,7,18,.82);display:grid;place-items:center;padding:16px;z-index:10}
+.card{background:var(--board);border-radius:16px;padding:24px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;max-width:320px}
+.card h2{font-family:var(--display);font-weight:400;margin:0;font-size:24px;color:var(--accent)}
+.card p{margin:0;color:var(--muted)}
+.card .big{font-family:var(--display);font-size:40px;color:var(--ink)}
+button{font:600 16px var(--body);background:var(--accent);color:#1a1326;border:0;border-radius:10px;padding:12px 22px;cursor:pointer}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.tile{transition-duration:0s!important}.spark,.combo{display:none}}
+
+/* i18n: language picker */
+.langbtn{font:600 12px var(--body);background:transparent;color:var(--muted);border:1px solid #3a3058;border-radius:999px;padding:5px 12px;flex:none}
+.sg-lp{position:fixed;inset:0;z-index:20;background:rgba(10,7,18,.82);display:grid;place-items:center;padding:16px}
+.sg-lp-card{background:var(--board);border-radius:16px;padding:20px;width:min(100%,320px);box-sizing:border-box;display:flex;flex-direction:column;gap:12px}
+.sg-lp-h{font-family:var(--display);font-size:18px;color:var(--accent);text-align:center}
+.sg-lp-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sg-lp-opt{font:600 14px var(--body);background:var(--slot);color:var(--ink);border-radius:10px;padding:11px 6px}
+.sg-lp-opt.on{background:var(--accent);color:#1a1326}
+.sg-lp-x{font:600 14px var(--body);background:transparent;color:var(--muted);padding:8px}
+</style>
+
+<div class="app">
+  <header>
+    <h1 data-i18n-html="title_html">Düşür<br>Katla</h1>
+    <div class="stats">
+      <div class="stat"><span data-i18n="next">Sıradaki</span><div class="mini" id="nextMini"></div></div>
+      <div class="stat"><span data-i18n="score">Skor</span><b id="score">0</b></div>
+      <div class="stat"><span data-i18n="biggest">En büyük</span><b id="max">2</b></div>
+      <div class="stat"><span data-i18n="best">Rekor</span><b id="best">–</b></div>
+    </div>
+  </header>
+  <div id="stage">
+    <div id="wrap"><div id="board"><div id="lane"></div></div></div>
+  </div>
+  <button id="swap" type="button"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span data-i18n="swap">Reklam izle: kareyi değiştir</span></button>
+  <p class="hint" data-i18n="hint">Parmağını sağa sola sürükleyip sütunu seç, bırakınca kare aşağı düşer. Yan yana ya da üst üste gelen aynı sayılar patlar ve ikiye katlanır.</p>
+  <button class="langbtn" type="button" data-sg-lang-btn>🌐</button>
+</div>
+<div id="over" hidden>
+  <div class="card">
+    <h2 data-i18n="over_title">Kuyu doldu</h2>
+    <p data-i18n="over_sub">Ulaştığın en büyük sayı</p>
+    <div class="big" id="overMax">0</div>
+    <p id="overNote"></p>
+    <button id="again" type="button" data-i18n="play_again">Tekrar oyna</button>
+  </div>
+</div>
+
+<script>
+/* Sampa Games i18n */
+window.SG_DICT={
+"language": {
+"tr": "Dil",
+"en": "Language",
+"es": "Idioma",
+"pt": "Idioma",
+"de": "Sprache",
+"fr": "Langue",
+"id": "Bahasa",
+"ru": "Язык"
+},
+"close": {
+"tr": "Kapat",
+"en": "Close",
+"es": "Cerrar",
+"pt": "Fechar",
+"de": "Schließen",
+"fr": "Fermer",
+"id": "Tutup",
+"ru": "Закрыть"
+},
+"title": {
+"tr": "Düşür Katla",
+"en": "Drop & Double",
+"es": "Drop & Double",
+"pt": "Drop & Double",
+"de": "Drop & Double",
+"fr": "Drop & Double",
+"id": "Drop & Double",
+"ru": "Drop & Double"
+},
+"title_html": {
+"tr": "Düşür<br>Katla",
+"en": "Drop &amp;<br>Double",
+"es": "Drop &amp;<br>Double",
+"pt": "Drop &amp;<br>Double",
+"de": "Drop &amp;<br>Double",
+"fr": "Drop &amp;<br>Double",
+"id": "Drop &amp;<br>Double",
+"ru": "Drop &amp;<br>Double"
+},
+"next": {
+"tr": "Sıradaki",
+"en": "Next",
+"es": "Siguiente",
+"pt": "Próxima",
+"de": "Nächste",
+"fr": "Suivant",
+"id": "Berikut",
+"ru": "Далее"
+},
+"score": {
+"tr": "Skor",
+"en": "Score",
+"es": "Puntos",
+"pt": "Pontos",
+"de": "Punkte",
+"fr": "Score",
+"id": "Skor",
+"ru": "Счёт"
+},
+"biggest": {
+"tr": "En büyük",
+"en": "Biggest",
+"es": "Mayor",
+"pt": "Maior",
+"de": "Größte",
+"fr": "Max",
+"id": "Terbesar",
+"ru": "Макс."
+},
+"best": {
+"tr": "Rekor",
+"en": "Best",
+"es": "Récord",
+"pt": "Recorde",
+"de": "Rekord",
+"fr": "Record",
+"id": "Rekor",
+"ru": "Рекорд"
+},
+"swap": {
+"tr": "Reklam izle: kareyi değiştir",
+"en": "Watch ad: swap tile",
+"es": "Ver anuncio: cambiar ficha",
+"pt": "Ver anúncio: trocar peça",
+"de": "Werbung: Feld tauschen",
+"fr": "Pub : changer la tuile",
+"id": "Tonton iklan: ganti kotak",
+"ru": "Реклама: сменить плитку"
+},
+"hint": {
+"tr": "Parmağını sağa sola sürükleyip sütunu seç, bırakınca kare aşağı düşer. Yan yana ya da üst üste gelen aynı sayılar patlar ve ikiye katlanır.",
+"en": "Drag left or right to pick a column, release to drop the tile. Matching numbers side by side or stacked pop and double.",
+"es": "Arrastra a izquierda o derecha para elegir columna; al soltar, la ficha cae. Los números iguales juntos o apilados explotan y se duplican.",
+"pt": "Arraste para os lados para escolher a coluna; ao soltar, a peça cai. Números iguais lado a lado ou empilhados estouram e dobram.",
+"de": "Zieh nach links oder rechts, um eine Spalte zu wählen, und lass los, damit das Feld fällt. Gleiche Zahlen neben- oder übereinander platzen und verdoppeln sich.",
+"fr": "Glisse à gauche ou à droite pour choisir une colonne, relâche pour lâcher la tuile. Les nombres identiques côte à côte ou empilés éclatent et doublent.",
+"id": "Geser ke kiri atau kanan untuk memilih kolom, lepas untuk menjatuhkan kotak. Angka sama yang bersebelahan atau bertumpuk akan pecah dan berlipat dua.",
+"ru": "Веди пальцем влево-вправо, чтобы выбрать столбец, отпусти — плитка упадёт. Одинаковые числа рядом или друг на друге лопаются и удваиваются."
+},
+"over_title": {
+"tr": "Kuyu doldu",
+"en": "Well is full",
+"es": "Pozo lleno",
+"pt": "Poço cheio",
+"de": "Schacht voll",
+"fr": "Puits plein",
+"id": "Sumur penuh",
+"ru": "Колодец полон"
+},
+"over_sub": {
+"tr": "Ulaştığın en büyük sayı",
+"en": "Your biggest number",
+"es": "Tu número más alto",
+"pt": "Seu maior número",
+"de": "Deine größte Zahl",
+"fr": "Ton plus grand nombre",
+"id": "Angka terbesarmu",
+"ru": "Твоё самое большое число"
+},
+"play_again": {
+"tr": "Tekrar oyna",
+"en": "Play again",
+"es": "Jugar de nuevo",
+"pt": "Jogar de novo",
+"de": "Nochmal spielen",
+"fr": "Rejouer",
+"id": "Main lagi",
+"ru": "Ещё раз"
+},
+"combo": {
+"tr": "Kombo ×{n}",
+"en": "Combo ×{n}",
+"es": "Combo ×{n}",
+"pt": "Combo ×{n}",
+"de": "Kombo ×{n}",
+"fr": "Combo ×{n}",
+"id": "Kombo ×{n}",
+"ru": "Комбо ×{n}"
+},
+"revive_title": {
+"tr": "Kuyu doldu!",
+"en": "Well is full!",
+"es": "¡Pozo lleno!",
+"pt": "Poço cheio!",
+"de": "Schacht voll!",
+"fr": "Puits plein !",
+"id": "Sumur penuh!",
+"ru": "Колодец полон!"
+},
+"revive_reward": {
+"tr": "Üst 3 sıra temizlenir, devam et",
+"en": "Clear the top 3 rows and keep going",
+"es": "Se limpian las 3 filas de arriba, ¡sigue!",
+"pt": "Limpa as 3 fileiras de cima, continue",
+"de": "Obere 3 Reihen weg – spiel weiter",
+"fr": "Les 3 rangées du haut s'effacent, continue",
+"id": "3 baris atas dibersihkan, lanjutkan",
+"ru": "Верхние 3 ряда очистятся — играй дальше"
+},
+"new_record": {
+"tr": "Yeni rekor!",
+"en": "New record!",
+"es": "¡Nuevo récord!",
+"pt": "Novo recorde!",
+"de": "Neuer Rekord!",
+"fr": "Nouveau record !",
+"id": "Rekor baru!",
+"ru": "Новый рекорд!"
+},
+"your_best": {
+"tr": "Rekorun: {n}",
+"en": "Your best: {n}",
+"es": "Tu récord: {n}",
+"pt": "Seu recorde: {n}",
+"de": "Dein Rekord: {n}",
+"fr": "Ton record : {n}",
+"id": "Rekormu: {n}",
+"ru": "Твой рекорд: {n}"
+}
+};
+
+(function(){
+var SUP=['tr','en','es','pt','de','fr','id','ru'];
+var NAMES={tr:'Türkçe',en:'English',es:'Español',pt:'Português',de:'Deutsch',fr:'Français',id:'Bahasa Indonesia',ru:'Русский'};
+var LOC={tr:'tr-TR',en:'en-US',es:'es-419',pt:'pt-BR',de:'de-DE',fr:'fr-FR',id:'id-ID',ru:'ru-RU'};
+var D=window.SG_DICT||{},lang=null;
+try{var s=localStorage.getItem('sg_lang');if(SUP.indexOf(s)>=0)lang=s}catch(e){}
+if(!lang){var ls=[];try{ls=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language]}catch(e){}
+  for(var i=0;i<ls.length&&!lang;i++){var p=String(ls[i]||'').toLowerCase().split(/[-_]/)[0];if(p==='in')p='id';if(SUP.indexOf(p)>=0)lang=p}}
+if(!lang)lang='en';
+document.documentElement.lang=lang;
+window.SG_LANG=lang;window.SG_LOCALE=LOC[lang];window.SG_LANG_NAMES=NAMES;
+function t(k,p){var e=D[k],s=e?(e[lang]!=null?e[lang]:e.en!=null?e.en:e.tr):null;if(s==null)s=k;s=String(s);
+  if(p)s=s.replace(/\{(\w+)\}/g,function(m,n){return p[n]!=null?p[n]:m});return s}
+window.t=t;window.SGt=t;
+window.SG_applyDom=function(root){root=root||document;
+  root.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.getAttribute('data-i18n'))});
+  root.querySelectorAll('[data-i18n-html]').forEach(function(el){el.innerHTML=t(el.getAttribute('data-i18n-html'))});
+  root.querySelectorAll('[data-i18n-aria]').forEach(function(el){el.setAttribute('aria-label',t(el.getAttribute('data-i18n-aria')))});
+  root.querySelectorAll('[data-sg-lang-btn]').forEach(function(el){el.textContent='🌐 '+NAMES[lang];el.setAttribute('aria-label',t('language')+': '+NAMES[lang]);
+    if(!el.__sg){el.__sg=1;el.addEventListener('click',function(ev){ev.stopPropagation();window.SG_openLangPicker()})}});
+  document.title=t('title');
+};
+function choose(c){
+  if(c===lang){var o=document.getElementById('sg-lang-pick');if(o)o.remove();return}
+  try{localStorage.setItem('sg_lang',c)}catch(e){}
+  try{window.SG_beforeLangReload&&window.SG_beforeLangReload()}catch(e){}
+  location.reload();
+}
+window.SG_openLangPicker=function(){
+  if(document.getElementById('sg-lang-pick'))return;
+  var o=document.createElement('div');o.id='sg-lang-pick';o.className='sg-lp';o.setAttribute('role','dialog');o.setAttribute('aria-label',t('language'));
+  var h='<div class="sg-lp-card"><div class="sg-lp-h">🌐 '+t('language')+'</div><div class="sg-lp-list">';
+  SUP.forEach(function(c){h+='<button type="button" class="sg-lp-opt'+(c===lang?' on':'')+'" data-l="'+c+'" lang="'+c+'">'+NAMES[c]+'</button>'});
+  h+='</div><button type="button" class="sg-lp-x">'+t('close')+'</button></div>';
+  o.innerHTML=h;
+  ['pointerdown','pointerup','pointermove'].forEach(function(n){o.addEventListener(n,function(e){e.stopPropagation()})});
+  o.addEventListener('click',function(e){var b=e.target.closest('[data-l]');if(b)return choose(b.getAttribute('data-l'));
+    if(e.target===o||e.target.closest('.sg-lp-x'))o.remove()});
+  document.body.appendChild(o);var on=o.querySelector('.on');if(on)on.focus();
+};
+addEventListener('keydown',function(e){if(e.key==='Escape'){var o=document.getElementById('sg-lang-pick');if(o)o.remove()}});
+})();
+SG_applyDom();
+</script>
+<script>
+const COLS=5, ROWS=7, GAP=6;
+const $=id=>document.getElementById(id);
+const stage=$('stage'), wrap=$('wrap'), board=$('board'), lane=$('lane');
+let cell=60, grid, cur, nxt, curEl=null, col=2, busy=false, over=false, score=0, maxTile=2, best=0, dragging=false;
+const slots=[];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+try{best=+localStorage.getItem('dk-best')||0}catch(e){}
+
+function fmt(v){ if(v>=1048576) return (v/1048576)+'M'; if(v>=16384) return (v/1024)+'K'; return String(v); }
+function color(v){ const e=Math.log2(v); const h=(e*41+28)%360; const l=Math.floor((e-1)/9)%2?50:63; return `hsl(${h} 82% ${l}%)`; }
+function setVal(el,v){ const f=el.firstChild, t=fmt(v); f.textContent=t; f.style.setProperty('--tc',color(v));
+  f.style.fontSize=(cell*(t.length<=2?.42:t.length===3?.34:.27))+'px'; el.dataset.v=v; }
+function makeTile(v){ const el=document.createElement('div'); el.className='tile'; el.innerHTML='<div class="face"></div>'; setVal(el,v); board.appendChild(el); return el; }
+function xy(r,c){ return [GAP+c*(cell+GAP), GAP+r*(cell+GAP)]; }
+function place(el,r,c,ms=140){ el.style.transitionDuration=ms+'ms'; const [x,y]=xy(r,c); el.style.transform=`translate(${x}px,${y}px)`; }
+function anim(el,cls){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+
+for(let i=0;i<ROWS*COLS;i++){ const s=document.createElement('div'); s.className='slot'; board.insertBefore(s,lane); slots.push(s); }
+
+function layout(){
+  const sw=stage.clientWidth, sh=stage.clientHeight;
+  cell=(Math.min(sw,420)-GAP*(COLS+1))/COLS;
+  if(8*cell+10*GAP>sh) cell=(sh-10*GAP)/8;
+  cell=Math.max(28,Math.floor(cell));
+  document.documentElement.style.setProperty('--cell',cell+'px');
+  const bw=GAP*(COLS+1)+cell*COLS, bh=GAP*(ROWS+1)+cell*ROWS;
+  wrap.style.paddingTop=(cell+GAP*2)+'px';
+  board.style.width=bw+'px'; board.style.height=bh+'px';
+  slots.forEach((s,i)=>{ const [x,y]=xy(Math.floor(i/COLS),i%COLS); Object.assign(s.style,{left:x+'px',top:y+'px',width:cell+'px',height:cell+'px'}); });
+  lane.style.width=(cell+GAP)+'px'; lane.style.height=bh+'px'; aimLane();
+  if(grid) grid.forEach((row,r)=>row.forEach((t,c)=>{ if(t){ setVal(t.el,t.v); place(t.el,r,c,0); } }));
+  if(curEl){ setVal(curEl,cur); place(curEl,-1,col,0); }
+}
+function aimLane(){ lane.style.transform=`translateX(${GAP/2+col*(cell+GAP)}px)`; }
+function aim(c){ if(c===col) return; col=c; aimLane(); if(curEl&&!busy) place(curEl,-1,c,90); }
+function aimAt(x){ const r=board.getBoundingClientRect(); aim(Math.max(0,Math.min(COLS-1,Math.floor((x-r.left)/(r.width/COLS))))); }
+
+function rnd(){
+  const k=Math.floor(Math.log2(maxTile)), top=Math.max(3,Math.min(6,k-3));
+  const pool=[]; for(let e=1;e<=top;e++) for(let w=0;w<top-e+2;w++) pool.push(2**e);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function lowest(c){ for(let r=ROWS-1;r>=0;r--) if(!grid[r][c]) return r; return -1; }
+function find(t){ for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(grid[r][c]===t) return [r,c]; return null; }
+
+function hud(){
+  $('score').textContent=score.toLocaleString(window.SG_LOCALE||'tr-TR');
+  $('max').textContent=fmt(maxTile);
+  $('best').textContent=best?fmt(best):'–';
+  const m=$('nextMini'); m.textContent=fmt(nxt); m.style.setProperty('--tc',color(nxt));
+}
+function gain(v){
+  score+=v; if(v>maxTile) maxTile=v;
+  if(maxTile>best){ best=maxTile; try{localStorage.setItem('dk-best',best)}catch(e){} }
+  hud();
+}
+function burst(r,c,v){
+  const [x,y]=xy(r,c);
+  for(let i=0;i<8;i++){
+    const s=document.createElement('div'); s.className='spark';
+    const a=Math.random()*Math.PI*2, d=cell*(.6+Math.random()*.6);
+    s.style.cssText=`left:${x+cell/2-4}px;top:${y+cell/2-4}px;background:${color(v)};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px`;
+    board.appendChild(s); setTimeout(()=>s.remove(),520);
+  }
+}
+function combo(n){ const d=document.createElement('div'); d.className='combo'; d.textContent=SGt('combo',{n}); wrap.appendChild(d); setTimeout(()=>d.remove(),820); }
+
+function gravity(){
+  const moved=[];
+  for(let c=0;c<COLS;c++){ let w=ROWS-1;
+    for(let r=ROWS-1;r>=0;r--){ const t=grid[r][c]; if(!t) continue;
+      if(r!==w){ grid[w][c]=t; grid[r][c]=null; place(t.el,w,c,150); moved.push([w,c]); } w--; } }
+  return moved;
+}
+async function resolve(queue){
+  let chain=0;
+  while(queue.length){
+    const [r,c]=queue.shift(); const t=grid[r]&&grid[r][c]; if(!t) continue;
+    const ns=[[r,c-1],[r,c+1],[r+1,c],[r-1,c]].filter(([a,b])=>a>=0&&a<ROWS&&b>=0&&b<COLS&&grid[a][b]&&grid[a][b].v===t.v);
+    if(!ns.length) continue;
+    chain++;
+    t.el.style.zIndex=3;
+    for(const [a,b] of ns){ const n=grid[a][b]; grid[a][b]=null; n.el.style.zIndex=2; place(n.el,r,c,130); setTimeout(()=>n.el.remove(),135); }
+    await sleep(140);
+    t.v*=2**ns.length; setVal(t.el,t.v); anim(t.el,'pop'); burst(r,c,t.v); gain(t.v);
+    t.el.style.zIndex='';
+    if(chain>1) combo(chain);
+    await sleep(110);
+    const moved=gravity(); if(moved.length) await sleep(170);
+    queue.unshift(...moved); const p=find(t); if(p) queue.unshift(p);
+  }
+}
+function spawn(){
+  cur=nxt; nxt=rnd();
+  curEl=makeTile(cur); curEl.classList.add('cur','born'); place(curEl,-1,col,0);
+  hud(); checkOver(); save();
+}
+let revived=false;
+function checkOver(){
+  for(let c=0;c<COLS;c++) if(lowest(c)>=0||grid[0][c].v===cur) return;
+  over=true;
+  if(window.AdKit&&!revived){
+    revived=true;
+    AdKit.levelDone({force:true,title:SGt('revive_title'),reward:SGt('revive_reward')}).then(ok=>{
+      if(ok){ for(let r=0;r<3;r++) for(let c=0;c<COLS;c++){ const t=grid[r][c]; if(t){ burst(r,c,t.v); t.el.remove(); grid[r][c]=null; } }
+        over=false; save(); }
+      else showOver();
+    });
+    return;
+  }
+  showOver();
+}
+function showOver(){
+  $('overMax').textContent=fmt(maxTile);
+  $('overNote').textContent=maxTile>=best?SGt('new_record'):SGt('your_best',{n:fmt(best)});
+  $('over').hidden=false; $('again').focus();
+}
+async function drop(){
+  if(busy||over||!curEl) return;
+  const c=col, r=lowest(c), el=curEl;
+  if(r<0){
+    const t=grid[0][c];
+    if(t.v!==cur){ anim(board,'shake'); return; }
+    busy=true; curEl=null; el.classList.remove('cur');
+    place(el,0,c,120); await sleep(125); el.remove();
+    t.v*=2; setVal(t.el,t.v); anim(t.el,'pop'); burst(0,c,t.v); gain(t.v);
+    await sleep(120); await resolve([[0,c]]);
+  } else {
+    busy=true; curEl=null; el.classList.remove('cur');
+    grid[r][c]={v:cur,el};
+    const ms=110+r*28; place(el,r,c,ms); await sleep(ms+10);
+    await resolve([[r,c]]);
+  }
+  busy=false; spawn();
+}
+
+function start(data){
+  revived=false;
+  board.querySelectorAll('.tile,.spark').forEach(e=>e.remove());
+  grid=Array.from({length:ROWS},()=>Array(COLS).fill(null));
+  over=false; busy=false; $('over').hidden=true;
+  if(data&&data.g){
+    data.g.forEach((row,r)=>row.forEach((v,c)=>{ if(v) grid[r][c]={v,el:makeTile(v)}; }));
+    score=data.score||0; maxTile=data.maxTile||2; nxt=data.cur||2; col=data.col??2;
+  } else {
+    [4,2,8,2,4].forEach((v,c)=>grid[ROWS-1][c]={v,el:makeTile(v)});
+    score=0; maxTile=8; nxt=2;
+  }
+  layout(); spawn();
+}
+function save(){}
+window.SG_beforeLangReload=()=>{ if(!grid||over||busy||!curEl) return; try{sessionStorage.setItem('sg_lang_resume',JSON.stringify({g:grid.map(r=>r.map(t=>t?t.v:0)),cur,score,maxTile,col}))}catch(e){} };
+function SG_resume(){ try{const s=sessionStorage.getItem('sg_lang_resume'); sessionStorage.removeItem('sg_lang_resume'); return s?JSON.parse(s):null }catch(e){ return null } }
+window.claude?.hot?.snapshot?.(()=>({g:grid.map(r=>r.map(t=>t?t.v:0)),cur,score,maxTile,col}));
+
+stage.addEventListener('pointerdown',e=>{ dragging=true; aimAt(e.clientX); try{stage.setPointerCapture(e.pointerId)}catch(_){} });
+stage.addEventListener('pointermove',e=>{ if(dragging||e.pointerType==='mouse') aimAt(e.clientX); });
+stage.addEventListener('pointerup',e=>{ if(!dragging) return; dragging=false; aimAt(e.clientX); drop(); });
+stage.addEventListener('pointercancel',()=>{ dragging=false; });
+addEventListener('keydown',e=>{
+  if(over) return;
+  if(e.key==='ArrowLeft') aim(Math.max(0,col-1));
+  else if(e.key==='ArrowRight') aim(Math.min(COLS-1,col+1));
+  else if(e.key==='ArrowDown'||e.key===' '){ e.preventDefault(); drop(); }
+});
+$('again').addEventListener('click',()=>start());
+// Ödüllü reklam: elindeki kareyi kuyuda eşi olan en küçük sayıyla değiştir
+$('swap').addEventListener('click',()=>{
+  if(busy||over||!curEl||!window.AdKit) return;
+  AdKit.rewarded('swap').then(ok=>{
+    if(!ok||busy||over||!curEl) return;
+    const tops=[]; for(let c=0;c<COLS;c++){ const r=lowest(c); const t=r+1<ROWS?grid[r+1][c]:null; if(t) tops.push(t.v); }
+    const v=tops.length?Math.min(...tops):2;
+    cur=v; setVal(curEl,cur); anim(curEl,'pop'); hud();
+  });
+});
+new ResizeObserver(()=>layout()).observe(stage);
+
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? SG_resume());
+</script>
+
+</body></html>
