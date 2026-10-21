@@ -1,0 +1,275 @@
+<title>Sampa Games – Free Mobile Games: Play Online, Get on Google Play</title>
+<meta name="description" content="Play 18 free Sampa Games in your browser: puzzle, 2048, arcade, RPG, strategy and more. Like one? Get it free on Google Play. Tarayıcında oyna, Google Play'den ücretsiz indir.">
+<link rel="canonical" href="https://sampagames.github.io/">
+<meta property="og:title" content="Sampa Games – Try 18 free games in your browser">
+<meta property="og:description" content="Puzzle, 2048, arcade, RPG and strategy games. Play online, then get them free on Google Play.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sampagames.github.io/">
+<link rel="icon" href="icons/orbo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: oyuncak rafı. Üstte "önce dene" vaadi ve simge mozaiği, altında türe göre süzülen oyun kartları; oyun, sayfanın üstünde açılan tam ekran oyun penceresinde oynanır. */
+:root{
+  --bg:#F2F4F8; --surface:#FFFFFF; --ink:#141B2D; --muted:#5B6478; --line:#DDE2EC; --chip:#E6EAF3;
+  --accent:#FF5A36; --accent-ink:#FFFFFF; --play:#01875F; --play-soft:#E2F4EC; --shadow:0 1px 2px rgba(20,27,45,.06),0 8px 24px rgba(20,27,45,.06);
+  --display:'Bricolage Grotesque','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+  --body:'Figtree','Segoe UI',system-ui,-apple-system,sans-serif;
+  --r:16px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E131D; --surface:#171E2B; --ink:#EEF1F7; --muted:#A2ABBD; --line:#2A3346; --chip:#222B3B;
+  --accent:#FF7353; --accent-ink:#1A0B06; --play:#2BC08F; --play-soft:#173A30; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E131D; --surface:#171E2B; --ink:#EEF1F7; --muted:#A2ABBD; --line:#2A3346; --chip:#222B3B;
+  --accent:#FF7353; --accent-ink:#1A0B06; --play:#2BC08F; --play-soft:#173A30; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);margin:0}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,a.btn{font:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* üst çubuk */
+.top{display:flex;align-items:center;gap:12px;padding-block:18px}
+.brand{display:flex;align-items:center;gap:10px;font:800 20px/1 var(--display);letter-spacing:-.01em;text-decoration:none}
+.brand i{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);font-style:normal;font-size:17px;transform:rotate(-6deg)}
+.top .sp{flex:1}
+.lang{display:flex;background:var(--chip);border-radius:999px;padding:3px}
+.lang button{border:0;background:transparent;color:var(--muted);padding:5px 11px;border-radius:999px;cursor:pointer;font-weight:600;font-size:13px}
+.lang button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+
+/* giriş */
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:40px;align-items:center;padding-block:28px 40px}
+.hero h1{font:800 clamp(38px,6.2vw,68px)/.98 var(--display);letter-spacing:-.025em;margin:0 0 18px;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{font-size:clamp(17px,2vw,19px);color:var(--muted);max-width:34em;margin:0 0 24px}
+.ctas{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:12px 18px;font-weight:700;text-decoration:none;cursor:pointer;border:0;min-height:46px}
+.btn.go{background:var(--accent);color:var(--accent-ink)}
+.btn.gp{background:var(--play);color:#fff}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn svg{width:18px;height:18px;flex:none}
+.facts{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;color:var(--muted);font-size:14px;font-weight:600}
+.facts span::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--play);margin-right:8px;vertical-align:1px}
+.mosaic{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:360px;justify-self:end;width:100%}
+.mosaic button{border:0;padding:0;background:none;cursor:pointer;border-radius:24%;aspect-ratio:1;max-width:100%;transition:transform .25s}
+.mosaic img{width:100%;height:100%;border-radius:24%;display:block;box-shadow:var(--shadow)}
+.mosaic button:nth-child(odd){transform:rotate(-4deg)}
+.mosaic button:nth-child(even){transform:rotate(3deg) translateY(10px)}
+.mosaic button:hover{transform:rotate(0) scale(1.06)}
+
+/* liste */
+.bar{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 20px;margin:8px 0 18px}
+.bar h2{font:800 28px/1.1 var(--display);margin:0;letter-spacing:-.01em}
+.bar .count{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chips button{border:0;background:var(--chip);color:var(--ink);padding:8px 14px;border-radius:999px;font-weight:600;font-size:14px;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding-bottom:48px}
+.card{background:var(--surface);border-radius:var(--r);padding:16px;display:grid;grid-template-columns:72px minmax(0,1fr);grid-template-rows:auto 1fr auto;column-gap:14px;row-gap:10px;box-shadow:var(--shadow)}
+.card img{width:72px;height:72px;border-radius:18px;grid-row:1/3}
+.card .meta{min-width:0}
+.card h3{font:700 17px/1.25 var(--body);margin:0 0 4px;text-wrap:balance}
+.tag{display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.tag b{background:var(--accent);color:var(--accent-ink);border-radius:6px;padding:1px 6px;letter-spacing:.06em}
+.card p{grid-column:2;margin:0;color:var(--muted);font-size:14.5px;min-width:0}
+.card .acts{grid-column:1/-1;display:flex;gap:8px}
+.card .acts .btn{flex:1;min-height:42px;padding:9px 12px;font-size:15px}
+.btn.gp-o{background:var(--play-soft);color:var(--play)}
+
+/* paylaş */
+.share{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:22px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;margin-bottom:28px}
+.share h2{font:800 24px/1.15 var(--display);margin:0 0 6px}
+.share p{margin:0;color:var(--muted)}
+.share .ctas{justify-content:flex-end}
+.foot{color:var(--muted);font-size:13px;padding-block:8px 32px;display:flex;flex-wrap:wrap;gap:6px 18px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;z-index:60}
+
+/* oyun penceresi */
+.player{position:fixed;inset:0;z-index:50;background:var(--bg);display:grid;grid-template-rows:auto minmax(0,1fr)}
+.pbar{display:flex;align-items:center;gap:10px;padding-top:calc(10px + env(safe-area-inset-top,0px));padding-bottom:10px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));background:var(--surface);box-shadow:var(--shadow)}
+.pbar img{width:36px;height:36px;border-radius:10px}
+.pbar .t{flex:1;min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pbar .btn{min-height:40px;padding:8px 14px;font-size:15px}
+.iconbtn{border:0;background:var(--chip);color:var(--ink);width:40px;height:40px;border-radius:10px;cursor:pointer;display:grid;place-items:center;flex:none}
+.iconbtn svg{width:20px;height:20px}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px));min-height:0}
+.frame{min-height:0;display:flex;align-items:center;justify-content:center}
+.frame iframe{border:0;background:#000;border-radius:18px;box-shadow:var(--shadow);display:block}
+.frame.p iframe{height:100%;aspect-ratio:9/19;max-width:100%}
+.frame.l iframe,.frame.f iframe{width:100%;height:100%}
+.side{align-self:center;background:var(--surface);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);text-align:center}
+.side h3{font:800 20px/1.2 var(--display);margin:0 0 6px}
+.side p{color:var(--muted);font-size:14px;margin:0 0 14px}
+#qr{display:grid;place-items:center;background:#fff;padding:12px;border-radius:12px;margin:0 auto 14px;width:max-content;max-width:100%}
+#qr img,#qr canvas{display:block}
+.side .btn{width:100%}
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;gap:28px}
+  .mosaic{justify-self:start;max-width:300px;grid-template-columns:repeat(6,1fr);max-width:100%}
+  .mosaic button:nth-child(n+7){display:none}
+  .stage{grid-template-columns:1fr;padding:0}
+  .side{display:none}
+  .frame iframe{border-radius:0;box-shadow:none}
+  .frame.p iframe{width:100%;aspect-ratio:auto}
+  .share{grid-template-columns:1fr}.share .ctas{justify-content:flex-start}
+}
+@media (max-width:420px){.pbar .btn span{display:none}.grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.allg{margin:8px 0 24px;color:var(--muted)}.allg summary{cursor:pointer;font-weight:600}.allg ul{columns:2;padding-left:18px;line-height:1.9}.allg a{color:var(--ink)}@media (max-width:640px){.allg ul{columns:1}}
+</style>
+
+<header class="wrap top">
+  <a class="brand" href="#" id="home"><i>S</i>Sampa Games</a>
+  <span class="sp"></span>
+  <div class="lang" role="group" aria-label="Dil / Language">
+    <button id="l-tr" type="button" aria-pressed="true">TR</button>
+    <button id="l-en" type="button" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<main>
+  <section class="wrap hero">
+    <div>
+      <h1 data-i="h1">Önce dene, <em>sonra indir.</em></h1>
+      <p data-i="lead">Sampa Games’in 18 oyunu burada, tarayıcında oynanıyor. Beğendiğini tek dokunuşla Google Play’den ücretsiz indir.</p>
+      <div class="ctas">
+        <a class="btn go" href="#oyunlar" data-i="ctaPlay">Oyunları gör</a>
+        <a class="btn ghost" id="devlink" target="_blank" rel="noopener" data-i="ctaAll">Hepsi Google Play’de</a>
+      </div>
+      <div class="facts"><span data-i="f1">Ücretsiz</span><span data-i="f2">İnternetsiz oynanır</span><span data-i="f3">Kayıt yok</span></div>
+    </div>
+    <div class="mosaic" id="mosaic" aria-label="Öne çıkan oyunlar"></div>
+  </section>
+
+  <section class="wrap" id="oyunlar">
+    <div class="bar"><h2 data-i="listT">Oyunlar</h2><span class="count" id="count"></span></div>
+    <div class="chips" id="chips" role="group" aria-label="Tür"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="wrap">
+    <div class="share">
+      <div>
+        <h2 data-i="shareT">Arkadaşına gönder</h2>
+        <p data-i="shareP">Bu sayfayı paylaş: kim hangi oyunu severse önce burada dener, sonra indirir.</p>
+      </div>
+      <div class="ctas">
+        <a class="btn gp" id="wa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.4z"/></svg><span data-i="wa">WhatsApp’ta paylaş</span></a>
+        <button class="btn ghost" id="copy" type="button" data-i="copy">Bağlantıyı kopyala</button>
+      </div>
+    </div>
+    <div class="foot">
+      <span>© 2026 Sampa Games</span>
+      <a href="https://claude.ai/artifact/SD4NBHnMvBtY9NvMRe9KmB" target="_blank" rel="noopener" data-i="privacy">Gizlilik politikası</a>
+      <span>alikkrmn@gmail.com</span>
+    </div>
+  </section>
+<section class="wrap" aria-label="All games"><details class="allg"><summary>All games / Tüm oyunlar</summary><ul><li><a href="g/piazza/">Piazza: Market Sort Puzzle</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.piazza" rel="noopener">Google Play</a></li><li><a href="g/orbo/">Orbo: One Tap Spin</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.orbo" rel="noopener">Google Play</a></li><li><a href="g/space-shuttle/">Space Shuttle: Orbit Defense</a> · <a href="https://play.google.com/store/apps/details?id=com.SampaGames.SpaceShuttle" rel="noopener">Google Play</a></li><li><a href="g/sobe/">SOBE: The Lost Lantern</a> · <a href="https://play.google.com/store/apps/details?id=com.SampaGames.SOBE" rel="noopener">Google Play</a></li><li><a href="g/dugum-ustasi/">Knot Master: Untangle Puzzle</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.dugumustasi" rel="noopener">Google Play</a></li><li><a href="g/ok-yolu/">Arrow Path: Tap Away Puzzle</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.okyolu" rel="noopener">Google Play</a></li><li><a href="g/dusur-katla/">Drop &amp; Double: 2048 Merge</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.dusurkatla" rel="noopener">Google Play</a></li><li><a href="g/katla-patla/">Merge Pop: Physics 2048</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.katlapatla" rel="noopener">Google Play</a></li><li><a href="g/dolmus-duragi/">Dolmus Stop: Bus Color Puzzle</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.dolmusduragi" rel="noopener">Google Play</a></li><li><a href="g/tek-renk/">One Color: Color Dodge Game</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.tekrenk" rel="noopener">Google Play</a></li><li><a href="g/kat-kat/">Kat Kat: Tower Stack</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.katkat" rel="noopener">Google Play</a></li><li><a href="g/twos/">TWOS: World of Colours</a> · <a href="https://play.google.com/store/apps/details?id=com.SampaGames.TWOSSaliha" rel="noopener">Google Play</a></li><li><a href="g/vizz/">Buzz! Fly to the Toilet</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.vizz" rel="noopener">Google Play</a></li><li><a href="g/son-nobetci/">Last Sentinel: Survival Game</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.sonnobetci" rel="noopener">Google Play</a></li><li><a href="g/kara-tas-seferi/">Black Stone Quest: Action RPG</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.karatas" rel="noopener">Google Play</a></li><li><a href="g/daire-7/">Bureau 7: Detective Game</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.daire7" rel="noopener">Google Play</a></li><li><a href="g/dunya-duzeni/">World Order: Rule a Country</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.dunyaduzeni" rel="noopener">Google Play</a></li><li><a href="g/bahce-ustasi/">Garden Master: 3D Design</a> · <a href="https://play.google.com/store/apps/details?id=com.sampagames.bahceustasi" rel="noopener">Google Play</a></li></ul></details></section>
+</main>
+
+<div class="player" id="player" hidden>
+  <div class="pbar">
+    <button class="iconbtn" id="close" type="button" aria-label="Geri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <img id="p-icon" alt="">
+    <div class="t" id="p-name"></div>
+    <a class="btn gp" id="p-play" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 2.8v18.4c0 .5.5.8 1 .6l15.7-9.1c.4-.3.4-.9 0-1.1L5 2.2c-.5-.3-1 .1-1 .6z"/></svg><span data-i="get">İndir</span></a>
+  </div>
+  <div class="stage">
+    <div class="frame" id="frame"></div>
+    <aside class="side">
+      <h3 data-i="sideT">Telefonuna al</h3>
+      <p data-i="sideP">Kamerayla tara, Google Play’de aç.</p>
+      <div id="qr" aria-label="Google Play QR"></div>
+      <a class="btn gp" id="p-play2" target="_blank" rel="noopener" data-i="gpFull">Google Play’den indir</a>
+    </aside>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="games.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  'use strict';
+  var GAMES=window.SAMPA_GAMES, CATS=window.SAMPA_CATS, PLAY=window.SAMPA_PLAY;
+  var SITE_URL='https://sampagames.github.io/';
+  var I18N={
+    tr:{h1:'Önce dene, <em>sonra indir.</em>',lead:'Sampa Games’in 18 oyunu burada, tarayıcında oynanıyor. Beğendiğini tek dokunuşla Google Play’den ücretsiz indir.',ctaPlay:'Oyunları gör',ctaAll:'Hepsi Google Play’de',f1:'Ücretsiz',f2:'İnternetsiz oynanır',f3:'Kayıt yok',listT:'Oyunlar',count:'{n} oyun',play:'Oyna',gp:'Google Play',isNew:'Yeni',shareT:'Arkadaşına gönder',shareP:'Bu sayfayı paylaş: kim hangi oyunu severse önce burada dener, sonra indirir.',wa:'WhatsApp’ta paylaş',copy:'Bağlantıyı kopyala',copied:'Bağlantı kopyalandı',copyFail:'Kopyalanamadı, adres çubuğundan kopyala',privacy:'Gizlilik politikası',get:'İndir',sideT:'Telefonuna al',sideP:'Kamerayla tara, Google Play’de aç.',gpFull:'Google Play’den indir',back:'Geri',waText:'Sampa Games oyunlarını dene, beğendiğini Google Play’den ücretsiz indir: ',waGame:'Bu oyunu dene: '},
+    en:{h1:'Try it first, <em>then get it.</em>',lead:'All 18 Sampa Games titles play right here in your browser. Found a favourite? Get it free on Google Play in one tap.',ctaPlay:'See the games',ctaAll:'All on Google Play',f1:'Free',f2:'Plays offline',f3:'No sign-up',listT:'Games',count:'{n} games',play:'Play',gp:'Google Play',isNew:'New',shareT:'Send it to a friend',shareP:'Share this page: everyone tries the game they like here first, then installs it.',wa:'Share on WhatsApp',copy:'Copy link',copied:'Link copied',copyFail:'Could not copy, use the address bar',privacy:'Privacy policy',get:'Get',sideT:'Get it on your phone',sideP:'Scan with your camera to open Google Play.',gpFull:'Get it on Google Play',back:'Back',waText:'Try Sampa Games in your browser, then get your favourite free on Google Play: ',waGame:'Try this game: '}
+  };
+  var lang='tr';
+  try{var saved=localStorage.getItem('sampa-lang'); if(saved==='tr'||saved==='en')lang=saved; else lang=(navigator.language||'tr').toLowerCase().indexOf('tr')===0?'tr':'en';}catch(e){lang=(navigator.language||'tr').toLowerCase().indexOf('tr')===0?'tr':'en';}
+  var cat='all', $=function(id){return document.getElementById(id)};
+  function t(k){return I18N[lang][k]}
+  function nm(g){return (lang==='en'&&g.nameEn)?g.nameEn:g.name}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function shareUrl(id){return (SITE_URL||location.href.split('#')[0])+(id?'#'+id:'')}
+
+  function render(){
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-i]').forEach(function(el){var v=t(el.getAttribute('data-i')); if(v==null)return; if(el.getAttribute('data-i')==='h1')el.innerHTML=v; else el.textContent=v;});
+    $('l-tr').setAttribute('aria-pressed',lang==='tr'); $('l-en').setAttribute('aria-pressed',lang==='en');
+    $('devlink').href=window.SAMPA_DEV;
+    $('wa').href='https://wa.me/?text='+encodeURIComponent(t('waText')+shareUrl());
+    // mozaik
+    var pick=['piazza','orbo','space-shuttle','vizz','kara-tas-seferi','dugum-ustasi','tek-renk','sobe','katla-patla'];
+    $('mosaic').innerHTML=pick.map(function(id){var g=byId(id);return '<button type="button" data-open="'+id+'" aria-label="'+esc(nm(g))+'"><img src="icons/'+id+'.webp" alt="" width="120" height="120"></button>'}).join('');
+    // türler
+    var used={all:1}; GAMES.forEach(function(g){used[g.cat]=1});
+    $('chips').innerHTML=Object.keys(CATS).filter(function(k){return used[k]}).map(function(k){return '<button type="button" data-cat="'+k+'" aria-pressed="'+(k===cat)+'">'+CATS[k][lang]+'</button>'}).join('');
+    var list=GAMES.filter(function(g){return cat==='all'||g.cat===cat});
+    $('count').textContent=t('count').replace('{n}',list.length);
+    $('grid').innerHTML=list.map(function(g){
+      return '<article class="card"><img src="icons/'+g.id+'.webp" alt="" width="72" height="72" loading="lazy">'+
+        '<div class="meta"><h3>'+esc(nm(g))+'</h3><span class="tag">'+(g.isNew?'<b>'+t('isNew')+'</b>':'')+CATS[g.cat][lang]+'</span></div>'+
+        '<p>'+esc(g[lang])+'</p>'+
+        '<div class="acts"><button class="btn go" type="button" data-open="'+g.id+'"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15c0 .6.6.9 1.1.6l12-7.5c.5-.3.5-.9 0-1.2l-12-7.5C7.6 3.6 7 3.9 7 4.5z"/></svg>'+t('play')+'</button>'+
+        '<a class="btn gp-o" href="'+PLAY(g.pkg)+'" target="_blank" rel="noopener">'+t('gp')+'</a></div></article>';
+    }).join('');
+  }
+  function byId(id){for(var i=0;i<GAMES.length;i++)if(GAMES[i].id===id)return GAMES[i];return null}
+
+  var current=null;
+  function open(id){
+    var g=byId(id); if(!g)return; current=g;
+    $('p-icon').src='icons/'+g.id+'.webp'; $('p-name').textContent=nm(g);
+    $('p-play').href=$('p-play2').href=PLAY(g.pkg);
+    var f=$('frame'); f.className='frame '+g.o;
+    f.innerHTML='<iframe title="'+esc(nm(g))+'" src="g/'+g.id+'/index.html" allow="autoplay; fullscreen; gamepad"></iframe>';
+    $('qr').innerHTML='';
+    if(window.QRCode){try{new QRCode($('qr'),{text:PLAY(g.pkg),width:168,height:168,colorDark:'#141B2D',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
+    $('player').hidden=false; document.body.style.overflow='hidden';
+    try{history.replaceState(null,'','#'+g.id)}catch(e){}
+    setTimeout(function(){var fr=f.querySelector('iframe'); if(fr)try{fr.focus()}catch(e){}},300);
+  }
+  function close(){
+    $('player').hidden=true; $('frame').innerHTML=''; document.body.style.overflow=''; current=null;
+    try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  }
+  function toast(msg){var el=$('toast'); el.textContent=msg; el.hidden=false; clearTimeout(toast.tm); toast.tm=setTimeout(function(){el.hidden=true},2200)}
+
+  document.addEventListener('click',function(e){
+    var o=e.target.closest('[data-open]'); if(o){e.preventDefault(); open(o.getAttribute('data-open')); return}
+    var c=e.target.closest('[data-cat]'); if(c){cat=c.getAttribute('data-cat'); render(); return}
+  });
+  $('close').addEventListener('click',close);
+  $('home').addEventListener('click',function(e){e.preventDefault(); close(); window.scrollTo(0,0)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&current)close()});
+  $('l-tr').addEventListener('click',function(){lang='tr';try{localStorage.setItem('sampa-lang',lang)}catch(e){} render()});
+  $('l-en').addEventListener('click',function(){lang='en';try{localStorage.setItem('sampa-lang',lang)}catch(e){} render()});
+  $('copy').addEventListener('click',function(){
+    var u=shareUrl();
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(function(){toast(t('copied'))},function(){toast(t('copyFail'))})} else toast(t('copyFail'));
+  });
+  window.addEventListener('message',function(e){
+    if(!e.data||!e.data.sampa||!current)return;
+    var b=$('p-play'); b.animate&&b.animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:600,iterations:2});
+  });
+  render();
+  var h=(location.hash||'').slice(1); if(h&&byId(h))open(h);
+})();
+</script>
