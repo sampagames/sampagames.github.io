@@ -1,0 +1,730 @@
+<!doctype html><html><head>
+<script>window.ADKIT_CONFIG={};</script>
+<script src="../../adkit-web.js" data-pkg="com.sampagames.katlapatla"></script>
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Merge Pop: Physics 2048 – Play Free Online | Sampa Games</title>
+<meta name="description" content="Drop the tiles and let matching ones collide. 2048 with real physics. Play free in your browser, then get it on Google Play.">
+<link rel="canonical" href="https://sampagames.github.io/g/katla-patla/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Fredoka:wght@600;700&family=Nunito:wght@700;800&display=swap">
+<style>
+/* Tek görünüm: kadife perdeli bir tiyatro sahnesi. Oyun alanı sahnenin kendisi; UI krem kartlar, altın birincil buton. */
+:root{
+  --plum:#22122e; --plum-2:#3b2150; --velvet:#b3213b; --velvet-d:#6e0f22;
+  --gold:#ffc94a; --gold-d:#c98c12; --cream:#fff4e2; --ink:#2a1530; --muted:#7a6386; --line:#ecd9bf;
+  --display:"Lilita One","Trebuchet MS",system-ui,sans-serif;
+  --num:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--plum);color:var(--cream);font-family:var(--body);
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#probe{position:fixed;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.layer{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;pointer-events:none;padding-inline:16px;
+  padding-block:calc(env(safe-area-inset-top,0px) + 10px) calc(env(safe-area-inset-bottom,0px) + 16px)}
+.layer .hit{pointer-events:auto}
+
+/* HUD */
+.bar{width:100%;max-width:420px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+.lbl{font:800 10px var(--body);letter-spacing:.14em;color:#f3d9a6;opacity:.85}
+.scorebox{display:flex;flex-direction:column;line-height:1}
+.scorebox b{font:400 clamp(30px,8vw,40px)/1 var(--display);color:#fff;text-shadow:0 3px 0 var(--velvet-d);font-variant-numeric:tabular-nums}
+.nextbox{display:flex;flex-direction:column;align-items:center;gap:2px}
+#nextC{width:52px;height:52px;border-radius:50%;background:#ffffff14;box-shadow:inset 0 0 0 2px #ffc94a55}
+.side{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.pill{background:#00000040;border:1px solid #ffc94a44;border-radius:999px;padding:5px 10px;font:800 13px var(--body);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill b{color:var(--gold)}
+.icon{width:38px;height:38px;border-radius:50%;border:0;background:#00000045;color:var(--cream);font:800 17px var(--body);cursor:pointer;box-shadow:inset 0 0 0 1px #ffc94a44}
+.icon:focus-visible,.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.icon.off{opacity:.45}
+
+/* Kartlar */
+.sheet{margin-block:auto;width:100%;max-width:360px;background:var(--cream);color:var(--ink);border-radius:22px;padding:22px 20px 18px;
+  box-shadow:0 0 0 4px var(--gold),0 0 0 7px var(--velvet-d),0 22px 50px #0009;display:flex;flex-direction:column;gap:12px;text-align:center}
+.sheet h1{margin:0;font:400 46px/1 var(--display);color:var(--velvet);letter-spacing:.01em;text-shadow:0 3px 0 #f1c7a2;text-wrap:balance}
+.sheet h2{margin:0;font:400 32px/1.05 var(--display);color:var(--velvet);text-wrap:balance}
+.sheet p{margin:0;font:700 15px/1.4 var(--body);color:var(--muted)}
+#ladder{width:100%;height:auto;aspect-ratio:320/78;max-width:100%}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;gap:4px}
+.stat b{font:400 24px/1 var(--display);color:var(--ink);font-variant-numeric:tabular-nums}
+.stat span{font:800 10px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.newbest{font:400 18px var(--display);color:var(--gold-d)}
+.btn{display:block;width:100%;box-sizing:border-box;border:0;border-radius:14px;padding:14px;font:400 21px/1 var(--display);letter-spacing:.02em;cursor:pointer;text-decoration:none;text-align:center;
+  background:var(--gold);color:var(--ink);box-shadow:0 4px 0 var(--gold-d)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--gold-d)}
+.btn.ad{background:var(--velvet);color:#fff;box-shadow:0 4px 0 var(--velvet-d)}
+.btn.wa{background:#25d366;color:#05371a;box-shadow:0 4px 0 #128c4a;font-size:18px}
+.btn.alt{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 2px var(--line);font-size:17px}
+.best{font:800 14px var(--body);color:var(--muted)}
+.best b{color:var(--ink)}
+.how{font:700 13px/1.4 var(--body);color:var(--muted)}
+
+#adlayer{position:fixed;inset:0;background:#000c;display:flex;align-items:center;justify-content:center;padding-inline:16px;z-index:5}
+#adlayer .box{background:#111;border:1px dashed #ffffff55;border-radius:16px;padding:28px 22px;text-align:center;max-width:300px;color:#eee}
+#adlayer b{display:block;font:400 64px/1 var(--display);color:var(--gold);margin-block:8px}
+#adlayer p{margin:0;font:700 14px/1.4 var(--body);color:#bbb}
+@media (prefers-reduced-motion:reduce){.btn:active{transform:none}}
+
+/* i18n: language picker */
+.langbtn{align-self:center;border:0;border-radius:999px;padding:7px 14px;background:transparent;color:var(--muted);box-shadow:inset 0 0 0 2px var(--line);font:800 13px var(--body);cursor:pointer}
+.langbtn:focus-visible,.sg-lp button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.sg-lp{position:fixed;inset:0;z-index:6;background:#000a;display:flex;align-items:center;justify-content:center;padding-inline:16px}
+.sg-lp-card{width:100%;max-width:340px;box-sizing:border-box;background:var(--cream);color:var(--ink);border-radius:22px;padding:20px 18px 14px;
+  box-shadow:0 0 0 4px var(--gold),0 0 0 7px var(--velvet-d),0 22px 50px #0009;display:flex;flex-direction:column;gap:12px;text-align:center}
+.sg-lp-h{font:400 26px/1 var(--display);color:var(--velvet)}
+.sg-lp-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sg-lp-opt{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:14px;padding:11px 4px;font:800 14px var(--body);cursor:pointer}
+.sg-lp-opt.on{background:var(--gold);border-color:var(--gold-d);box-shadow:0 3px 0 var(--gold-d)}
+.sg-lp-x{border:0;background:transparent;color:var(--muted);font:800 14px var(--body);padding:8px;cursor:pointer}
+</style>
+
+<canvas id="c" aria-label="Oyun sahnesi" data-i18n-aria="aria_stage"></canvas>
+<div id="probe"></div>
+
+<div class="layer" id="menu">
+  <div class="sheet hit">
+    <h1 data-i18n="title">Katla Patla</h1>
+    <p data-i18n="intro">Sayıları sahneye bırak. Aynı sayılar çarpışınca patlar, birleşir ve ikiye katlanır.</p>
+    <canvas id="ladder" width="640" height="156" aria-label="2'den 2048'e taşlar" data-i18n-aria="aria_ladder"></canvas>
+    <div class="best"><span data-i18n="best_colon">Rekor:</span> <b id="mBest">0</b></div>
+    <button class="btn" id="playBtn" data-i18n="play">Oyna</button>
+    <div class="how" data-i18n="how">Parmağını kaydırıp nişan al, bırakınca düşer. Taşlar kırmızı çizgiyi aşarsa oyun biter.</div>
+    <button class="langbtn" type="button" data-sg-lang-btn>🌐</button>
+  </div>
+</div>
+
+<div class="layer" id="hud" hidden>
+  <div class="bar">
+    <div class="scorebox"><span class="lbl" data-i18n="hud_score">PUAN</span><b id="score">0</b></div>
+    <div class="nextbox"><span class="lbl" data-i18n="hud_next">SIRADAKİ</span><canvas id="nextC" width="104" height="104"></canvas></div>
+    <div class="side"><span class="pill"><span data-i18n="best">Rekor</span> <b id="hBest">0</b></span><button class="icon hit" id="muteBtn" aria-label="Sesi kapat" data-i18n-aria="mute">♪</button></div>
+  </div>
+</div>
+
+<div class="layer" id="over" hidden>
+  <div class="sheet hit">
+    <h2 id="oTitle" data-i18n="over_full">Sahne doldu!</h2>
+    <div class="newbest" id="oNew" hidden data-i18n="new_record">Yeni rekor!</div>
+    <div class="stats">
+      <div class="stat"><b id="oScore">0</b><span data-i18n="stat_score">Puan</span></div>
+      <div class="stat"><b id="oMax">0</b><span data-i18n="stat_biggest">En büyük</span></div>
+      <div class="stat"><b id="oBest">0</b><span data-i18n="best">Rekor</span></div>
+    </div>
+    <button class="btn ad" id="contBtn" data-i18n="continue_ad">Reklam izle, devam et</button>
+    <button class="btn" id="againBtn" data-i18n="play_again">Tekrar oyna</button>
+    <a class="btn wa" id="waBtn" target="_blank" rel="noopener" href="https://wa.me/" data-i18n="wa">WhatsApp'ta meydan oku</a>
+    <button class="btn alt" id="homeBtn" data-i18n="home">Ana menü</button>
+  </div>
+</div>
+
+<div id="adlayer" hidden><div class="box"><p data-i18n="adarea">Ödüllü reklam alanı</p><b id="adN">3</b><p data-i18n="adarea_note">Yayındaki sürümde burada reklam oynar. Bitince sahnenin üstü temizlenir.</p></div></div>
+
+<script>
+/* Sampa Games i18n */
+window.SG_DICT={
+"language": {
+"tr": "Dil",
+"en": "Language",
+"es": "Idioma",
+"pt": "Idioma",
+"de": "Sprache",
+"fr": "Langue",
+"id": "Bahasa",
+"ru": "Язык"
+},
+"close": {
+"tr": "Kapat",
+"en": "Close",
+"es": "Cerrar",
+"pt": "Fechar",
+"de": "Schließen",
+"fr": "Fermer",
+"id": "Tutup",
+"ru": "Закрыть"
+},
+"title": {
+"tr": "Katla Patla",
+"en": "Merge Pop",
+"es": "Merge Pop",
+"pt": "Merge Pop",
+"de": "Merge Pop",
+"fr": "Merge Pop",
+"id": "Merge Pop",
+"ru": "Merge Pop"
+},
+"aria_stage": {
+"tr": "Oyun sahnesi",
+"en": "Game stage",
+"es": "Escenario del juego",
+"pt": "Palco do jogo",
+"de": "Spielbühne",
+"fr": "Scène du jeu",
+"id": "Panggung permainan",
+"ru": "Игровая сцена"
+},
+"intro": {
+"tr": "Sayıları sahneye bırak. Aynı sayılar çarpışınca patlar, birleşir ve ikiye katlanır.",
+"en": "Drop numbers onto the stage. When matching numbers collide, they pop, merge and double.",
+"es": "Suelta números en el escenario. Cuando dos iguales chocan, explotan, se fusionan y se duplican.",
+"pt": "Solte números no palco. Quando números iguais colidem, estouram, se fundem e dobram.",
+"de": "Lass Zahlen auf die Bühne fallen. Stoßen gleiche Zahlen zusammen, platzen sie, verschmelzen und verdoppeln sich.",
+"fr": "Lâche des nombres sur la scène. Quand deux nombres identiques se touchent, ils éclatent, fusionnent et doublent.",
+"id": "Jatuhkan angka ke panggung. Saat angka yang sama bertabrakan, mereka pecah, bergabung, dan berlipat dua.",
+"ru": "Бросай числа на сцену. Одинаковые числа при столкновении лопаются, сливаются и удваиваются."
+},
+"aria_ladder": {
+"tr": "2'den 2048'e taşlar",
+"en": "Pieces from 2 to 2048",
+"es": "Fichas del 2 al 2048",
+"pt": "Peças de 2 a 2048",
+"de": "Steine von 2 bis 2048",
+"fr": "Pièces de 2 à 2048",
+"id": "Keping dari 2 sampai 2048",
+"ru": "Фишки от 2 до 2048"
+},
+"best_colon": {
+"tr": "Rekor:",
+"en": "Best:",
+"es": "Récord:",
+"pt": "Recorde:",
+"de": "Rekord:",
+"fr": "Record :",
+"id": "Rekor:",
+"ru": "Рекорд:"
+},
+"play": {
+"tr": "Oyna",
+"en": "Play",
+"es": "Jugar",
+"pt": "Jogar",
+"de": "Spielen",
+"fr": "Jouer",
+"id": "Main",
+"ru": "Играть"
+},
+"how": {
+"tr": "Parmağını kaydırıp nişan al, bırakınca düşer. Taşlar kırmızı çizgiyi aşarsa oyun biter.",
+"en": "Slide your finger to aim, release to drop. If pieces cross the red line, the game ends.",
+"es": "Desliza el dedo para apuntar y suelta para dejar caer. Si las fichas pasan la línea roja, se acaba el juego.",
+"pt": "Deslize o dedo para mirar; ao soltar, a peça cai. Se as peças passarem da linha vermelha, o jogo acaba.",
+"de": "Wisch zum Zielen, lass los zum Fallenlassen. Überqueren Steine die rote Linie, ist das Spiel vorbei.",
+"fr": "Glisse le doigt pour viser, relâche pour lâcher. Si les pièces dépassent la ligne rouge, la partie est finie.",
+"id": "Geser jari untuk membidik, lepas untuk menjatuhkan. Jika keping melewati garis merah, permainan berakhir.",
+"ru": "Веди пальцем, чтобы прицелиться, отпусти — фишка упадёт. Если фишки пересекут красную линию, игра окончена."
+},
+"hud_score": {
+"tr": "PUAN",
+"en": "SCORE",
+"es": "PUNTOS",
+"pt": "PONTOS",
+"de": "PUNKTE",
+"fr": "SCORE",
+"id": "SKOR",
+"ru": "ОЧКИ"
+},
+"hud_next": {
+"tr": "SIRADAKİ",
+"en": "NEXT",
+"es": "SIGUIENTE",
+"pt": "PRÓXIMA",
+"de": "NÄCHSTE",
+"fr": "SUIVANT",
+"id": "BERIKUT",
+"ru": "ДАЛЕЕ"
+},
+"best": {
+"tr": "Rekor",
+"en": "Best",
+"es": "Récord",
+"pt": "Recorde",
+"de": "Rekord",
+"fr": "Record",
+"id": "Rekor",
+"ru": "Рекорд"
+},
+"mute": {
+"tr": "Sesi kapat",
+"en": "Mute",
+"es": "Silenciar",
+"pt": "Desativar som",
+"de": "Ton aus",
+"fr": "Couper le son",
+"id": "Matikan suara",
+"ru": "Выключить звук"
+},
+"unmute": {
+"tr": "Sesi aç",
+"en": "Unmute",
+"es": "Activar sonido",
+"pt": "Ativar som",
+"de": "Ton an",
+"fr": "Activer le son",
+"id": "Nyalakan suara",
+"ru": "Включить звук"
+},
+"over_full": {
+"tr": "Sahne doldu!",
+"en": "Stage is full!",
+"es": "¡Escenario lleno!",
+"pt": "Palco lotado!",
+"de": "Bühne voll!",
+"fr": "Scène pleine !",
+"id": "Panggung penuh!",
+"ru": "Сцена заполнена!"
+},
+"over_legend": {
+"tr": "Efsane gösteri!",
+"en": "Legendary show!",
+"es": "¡Show legendario!",
+"pt": "Show lendário!",
+"de": "Legendäre Show!",
+"fr": "Spectacle légendaire !",
+"id": "Pertunjukan legendaris!",
+"ru": "Легендарное шоу!"
+},
+"over_ovation": {
+"tr": "Ayakta alkış!",
+"en": "Standing ovation!",
+"es": "¡Ovación de pie!",
+"pt": "Aplausos de pé!",
+"de": "Standing Ovations!",
+"fr": "Standing ovation !",
+"id": "Tepuk tangan meriah!",
+"ru": "Овации стоя!"
+},
+"new_record": {
+"tr": "Yeni rekor!",
+"en": "New record!",
+"es": "¡Nuevo récord!",
+"pt": "Novo recorde!",
+"de": "Neuer Rekord!",
+"fr": "Nouveau record !",
+"id": "Rekor baru!",
+"ru": "Новый рекорд!"
+},
+"stat_score": {
+"tr": "Puan",
+"en": "Score",
+"es": "Puntos",
+"pt": "Pontos",
+"de": "Punkte",
+"fr": "Score",
+"id": "Skor",
+"ru": "Очки"
+},
+"stat_biggest": {
+"tr": "En büyük",
+"en": "Biggest",
+"es": "Mayor",
+"pt": "Maior",
+"de": "Größter",
+"fr": "Max",
+"id": "Terbesar",
+"ru": "Макс."
+},
+"continue_ad": {
+"tr": "Reklam izle, devam et",
+"en": "Watch ad, keep going",
+"es": "Ver anuncio y seguir",
+"pt": "Ver anúncio e continuar",
+"de": "Werbung, weiterspielen",
+"fr": "Pub et on continue",
+"id": "Tonton iklan, lanjut",
+"ru": "Реклама — и дальше"
+},
+"play_again": {
+"tr": "Tekrar oyna",
+"en": "Play again",
+"es": "Jugar de nuevo",
+"pt": "Jogar de novo",
+"de": "Nochmal spielen",
+"fr": "Rejouer",
+"id": "Main lagi",
+"ru": "Ещё раз"
+},
+"wa": {
+"tr": "WhatsApp'ta meydan oku",
+"en": "Challenge on WhatsApp",
+"es": "Reta por WhatsApp",
+"pt": "Desafie no WhatsApp",
+"de": "Per WhatsApp herausfordern",
+"fr": "Défier sur WhatsApp",
+"id": "Tantang di WhatsApp",
+"ru": "Вызов в WhatsApp"
+},
+"home": {
+"tr": "Ana menü",
+"en": "Main menu",
+"es": "Menú principal",
+"pt": "Menu principal",
+"de": "Hauptmenü",
+"fr": "Menu principal",
+"id": "Menu utama",
+"ru": "Главное меню"
+},
+"adarea": {
+"tr": "Ödüllü reklam alanı",
+"en": "Rewarded ad area",
+"es": "Espacio de anuncio bonificado",
+"pt": "Espaço de anúncio premiado",
+"de": "Prämienwerbung",
+"fr": "Espace pub récompensée",
+"id": "Area iklan berhadiah",
+"ru": "Место для рекламы с наградой"
+},
+"adarea_note": {
+"tr": "Yayındaki sürümde burada reklam oynar. Bitince sahnenin üstü temizlenir.",
+"en": "In the live version an ad plays here. When it ends, the top of the stage is cleared.",
+"es": "En la versión publicada aquí se muestra un anuncio. Al terminar, se limpia la parte de arriba del escenario.",
+"pt": "Na versão publicada, um anúncio roda aqui. Ao terminar, o topo do palco é limpo.",
+"de": "In der veröffentlichten Version läuft hier Werbung. Danach wird der obere Bühnenbereich geräumt.",
+"fr": "Dans la version publiée, une pub s'affiche ici. Ensuite, le haut de la scène est dégagé.",
+"id": "Di versi rilis, iklan diputar di sini. Setelah selesai, bagian atas panggung dibersihkan.",
+"ru": "В релизной версии здесь идёт реклама. После неё верх сцены очищается."
+},
+"chain": {
+"tr": "Zincir ×{n}",
+"en": "Chain ×{n}",
+"es": "Cadena ×{n}",
+"pt": "Corrente ×{n}",
+"de": "Kette ×{n}",
+"fr": "Chaîne ×{n}",
+"id": "Rantai ×{n}",
+"ru": "Цепочка ×{n}"
+},
+"new_tile": {
+"tr": "Yeni: {n}",
+"en": "New: {n}",
+"es": "Nuevo: {n}",
+"pt": "Novo: {n}",
+"de": "Neu: {n}",
+"fr": "Nouveau : {n}",
+"id": "Baru: {n}",
+"ru": "Новое: {n}"
+},
+"share": {
+"tr": "Katla Patla'da {score} puan yaptım, en büyük taşım {max}! Beni geçebilir misin?",
+"en": "I scored {score} points in Merge Pop, my biggest piece was {max}! Can you beat me?",
+"es": "¡Hice {score} puntos en Merge Pop y mi ficha más grande fue {max}! ¿Me superas?",
+"pt": "Fiz {score} pontos no Merge Pop e minha maior peça foi {max}! Consegue me superar?",
+"de": "Ich habe {score} Punkte in Merge Pop geholt, mein größter Stein: {max}! Schaffst du mehr?",
+"fr": "J'ai fait {score} points à Merge Pop, ma plus grosse pièce : {max} ! Tu peux me battre ?",
+"id": "Aku dapat {score} poin di Merge Pop, keping terbesarku {max}! Bisa kalahkan aku?",
+"ru": "Я набрал {score} очков в Merge Pop, моя самая большая фишка — {max}! Сможешь побить?"
+},
+"bonus_title": {
+"tr": "Yeni gösteri bonusu",
+"en": "New show bonus",
+"es": "Bono de nuevo show",
+"pt": "Bônus de novo show",
+"de": "Bonus für neue Show",
+"fr": "Bonus nouveau spectacle",
+"id": "Bonus pertunjukan baru",
+"ru": "Бонус нового шоу"
+},
+"bonus_reward": {
+"tr": "+100 puanla başla",
+"en": "Start with +100 points",
+"es": "Empieza con +100 puntos",
+"pt": "Comece com +100 pontos",
+"de": "Starte mit +100 Punkten",
+"fr": "Commence avec +100 points",
+"id": "Mulai dengan +100 poin",
+"ru": "Старт с +100 очками"
+}
+};
+
+(function(){
+var SUP=['tr','en','es','pt','de','fr','id','ru'];
+var NAMES={tr:'Türkçe',en:'English',es:'Español',pt:'Português',de:'Deutsch',fr:'Français',id:'Bahasa Indonesia',ru:'Русский'};
+var LOC={tr:'tr-TR',en:'en-US',es:'es-419',pt:'pt-BR',de:'de-DE',fr:'fr-FR',id:'id-ID',ru:'ru-RU'};
+var D=window.SG_DICT||{},lang=null;
+try{var s=localStorage.getItem('sg_lang');if(SUP.indexOf(s)>=0)lang=s}catch(e){}
+if(!lang){var ls=[];try{ls=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language]}catch(e){}
+  for(var i=0;i<ls.length&&!lang;i++){var p=String(ls[i]||'').toLowerCase().split(/[-_]/)[0];if(p==='in')p='id';if(SUP.indexOf(p)>=0)lang=p}}
+if(!lang)lang='en';
+document.documentElement.lang=lang;
+window.SG_LANG=lang;window.SG_LOCALE=LOC[lang];window.SG_LANG_NAMES=NAMES;
+function t(k,p){var e=D[k],s=e?(e[lang]!=null?e[lang]:e.en!=null?e.en:e.tr):null;if(s==null)s=k;s=String(s);
+  if(p)s=s.replace(/\{(\w+)\}/g,function(m,n){return p[n]!=null?p[n]:m});return s}
+window.t=t;window.SGt=t;
+window.SG_applyDom=function(root){root=root||document;
+  root.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.getAttribute('data-i18n'))});
+  root.querySelectorAll('[data-i18n-html]').forEach(function(el){el.innerHTML=t(el.getAttribute('data-i18n-html'))});
+  root.querySelectorAll('[data-i18n-aria]').forEach(function(el){el.setAttribute('aria-label',t(el.getAttribute('data-i18n-aria')))});
+  root.querySelectorAll('[data-sg-lang-btn]').forEach(function(el){el.textContent='🌐 '+NAMES[lang];el.setAttribute('aria-label',t('language')+': '+NAMES[lang]);
+    if(!el.__sg){el.__sg=1;el.addEventListener('click',function(ev){ev.stopPropagation();window.SG_openLangPicker()})}});
+  document.title=t('title');
+};
+function choose(c){
+  if(c===lang){var o=document.getElementById('sg-lang-pick');if(o)o.remove();return}
+  try{localStorage.setItem('sg_lang',c)}catch(e){}
+  try{window.SG_beforeLangReload&&window.SG_beforeLangReload()}catch(e){}
+  location.reload();
+}
+window.SG_openLangPicker=function(){
+  if(document.getElementById('sg-lang-pick'))return;
+  var o=document.createElement('div');o.id='sg-lang-pick';o.className='sg-lp';o.setAttribute('role','dialog');o.setAttribute('aria-label',t('language'));
+  var h='<div class="sg-lp-card"><div class="sg-lp-h">🌐 '+t('language')+'</div><div class="sg-lp-list">';
+  SUP.forEach(function(c){h+='<button type="button" class="sg-lp-opt'+(c===lang?' on':'')+'" data-l="'+c+'" lang="'+c+'">'+NAMES[c]+'</button>'});
+  h+='</div><button type="button" class="sg-lp-x">'+t('close')+'</button></div>';
+  o.innerHTML=h;
+  ['pointerdown','pointerup','pointermove'].forEach(function(n){o.addEventListener(n,function(e){e.stopPropagation()})});
+  o.addEventListener('click',function(e){var b=e.target.closest('[data-l]');if(b)return choose(b.getAttribute('data-l'));
+    if(e.target===o||e.target.closest('.sg-lp-x'))o.remove()});
+  document.body.appendChild(o);var on=o.querySelector('.on');if(on)on.focus();
+};
+addEventListener('keydown',function(e){if(e.key==='Escape'){var o=document.getElementById('sg-lang-pick');if(o)o.remove()}});
+})();
+SG_applyDom();
+</script>
+<script>
+(()=>{
+const GAME_URL='https://play.google.com/store/apps/details?id=com.sampagames.katlapatla';
+const $=id=>document.getElementById(id);
+const WW=400,WH=640,LINE_Y=120,HOLD_Y=60,G=1500,SUB=8;
+const NUMFONT='"Fredoka","Trebuchet MS",system-ui,sans-serif';
+const DISP='"Lilita One","Trebuchet MS",system-ui,sans-serif';
+
+/* ---------- taşlar ---------- */
+const PAL=[
+ ['#ffd23f','#fff1a8','#a67a00'],['#ff9f1c','#ffd59a','#a85700'],['#ff5c7a','#ffb3c1','#a01f3b'],
+ ['#c77dff','#ead1ff','#6a28a8'],['#4c8dff','#b8d3ff','#1d4cae'],['#22c3a6','#a6f0e2','#0a6d5c'],
+ ['#8bd346','#d4f5a8','#447f14'],['#ff7ab6','#ffd0e6','#a5296a'],['#ff6b35','#ffc2a6','#9e300c'],
+ ['#2dd4ff','#b3f1ff','#0877a0'],['#ffcc00','#fff6c2','#9a7000'],['#a68bff','#ffffff','#4e37a6']];
+const SHAPES=['circle','circle','square','hex','circle','pent','circle','hex','square','circle','oct','circle'];
+const SH={square:[4,1.2,.42],pent:[5,1.12,.3],hex:[6,1.06,.26],oct:[8,1.04,.2]};
+const pal=t=>PAL[(t-1)%PAL.length];
+const rad=t=>Math.min(118,17+t*8.6);
+let world=[],queue=[],parts=[],pops=[],now=0;
+function makeBody(x,y,t){return{x,y,vx:0,vy:0,r:rad(t),a:0,w:0,speed:0,tier:t,shape:SHAPES[(t-1)%SHAPES.length],born:now,dead:false,pop:0,touch:false}}
+function resetWorld(){world=[];queue=[];parts=[];pops=[]}
+
+/* ---------- fizik (dış kütüphane yok) ---------- */
+function step(dt){
+  const h=dt/SUB;
+  for(let s=0;s<SUB;s++){
+    for(const b of world){b.vy+=G*h;b.vx*=.9997;b.x+=b.vx*h;b.y+=b.vy*h;b.touch=false}
+    for(let i=0;i<world.length;i++){const a=world[i];if(a.dead)continue;
+      for(let j=i+1;j<world.length;j++){const b=world[j];if(b.dead)continue;
+        const dx=b.x-a.x,dy=b.y-a.y,rr=a.r+b.r;if(dx>rr||dx<-rr||dy>rr||dy<-rr)continue;
+        const d2=dx*dx+dy*dy;if(d2>=rr*rr)continue;
+        if(a.tier===b.tier){a.dead=b.dead=true;queue.push([a,b]);break}
+        const d=Math.sqrt(d2)||.001,nx=dx/d,ny=dy/d,ov=rr-d,ma=a.r*a.r,mb=b.r*b.r,ia=mb/(ma+mb),ib=ma/(ma+mb);
+        a.x-=nx*ov*ia;a.y-=ny*ov*ia;b.x+=nx*ov*ib;b.y+=ny*ov*ib;
+        const rvx=b.vx-a.vx,rvy=b.vy-a.vy,vn=rvx*nx+rvy*ny;
+        if(vn<0){const im=1/ma+1/mb,jn=-1.1*vn/im;a.vx-=jn*nx/ma;a.vy-=jn*ny/ma;b.vx+=jn*nx/mb;b.vy+=jn*ny/mb;
+          const tx=-ny,ty=nx,vt=rvx*tx+rvy*ty,jt=Math.max(-jn*.3,Math.min(jn*.3,-vt/im));
+          a.vx-=jt*tx/ma;a.vy-=jt*ty/ma;b.vx+=jt*tx/mb;b.vy+=jt*ty/mb}
+        a.touch=b.touch=true}}
+    for(const b of world){if(b.dead)continue;
+      if(b.x-b.r<0){b.x=b.r;if(b.vx<0)b.vx*=-.2;b.touch=true}
+      if(b.x+b.r>WW){b.x=WW-b.r;if(b.vx>0)b.vx*=-.2;b.touch=true}
+      if(b.y+b.r>WH){b.y=WH-b.r;if(b.vy>0)b.vy=b.vy>150?-b.vy*.15:0;b.vx*=.985;b.touch=true}}
+  }
+  for(const b of world){const sp=Math.hypot(b.vx,b.vy);if(sp>2600){b.vx*=2600/sp;b.vy*=2600/sp}b.speed=Math.min(sp,2600);
+    b.w=b.touch?b.w+(b.vx/b.r-b.w)*.25:b.w*.995;b.a+=b.w*dt}
+}
+function processMerges(){
+  if(!queue.length)return;const add=[];
+  for(const [a,b] of queue){
+    const t=a.tier+1,nb=makeBody((a.x+b.x)/2,(a.y+b.y)/2,t);
+    nb.x=Math.max(nb.r,Math.min(WW-nb.r,nb.x));nb.pop=1;nb.a=(a.a+b.a)/2;
+    nb.vx=(a.vx+b.vx)*.4;nb.vy=Math.min(0,(a.vy+b.vy)*.4)-80;add.push(nb);
+    burst(nb.x,nb.y,t,a.r);if(state==='play')onMerge(nb.x,nb.y,t);
+  }
+  world=world.filter(b=>!b.dead).concat(add);queue=[];
+}
+function burst(x,y,t,r){const c=pal(Math.max(1,t-1));for(let i=0;i<16;i++){const a=Math.random()*Math.PI*2,v=2+Math.random()*4;
+  parts.push({x:x+Math.cos(a)*r*.6,y:y+Math.sin(a)*r*.6,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1.5,life:1,col:i%3?c[0]:c[1],s:3+Math.random()*4})}
+  parts.push({ring:1,x,y,r,life:1,col:pal(t)[1]})}
+
+/* ---------- oyun durumu ---------- */
+let state='menu',score=0,best=0,maxTier=1,combo=0,lastMerge=-9,held=null,nextT=1,aimX=WW/2,wait=0,overT=0,continued=false,attractT=0,muted=false;
+try{best=+localStorage.getItem('katlapatla.best')||0;muted=localStorage.getItem('katlapatla.mute')==='1'}catch(e){}
+function roll(){const w=[34,28,20,11,7],tot=w.reduce((a,b)=>a+b);let r=Math.random()*tot;for(let i=0;i<w.length;i++){r-=w[i];if(r<0)return i+1}return 1}
+function onMerge(x,y,t){
+  const v=2**t;combo=(now-lastMerge<1.1)?combo+1:1;lastMerge=now;
+  const bonus=combo>1?Math.floor(v*(combo-1)/2):0;score+=v+bonus;
+  pops.push({x,y,txt:'+'+fmt(v+bonus),t:0,col:'#fff'});
+  if(combo>1)pops.push({x,y:y-28,txt:SGt('chain',{n:combo}),t:0,col:'#ffc94a',big:1});
+  if(t>maxTier){maxTier=t;if(t>=7)pops.push({x:WW/2,y:WH*.42,txt:v===2048?'2048!':SGt('new_tile',{n:v}),t:0,col:pal(t)[1],huge:1})}
+  tone(note(t),.24,'triangle',.16);tone(note(t)*2,.14,'sine',.05);if(combo>1)tone(note(t+combo),.18,'sine',.06);
+  buzz(t>=7?30:12);updHud();
+}
+function setHeld(t){held=makeBody(aimX,HOLD_Y,t)}
+function drop(){
+  if(state!=='play'||!held||wait>0)return;
+  held.x=aimX;held.y=HOLD_Y;held.vy=180;held.born=now;world.push(held);held=null;wait=.5;
+  tone(200,.09,'sine',.08,120);buzz(8);
+}
+function startGame(){
+  resetWorld();score=0;combo=0;maxTier=1;continued=false;overT=0;wait=0;aimX=WW/2;
+  state='play';setHeld(roll());nextT=roll();show('hud');updHud();drawNext();tone(523,.12,'triangle',.12);
+}
+function seedMenu(){
+  resetWorld();const ts=[6,3,1,2,4,1,2,5,1,3];let x=10,y=WH;
+  for(const t of ts){const r=rad(t);if(x+2*r>WW){x=10;y-=150}world.push(makeBody(x+r,y-r-Math.random()*40,t));x+=2*r+4}
+  for(let i=0;i<240;i++){step(1/60);processMerges()}
+  for(const b of world)b.born=-9;parts=[];
+}
+function toMenu(){state='menu';seedMenu();show('menu');$('mBest').textContent=fmt(best)}
+function gameOver(){
+  state='over';tone(330,.55,'sawtooth',.07,110);buzz(90);
+  const isBest=score>best;if(isBest){best=score;try{localStorage.setItem('katlapatla.best',best)}catch(e){}}
+  setTimeout(()=>{if(state!=='over')return;
+    $('oScore').textContent=fmt(score);$('oMax').textContent=fmt(2**maxTier);$('oBest').textContent=fmt(best);$('oNew').hidden=!isBest;
+    $('oTitle').textContent=maxTier>=11?SGt('over_legend'):maxTier>=8?SGt('over_ovation'):SGt('over_full');
+    $('contBtn').hidden=continued||score<50;
+    const txt=SGt('share',{score:fmt(score),max:fmt(2**maxTier)})+(GAME_URL?' '+GAME_URL:'');
+    $('waBtn').href='https://wa.me/?text='+encodeURIComponent(txt);show('over')},900);
+}
+function watchAd(){
+  if(!window.AdKit)return;
+  state='ad';$('over').hidden=true;
+  AdKit.rewarded('continue').then(ok=>{
+    if(!ok){state='over';show('over');return}
+    world=world.filter(b=>{if(b.y-b.r<LINE_Y+170){burst(b.x,b.y,b.tier+1,b.r);return false}return true});
+    continued=true;overT=0;state='play';show('hud');if(!held){setHeld(nextT);nextT=roll();drawNext()}tone(660,.2,'triangle',.12)});
+}
+const fmt=n=>n.toLocaleString(window.SG_LOCALE||'tr-TR');
+function updHud(){$('score').textContent=fmt(score);$('hBest').textContent=fmt(Math.max(best,score))}
+function show(id){for(const l of['menu','hud','over'])$(l).hidden=l!==id}
+
+/* ---------- ses ---------- */
+let AC=null;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,d=.15,type='sine',v=.15,to){if(muted||state==='menu')return;const a=ac();if(!a)return;const t=a.currentTime,o=a.createOscillator(),g=a.createGain();
+  o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);
+  o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.02)}
+const SC=[0,2,4,7,9];const note=t=>261.63*2**((Math.floor((t-1)/5)*12+SC[(t-1)%5])/12);
+function buzz(ms){if(muted)return;try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
+
+/* ---------- yerleşim ---------- */
+const cv=$('c'),ctx=cv.getContext('2d');let W=1,H=1,DPR=1,S=1,OX=0,OY=0,sT=0,sB=0;
+function layout(){
+  DPR=Math.min(2,devicePixelRatio||1);W=Math.max(1,innerWidth);H=Math.max(1,innerHeight);cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+  const pc=getComputedStyle($('probe'));sT=parseFloat(pc.paddingTop)||0;sB=parseFloat(pc.paddingBottom)||0;
+  const top=sT+82,bot=sB+26;S=Math.max(.2,Math.min((W-8)/WW,(H-top-bot)/WH,1.5));OX=(W-WW*S)/2;OY=Math.max(top,H-bot-WH*S);
+}
+addEventListener('resize',layout);
+
+/* ---------- çizim ---------- */
+function piecePath(c,b){
+  c.beginPath();if(b.shape==='circle'){c.arc(b.x,b.y,b.r,0,Math.PI*2);return}
+  const [n,k,cr]=SH[b.shape],R=b.r*k,rot=b.a-Math.PI/2+(n===4?Math.PI/4:0),p=[];
+  for(let i=0;i<n;i++){const an=rot+i*2*Math.PI/n;p.push([b.x+Math.cos(an)*R,b.y+Math.sin(an)*R])}
+  c.moveTo((p[n-1][0]+p[0][0])/2,(p[n-1][1]+p[0][1])/2);
+  for(let i=0;i<n;i++){const q=p[(i+1)%n];c.arcTo(p[i][0],p[i][1],(p[i][0]+q[0])/2,(p[i][1]+q[1])/2,b.r*cr)}c.closePath();
+}
+function drawPiece(c,b,k=1,al=1,warn=false){
+  const [f,hi,dk]=pal(b.tier),x=b.x,y=b.y,r=b.r;
+  c.save();c.globalAlpha=al;if(k!==1){c.translate(x,y);c.scale(k,k);c.translate(-x,-y)}
+  piecePath(c,b);
+  const g=c.createRadialGradient(x-r*.35,y-r*.42,r*.08,x,y,r*1.2);g.addColorStop(0,hi);g.addColorStop(.5,f);g.addColorStop(1,dk);
+  c.fillStyle=g;c.fill();c.lineWidth=2.5;c.lineJoin='round';c.strokeStyle=warn?'#ff3b3b':dk;c.stroke();
+  c.beginPath();c.ellipse(x-r*.33,y-r*.45,r*.25,r*.12,-.55,0,Math.PI*2);c.fillStyle='rgba(255,255,255,.5)';c.fill();
+  if(b.tier>=11){c.fillStyle='rgba(255,255,255,'+(.5+.5*Math.sin(now*6+x))+')';star(c,x+r*.45,y-r*.5,r*.13)}
+  const s=String(2**b.tier),L=s.length,fs=r*(L===1?.95:L===2?.8:L===3?.62:L===4?.5:.4);
+  c.font='700 '+fs+'px '+NUMFONT;c.textAlign='center';c.textBaseline='middle';c.lineWidth=Math.max(2,fs*.16);c.strokeStyle=dk;
+  c.strokeText(s,x,y+fs*.06);c.fillStyle='#fff';c.fillText(s,x,y+fs*.06);c.restore();
+}
+function star(c,x,y,r){c.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,rr=i%2?r*.35:r;c.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr)}c.closePath();c.fill()}
+function drawBg(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#170a20');g.addColorStop(1,'#33193f');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  const x0=OX,x1=OX+WW*S,fy=OY+WH*S;
+  g=ctx.createLinearGradient(0,0,0,fy);g.addColorStop(0,'#2c1840');g.addColorStop(1,'#4d2c63');ctx.fillStyle=g;ctx.fillRect(x0,0,x1-x0,fy);
+  ctx.save();ctx.beginPath();ctx.rect(x0,0,x1-x0,fy);ctx.clip();
+  g=ctx.createLinearGradient(0,0,0,fy);g.addColorStop(0,'rgba(255,226,160,.02)');g.addColorStop(1,'rgba(255,226,160,.13)');
+  ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(W/2-40*S,0);ctx.lineTo(W/2+40*S,0);ctx.lineTo(x1-20*S,fy);ctx.lineTo(x0+20*S,fy);ctx.fill();
+  const rg=ctx.createRadialGradient(W/2,fy,4,W/2,fy,WW*S*.6);rg.addColorStop(0,'rgba(255,214,140,.25)');rg.addColorStop(1,'rgba(255,214,140,0)');ctx.fillStyle=rg;ctx.fillRect(x0,0,x1-x0,fy);
+  ctx.restore();
+  g=ctx.createLinearGradient(0,fy,0,H);g.addColorStop(0,'#b0713d');g.addColorStop(1,'#4f2a12');ctx.fillStyle=g;ctx.fillRect(0,fy,W,H-fy);
+  ctx.strokeStyle='rgba(40,16,4,.35)';ctx.lineWidth=1;
+  for(let i=-12;i<=12;i++){ctx.beginPath();ctx.moveTo(W/2+i*28*S,fy);ctx.lineTo(W/2+i*60*S,H);ctx.stroke()}
+  ctx.fillStyle='#e0a066';ctx.fillRect(0,fy,W,Math.max(2,3*S));
+  curtain(0,x0,fy,false);curtain(x1,W-x1,fy,true);
+  ctx.fillStyle='#ffc94a';ctx.fillRect(x0-2,0,2,fy);ctx.fillRect(x1,0,2,fy);
+  const vh=sT+30;g=ctx.createLinearGradient(0,0,0,vh);g.addColorStop(0,'#5e0c1d');g.addColorStop(1,'#a51d36');ctx.fillStyle=g;
+  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(W,0);ctx.lineTo(W,vh);const sc=Math.max(28,W/14);
+  for(let x=W;x>0;x-=sc)ctx.quadraticCurveTo(x-sc/2,vh+14,x-sc,vh);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#ffc94a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,vh-5);ctx.lineTo(W,vh-5);ctx.stroke();
+}
+function curtain(x,w,h,right){
+  if(w<=0)return;const n=Math.max(1,Math.round(w/24)),fw=w/n;
+  for(let i=0;i<n;i++){const g=ctx.createLinearGradient(x+i*fw,0,x+(i+1)*fw,0);g.addColorStop(0,'#5e0c1d');g.addColorStop(.45,'#c4283f');g.addColorStop(.6,'#d8394f');g.addColorStop(1,'#6e0f22');
+    ctx.fillStyle=g;ctx.fillRect(x+i*fw-.5,0,fw+1,h+6)}
+  const sh=ctx.createLinearGradient(right?x:x+w,0,right?x+18:x+w-18,0);sh.addColorStop(0,'rgba(0,0,0,.45)');sh.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=sh;ctx.fillRect(right?x:x+w-18,0,Math.min(18,w),h);
+}
+const easeBack=p=>{const c=1.9;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2)};
+function render(){
+  drawBg();
+  ctx.setTransform(DPR*S,0,0,DPR*S,DPR*OX,DPR*OY);
+  const danger=overT>0;ctx.save();ctx.setLineDash([10,8]);ctx.lineWidth=danger?3:2;
+  ctx.strokeStyle=danger?'rgba(255,70,70,'+(.5+.5*Math.sin(now*14))+')':'rgba(255,236,210,.28)';
+  ctx.beginPath();ctx.moveTo(0,LINE_Y);ctx.lineTo(WW,LINE_Y);ctx.stroke();ctx.restore();
+  if(held&&state==='play'){ctx.save();ctx.setLineDash([4,8]);ctx.strokeStyle='rgba(255,240,220,.3)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(aimX,HOLD_Y+held.r);ctx.lineTo(aimX,WH);ctx.stroke();ctx.restore()}
+  for(const b of world){
+    let k=1;if(b.pop){const p=Math.min(1,(now-b.born)/.22);k=p<1?.55+.45*easeBack(p):1;if(p>=1)b.pop=0}
+    const warn=(state==='play'||state==='over')&&now-b.born>1.4&&b.y-b.r<LINE_Y&&Math.sin(now*14)>0;
+    drawPiece(ctx,b,k,1,warn);
+  }
+  if(held&&state==='play'){held.x=aimX;held.y=HOLD_Y;held.a=0;drawPiece(ctx,held,wait>0?.8:1,.95)}
+  for(const p of parts){ctx.globalAlpha=Math.max(0,p.life);if(p.ring){ctx.strokeStyle=p.col;ctx.lineWidth=4*p.life;ctx.beginPath();ctx.arc(p.x,p.y,p.r*(1.6-p.life*.6),0,Math.PI*2);ctx.stroke()}
+    else{ctx.fillStyle=p.col;ctx.fillRect(p.x-p.s/2,p.y-p.s/2,p.s,p.s)}}
+  ctx.globalAlpha=1;ctx.textAlign='center';ctx.textBaseline='middle';
+  for(const p of pops){const a=1-Math.max(0,(p.t-.6)/.5);ctx.globalAlpha=Math.max(0,a);const fs=p.huge?52:p.big?24:20;
+    ctx.font=fs+'px '+DISP;ctx.lineWidth=fs*.18;ctx.strokeStyle='rgba(40,10,40,.85)';const y=p.y-p.t*40;ctx.strokeText(p.txt,p.x,y);ctx.fillStyle=p.col;ctx.fillText(p.txt,p.x,y)}
+  ctx.globalAlpha=1;
+}
+function drawNext(){const c=$('nextC').getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,104,104);
+  const b=makeBody(0,0,nextT),k=40/(b.r*(SH[b.shape]?SH[b.shape][1]:1));c.setTransform(k,0,0,k,52,52);drawPiece(c,b)}
+function drawLadder(){const c=$('ladder').getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,640,156);
+  const ts=[1,2,3,4,5,6,7,8,9,10,11];let tot=0;const sz=ts.map(t=>{const s=14+t*3.1;tot+=s*2;return s});const gap=(640-tot)/(ts.length-1);let x=0;
+  ts.forEach((t,i)=>{const s=sz[i];x+=s;const b=makeBody(0,0,t),k=s/(b.r*(SH[b.shape]?SH[b.shape][1]:1));c.setTransform(k,0,0,k,x,92-s*.15);drawPiece(c,b);c.setTransform(1,0,0,1,0,0);x+=s+gap})}
+
+/* ---------- döngü ---------- */
+let last=performance.now(),acc=0;
+function frame(t){
+  const dt=Math.max(0,Math.min(.05,(t-last)/1000));last=t;now+=dt;
+  try{
+    if(state==='play'||state==='menu'){acc+=dt;while(acc>=1/60){step(1/60);processMerges();acc-=1/60}}else acc=0;
+    if(state==='play'){
+      if(held)aimX=Math.max(held.r+2,Math.min(WW-held.r-2,aimX));
+      if(wait>0){wait-=dt;if(wait<=0&&!held){setHeld(nextT);nextT=roll();drawNext()}}
+      let over=false;for(const b of world)if(now-b.born>1.4&&b.y-b.r<LINE_Y&&b.speed<60){over=true;break}
+      overT=over?overT+dt:Math.max(0,overT-dt*2);if(overT>2.2)gameOver();
+    }else if(state==='menu'){
+      attractT-=dt;if(attractT<=0){attractT=.9;let high=false;for(const b of world)if(b.y-b.r<LINE_Y+60)high=true;
+        if(high)seedMenu();else{const tt=roll(),r=rad(tt),b=makeBody(r+Math.random()*(WW-2*r),HOLD_Y,tt);b.born=-9;world.push(b)}}
+    }
+    for(const p of parts){p.life-=dt*(p.ring?2.4:1.4);if(!p.ring){p.x+=p.vx;p.y+=p.vy;p.vy+=.25}}
+    parts=parts.filter(p=>p.life>0);for(const p of pops)p.t+=dt;pops=pops.filter(p=>p.t<1.1);
+    render();
+  }catch(e){console.error(e)}
+  requestAnimationFrame(frame);
+}
+
+/* ---------- girdi ---------- */
+let aiming=false;const toWorld=e=>(e.clientX-OX)/S;
+cv.addEventListener('pointerdown',e=>{ac();if(state!=='play')return;aiming=true;aimX=toWorld(e)});
+addEventListener('pointermove',e=>{if(state==='play'&&(aiming||e.pointerType==='mouse'))aimX=toWorld(e)});
+addEventListener('pointerup',()=>{if(aiming){aiming=false;drop()}});
+addEventListener('pointercancel',()=>{aiming=false});
+addEventListener('keydown',e=>{if(state!=='play')return;if(e.key==='ArrowLeft')aimX-=14;else if(e.key==='ArrowRight')aimX+=14;
+  else if(e.key===' '||e.key==='ArrowDown'||e.key==='Enter'){e.preventDefault();drop()}});
+$('playBtn').onclick=()=>{ac();startGame()};$('againBtn').onclick=()=>{if(!window.AdKit)return startGame();$('over').hidden=true;
+  AdKit.levelDone({title:SGt('bonus_title'),reward:SGt('bonus_reward')}).then(ok=>{startGame();if(ok){score+=100;updHud()}})};$('homeBtn').onclick=toMenu;$('contBtn').onclick=watchAd;
+const mb=$('muteBtn');const syncMute=()=>{mb.classList.toggle('off',muted);mb.setAttribute('aria-label',muted?SGt('unmute'):SGt('mute'))};
+mb.onclick=()=>{muted=!muted;try{localStorage.setItem('katlapatla.mute',muted?'1':'0')}catch(e){}syncMute()};syncMute();
+
+layout();toMenu();drawLadder();requestAnimationFrame(frame);
+(document.fonts&&document.fonts.ready||Promise.resolve()).then(()=>{drawLadder();drawNext()});
+})();
+</script>
+
+</body></html>
