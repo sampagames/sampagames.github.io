@@ -1,0 +1,635 @@
+<!doctype html><html><head>
+<script>window.ADKIT_CONFIG={"everyLevels": 2, "minGapSec": 180};</script>
+<script src="../../adkit-web.js" data-pkg="com.sampagames.karatas"></script>
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Black Stone Quest: Action RPG – Play Free Online | Sampa Games</title>
+<meta name="description" content="Smash the Black Stones, hunt monsters, upgrade your sword to +9. Play free in your browser, then get it on Google Play.">
+<link rel="canonical" href="https://sampagames.github.io/g/kara-tas-seferi/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+/* Tek görünüm: koyu orman, lake kırmızısı ve altın. 3B sahne + 2B yazı katmanı + HTML HUD. */
+:root{
+  --ink:#0e1411; --panel:#18201b; --panel-2:#222d26; --line:#3d4a40;
+  --gold:#d9b25a; --red:#b8322a; --hp:#c8402f; --mp:#3f7fc4; --exp:#d9b25a;
+  --text:#ece4cf; --muted:#a69d86;
+  --display:"Cormorant SC","Palatino Linotype",Georgia,system-ui,serif;
+  --body:"Alegreya Sans","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--ink);color:var(--text);font-family:var(--body);
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none}
+#game,#ui{position:fixed;inset:0;width:100%;height:100%;display:block}
+#ui{pointer-events:none;z-index:1}
+.hud{position:fixed;pointer-events:none;z-index:2}
+#status{top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;display:flex;gap:10px;align-items:center}
+.crest{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3a2a20,#120c09);
+  border:2px solid var(--gold);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:22px;color:var(--gold);
+  box-shadow:0 2px 8px #0008}
+.bars{display:flex;flex-direction:column;gap:4px;width:min(46vw,190px)}
+.bar{height:11px;background:#0009;border:1px solid var(--line);border-radius:2px;position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0;transform-origin:left;transition:transform .15s}
+.bar.hp i{background:linear-gradient(#e0593f,var(--hp))}
+.bar.mp i{background:linear-gradient(#5d9be0,var(--mp))}
+.bar.ex{height:5px} .bar.ex i{background:var(--exp)}
+.bar b{position:absolute;inset:0;font:700 9px/11px var(--body);text-align:center;color:#fff;text-shadow:0 1px 1px #000}
+#purse{font:700 13px var(--body);color:var(--gold);display:flex;gap:10px;font-variant-numeric:tabular-nums;text-shadow:0 1px 2px #000}
+#purse span{color:var(--text);font-weight:500;opacity:.8}
+#mapwrap{top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;text-align:center}
+#mini{width:104px;height:104px;border-radius:50%;border:2px solid var(--gold);background:#0b100d;box-shadow:0 2px 8px #0008}
+#zone{font:600 12px var(--display);color:var(--gold);margin-top:2px;text-shadow:0 1px 2px #000;letter-spacing:.04em}
+#controls{right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:200px;height:200px;pointer-events:none}
+.btn{position:absolute;pointer-events:auto;border-radius:50%;border:2px solid var(--gold);color:var(--text);
+  background:radial-gradient(circle at 40% 35%,#3b2a22,#160f0c);display:grid;place-items:center;text-align:center;
+  font:700 11px/1.1 var(--body);box-shadow:0 3px 10px #000a;touch-action:none;cursor:pointer;overflow:hidden}
+.btn:active{filter:brightness(1.4)}
+.btn:focus-visible{outline:2px solid #fff}
+.btn .cd{position:absolute;inset:0;background:#000b;transform-origin:bottom;transform:scaleY(0)}
+.btn .lbl{position:relative}
+.btn small{display:block;font-weight:500;color:var(--muted);font-size:9px}
+#bAtk{width:92px;height:92px;right:0;bottom:0;font:700 15px var(--display);background:radial-gradient(circle at 40% 35%,#7a2a22,#2a0d0a)}
+#bS1{width:58px;height:58px;right:100px;bottom:2px}
+#bS2{width:58px;height:58px;right:84px;bottom:68px}
+#bS3{width:58px;height:58px;right:22px;bottom:104px}
+#bPot{width:46px;height:46px;right:130px;bottom:118px;border-color:var(--hp)}
+#talk{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 128px);z-index:3;
+  pointer-events:auto;border:2px solid var(--gold);background:var(--panel);color:var(--gold);font:700 16px var(--display);
+  padding:10px 22px;border-radius:4px;letter-spacing:.06em}
+#banner{position:fixed;left:0;right:0;top:26%;text-align:center;z-index:3;pointer-events:none;font:700 clamp(22px,6vw,40px) var(--display);
+  color:var(--gold);text-shadow:0 2px 0 #000,0 0 18px #b8322a99;opacity:0;transition:opacity .4s;padding-inline:16px}
+#banner small{display:block;font:500 14px var(--body);color:var(--text);margin-top:4px}
+#log{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 190px);z-index:2;pointer-events:none;
+  font:500 12px/1.35 var(--body);color:var(--text);text-shadow:0 1px 2px #000;max-width:60vw;display:flex;flex-direction:column;gap:1px}
+#log div{transition:opacity 1s}
+#overlay{position:fixed;inset:0;z-index:5;background:#000a;display:grid;place-items:center;padding:16px}
+.card{width:min(100%,380px);max-height:86vh;overflow:auto;background:var(--panel);border:2px solid var(--gold);border-radius:6px;
+  padding:18px;box-shadow:0 10px 40px #000;display:flex;flex-direction:column;gap:12px}
+.card h2{margin:0;font:700 26px var(--display);color:var(--gold);text-wrap:balance;letter-spacing:.03em}
+.card p{margin:0;color:var(--muted);line-height:1.45;font-size:14px}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--panel-2);border:1px solid var(--line);
+  border-radius:4px;padding:10px 12px;font-variant-numeric:tabular-nums}
+.row strong{color:var(--text);text-align:right} .row em{font-style:normal;color:var(--gold)}
+.act{font:700 15px var(--body);border:1px solid var(--gold);background:linear-gradient(#7a2a22,#4a1612);color:var(--text);
+  border-radius:4px;padding:11px 14px;cursor:pointer;touch-action:manipulation}
+.act:disabled{opacity:.4;cursor:default}
+.act.ghost{background:transparent;color:var(--muted);border-color:var(--line)}
+.act:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.weapon{font:700 34px var(--display);color:var(--gold);text-align:center}
+.result{min-height:20px;text-align:center;font-weight:700}
+.ok{color:#8fd16a}.bad{color:#e0593f}
+.keys{font-size:12px;color:var(--muted)}
+.langs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.langs .act{padding:10px 8px;font-size:14px}
+.langs .act.cur{background:linear-gradient(#a8862f,#6e5418);color:#fff}
+/* language picker */
+.ihead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+#langBtn{padding:6px 10px;font-size:13px;color:var(--gold);white-space:nowrap}
+#loading{position:fixed;inset:0;z-index:6;display:grid;place-items:center;background:var(--ink);font:700 22px var(--display);color:var(--gold)}
+@media (prefers-reduced-motion:reduce){.bar i,#banner{transition:none}}
+</style>
+
+<canvas id="game"></canvas>
+<canvas id="ui"></canvas>
+
+<div class="hud" id="status">
+  <div class="crest" id="lv">1</div>
+  <div class="bars">
+    <div class="bar hp"><i id="hpI"></i><b id="hpT"></b></div>
+    <div class="bar mp"><i id="mpI"></i><b id="mpT"></b></div>
+    <div class="bar ex"><i id="exI"></i></div>
+    <div id="purse"><div><span data-i18n="cur">Yang</span> <b id="gold">0</b></div><div><span data-i18n="soul">Ruh Taşı</span> <b id="soul">0</b></div></div>
+  </div>
+</div>
+<div class="hud" id="mapwrap"><canvas id="mini" width="208" height="208"></canvas><div id="zone"></div></div>
+
+<div class="hud" id="controls">
+  <button class="btn" id="bAtk" aria-label="Saldır" data-i18n-aria="a_atk"><span class="lbl" data-i18n="l_atk">Vur</span></button>
+  <button class="btn" id="bS1" aria-label="Kılıç Çemberi" data-i18n-aria="a_s1"><span class="cd"></span><span class="lbl"><span data-i18n="l_s1">Çember</span><small>20 MP</small></span></button>
+  <button class="btn" id="bS2" aria-label="Hamle" data-i18n-aria="a_s2"><span class="cd"></span><span class="lbl"><span data-i18n="l_s2">Hamle</span><small>15 MP</small></span></button>
+  <button class="btn" id="bS3" aria-label="Savaş Narası" data-i18n-aria="a_s3"><span class="cd"></span><span class="lbl"><span data-i18n="l_s3">Nara</span><small>30 MP</small></span></button>
+  <button class="btn" id="bPot" aria-label="Kırmızı iksir iç" data-i18n-aria="a_pot"><span class="cd"></span><span class="lbl"><span data-i18n="l_pot">İksir</span><small id="potN">5</small></span></button>
+</div>
+<button id="talk" hidden></button>
+<div id="banner"></div>
+<div id="log"></div>
+<div id="overlay" hidden><div class="card" id="card"></div></div>
+<div id="loading" data-i18n="loading">Dünya yükleniyor…</div>
+<script>
+(function(){
+var SUP=["tr", "en", "es", "pt", "de", "fr", "id", "ru"], NAMES={"tr": "Türkçe", "en": "English", "es": "Español", "pt": "Português", "de": "Deutsch", "fr": "Français", "id": "Bahasa Indonesia", "ru": "Русский"}, DICT={"title": {"tr": "Kara Taş Seferi", "en": "Black Stone Quest", "es": "Black Stone Quest", "pt": "Black Stone Quest", "de": "Black Stone Quest", "fr": "Black Stone Quest", "id": "Black Stone Quest", "ru": "Black Stone Quest"}, "loading": {"tr": "Dünya yükleniyor…", "en": "Loading world…", "es": "Cargando el mundo…", "pt": "Carregando o mundo…", "de": "Welt wird geladen…", "fr": "Chargement du monde…", "id": "Memuat dunia…", "ru": "Загрузка мира…"}, "noEngine": {"tr": "3B motor yüklenemedi. Sayfayı yenile.", "en": "Couldn't load the 3D engine. Reload the page.", "es": "No se pudo cargar el motor 3D. Recarga la página.", "pt": "Não foi possível carregar o motor 3D. Recarregue a página.", "de": "3D-Engine konnte nicht geladen werden. Seite neu laden.", "fr": "Impossible de charger le moteur 3D. Recharge la page.", "id": "Mesin 3D gagal dimuat. Muat ulang halaman.", "ru": "Не удалось загрузить 3D-движок. Обнови страницу."}, "cur": {"tr": "Yang", "en": "Gold", "es": "Oro", "pt": "Ouro", "de": "Gold", "fr": "Or", "id": "Emas", "ru": "Золото"}, "goldN": {"tr": "{n} Yang", "en": "{n} Gold", "es": "{n} oro", "pt": "{n} ouro", "de": "{n} Gold", "fr": "{n} or", "id": "{n} Emas", "ru": "{n} золота"}, "soul": {"tr": "Ruh Taşı", "en": "Soul Stone", "es": "Piedra del Alma", "pt": "Pedra da Alma", "de": "Seelenstein", "fr": "Pierre d'âme", "id": "Batu Jiwa", "ru": "Камень души"}, "redPot": {"tr": "Kırmızı İksir", "en": "Red Potion", "es": "Poción Roja", "pt": "Poção Vermelha", "de": "Roter Trank", "fr": "Potion rouge", "id": "Ramuan Merah", "ru": "Красное зелье"}, "weapon": {"tr": "Ejder Dişi +{n}", "en": "Dragon Fang +{n}", "es": "Colmillo de Dragón +{n}", "pt": "Presa de Dragão +{n}", "de": "Drachenzahn +{n}", "fr": "Croc du Dragon +{n}", "id": "Taring Naga +{n}", "ru": "Клык дракона +{n}"}, "zones": {"tr": ["Köy", "Kurt Ormanı", "Domuz Yaylası", "Haydut Geçidi", "Ayı Vadisi", "Kara Dağlar", "Kül Ovası", "Unutulmuş Sınır"], "en": ["Village", "Wolf Forest", "Boar Highlands", "Bandit Pass", "Bear Valley", "Black Mountains", "Ash Plain", "Forgotten Frontier"], "es": ["Aldea", "Bosque de Lobos", "Meseta de Jabalíes", "Paso de Bandidos", "Valle de Osos", "Montañas Negras", "Llanura de Ceniza", "Frontera Olvidada"], "pt": ["Vila", "Floresta dos Lobos", "Planalto dos Javalis", "Passo dos Bandidos", "Vale dos Ursos", "Montanhas Negras", "Planície de Cinzas", "Fronteira Esquecida"], "de": ["Dorf", "Wolfswald", "Eberhochland", "Räuberpass", "Bärental", "Schwarze Berge", "Aschenebene", "Vergessene Grenze"], "fr": ["Village", "Forêt des Loups", "Plateau des Sangliers", "Col des Bandits", "Vallée des Ours", "Monts Noirs", "Plaine de Cendres", "Frontière Oubliée"], "id": ["Desa", "Hutan Serigala", "Dataran Babi Hutan", "Celah Bandit", "Lembah Beruang", "Gunung Hitam", "Dataran Abu", "Perbatasan Terlupakan"], "ru": ["Деревня", "Волчий лес", "Кабанье нагорье", "Перевал разбойников", "Медвежья долина", "Чёрные горы", "Пепельная равнина", "Забытый рубеж"]}, "lvAbbr": {"tr": "Sv.{n}", "en": "Lv.{n}", "es": "Nv.{n}", "pt": "Nv.{n}", "de": "St.{n}", "fr": "Niv.{n}", "id": "Lv.{n}", "ru": "Ур.{n}"}, "a_atk": {"tr": "Saldır", "en": "Attack", "es": "Atacar", "pt": "Atacar", "de": "Angreifen", "fr": "Attaquer", "id": "Serang", "ru": "Атаковать"}, "l_atk": {"tr": "Vur", "en": "Strike", "es": "Golpe", "pt": "Golpe", "de": "Schlag", "fr": "Frappe", "id": "Tebas", "ru": "Удар"}, "a_s1": {"tr": "Kılıç Çemberi", "en": "Blade Circle", "es": "Círculo de Espada", "pt": "Círculo da Espada", "de": "Klingenkreis", "fr": "Cercle de lame", "id": "Lingkaran Pedang", "ru": "Круг клинка"}, "l_s1": {"tr": "Çember", "en": "Spin", "es": "Giro", "pt": "Giro", "de": "Wirbel", "fr": "Tornade", "id": "Putar", "ru": "Вихрь"}, "a_s2": {"tr": "Hamle", "en": "Dash", "es": "Embestida", "pt": "Investida", "de": "Ansturm", "fr": "Charge", "id": "Terjangan", "ru": "Рывок"}, "l_s2": {"tr": "Hamle", "en": "Dash", "es": "Carga", "pt": "Avanço", "de": "Sturm", "fr": "Charge", "id": "Terjang", "ru": "Рывок"}, "a_s3": {"tr": "Savaş Narası", "en": "War Cry", "es": "Grito de Guerra", "pt": "Grito de Guerra", "de": "Kriegsschrei", "fr": "Cri de guerre", "id": "Pekik Perang", "ru": "Боевой клич"}, "l_s3": {"tr": "Nara", "en": "Roar", "es": "Grito", "pt": "Grito", "de": "Schrei", "fr": "Cri", "id": "Pekik", "ru": "Клич"}, "a_pot": {"tr": "Kırmızı iksir iç", "en": "Drink red potion", "es": "Beber poción roja", "pt": "Beber poção vermelha", "de": "Roten Trank trinken", "fr": "Boire une potion rouge", "id": "Minum ramuan merah", "ru": "Выпить красное зелье"}, "l_pot": {"tr": "İksir", "en": "Potion", "es": "Poción", "pt": "Poção", "de": "Trank", "fr": "Potion", "id": "Ramuan", "ru": "Зелье"}, "potN": {"tr": "{n} adet", "en": "×{n}", "es": "×{n}", "pt": "×{n}", "de": "×{n}", "fr": "×{n}", "id": "×{n}", "ru": "×{n}"}, "npcSmith": {"tr": "Demirci Ata", "en": "Smith Ata", "es": "Herrero Ata", "pt": "Ferreiro Ata", "de": "Schmied Ata", "fr": "Forgeron Ata", "id": "Pandai Besi Ata", "ru": "Кузнец Ата"}, "npcShop": {"tr": "Tüccar Meryem", "en": "Merchant Meryem", "es": "Mercader Meryem", "pt": "Mercadora Meryem", "de": "Händlerin Meryem", "fr": "Marchande Meryem", "id": "Pedagang Meryem", "ru": "Торговка Мерьем"}, "talkTo": {"tr": "{name} ile konuş", "en": "Talk to {name}", "es": "Hablar con {name}", "pt": "Falar com {name}", "de": "Mit {name} reden", "fr": "Parler à {name}", "id": "Bicara dengan {name}", "ru": "Поговорить: {name}"}, "mWolf": {"tr": "Kurt", "en": "Wolf", "es": "Lobo", "pt": "Lobo", "de": "Wolf", "fr": "Loup", "id": "Serigala", "ru": "Волк"}, "mBoar": {"tr": "Yaban Domuzu", "en": "Wild Boar", "es": "Jabalí", "pt": "Javali", "de": "Wildschwein", "fr": "Sanglier", "id": "Babi Hutan", "ru": "Кабан"}, "mBandit": {"tr": "Dağ Haydudu", "en": "Mountain Bandit", "es": "Bandido de Montaña", "pt": "Bandido da Montanha", "de": "Bergräuber", "fr": "Bandit des montagnes", "id": "Bandit Gunung", "ru": "Горный разбойник"}, "mBear": {"tr": "Boz Ayı", "en": "Brown Bear", "es": "Oso Pardo", "pt": "Urso-pardo", "de": "Braunbär", "fr": "Ours brun", "id": "Beruang Cokelat", "ru": "Бурый медведь"}, "mStone": {"tr": "Kara Taş", "en": "Black Stone", "es": "Piedra Negra", "pt": "Pedra Negra", "de": "Schwarzer Stein", "fr": "Pierre Noire", "id": "Batu Hitam", "ru": "Чёрный камень"}, "hero": {"tr": "Kahraman", "en": "Hero", "es": "Héroe", "pt": "Herói", "de": "Held", "fr": "Héros", "id": "Pahlawan", "ru": "Герой"}, "drag": {"tr": "Sürükle", "en": "Drag", "es": "Arrastra", "pt": "Arraste", "de": "Ziehen", "fr": "Glisse", "id": "Geser", "ru": "Веди"}, "stoneFell": {"tr": "Bir Kara Taş düştü!", "en": "A Black Stone has fallen!", "es": "¡Cayó una Piedra Negra!", "pt": "Uma Pedra Negra caiu!", "de": "Ein Schwarzer Stein ist gefallen!", "fr": "Une Pierre Noire est tombée !", "id": "Sebuah Batu Hitam jatuh!", "ru": "Упал Чёрный камень!"}, "stoneWhere": {"tr": "{zone} bölgesinde. Haritada kırmızı işaret.", "en": "Zone: {zone}. Red marker on the map.", "es": "Zona: {zone}. Marca roja en el mapa.", "pt": "Região: {zone}. Marcador vermelho no mapa.", "de": "Gebiet: {zone}. Roter Marker auf der Karte.", "fr": "Zone : {zone}. Marqueur rouge sur la carte.", "id": "Wilayah: {zone}. Tanda merah di peta.", "ru": "Область: {zone}. Красная метка на карте."}, "stoneCrack": {"tr": "Taş çatlıyor!", "en": "The stone cracks!", "es": "¡La piedra se agrieta!", "pt": "A pedra está rachando!", "de": "Der Stein bricht!", "fr": "La pierre se fissure !", "id": "Batunya retak!", "ru": "Камень трескается!"}, "stoneBroken": {"tr": "Kara Taş parçalandı!", "en": "Black Stone shattered!", "es": "¡Piedra Negra destrozada!", "pt": "Pedra Negra despedaçada!", "de": "Schwarzer Stein zerschmettert!", "fr": "Pierre Noire brisée !", "id": "Batu Hitam hancur!", "ru": "Чёрный камень разбит!"}, "xp": {"tr": "+{n} TP", "en": "+{n} XP", "es": "+{n} XP", "pt": "+{n} XP", "de": "+{n} EP", "fr": "+{n} XP", "id": "+{n} XP", "ru": "+{n} опыта"}, "lvUp": {"tr": "Seviye {n}!", "en": "Level {n}!", "es": "¡Nivel {n}!", "pt": "Nível {n}!", "de": "Stufe {n}!", "fr": "Niveau {n} !", "id": "Level {n}!", "ru": "Уровень {n}!"}, "lvUpSub": {"tr": "Can, mana ve saldırı gücün arttı.", "en": "Health, mana and attack power increased.", "es": "Tu vida, maná y poder de ataque aumentaron.", "pt": "Sua vida, mana e poder de ataque aumentaram.", "de": "Leben, Mana und Angriffskraft gesteigert.", "fr": "Vie, mana et puissance d'attaque augmentées.", "id": "Darah, mana, dan kekuatan seranganmu naik.", "ru": "Здоровье, мана и сила атаки выросли."}, "defeated": {"tr": "Yenildin", "en": "Defeated", "es": "Derrotado", "pt": "Derrotado", "de": "Besiegt", "fr": "Vaincu", "id": "Kalah", "ru": "Поражение"}, "defeatedSub": {"tr": "Köyde uyanacaksın. {n} Yang kaybettin.", "en": "You'll wake up in the village. Lost {n} gold.", "es": "Despertarás en la aldea. Perdiste {n} de oro.", "pt": "Você vai acordar na vila. Perdeu {n} de ouro.", "de": "Du erwachst im Dorf. {n} Gold verloren.", "fr": "Tu te réveilleras au village. {n} or perdu.", "id": "Kamu akan bangun di desa. Kehilangan {n} emas.", "ru": "Ты очнёшься в деревне. Потеряно золота: {n}."}, "adTitle": {"tr": "Yenildin!", "en": "Defeated!", "es": "¡Derrotado!", "pt": "Derrotado!", "de": "Besiegt!", "fr": "Vaincu !", "id": "Kalah!", "ru": "Поражение!"}, "adText": {"tr": "Kısa bir reklam izle, olduğun yerde ayağa kalk ve kaybettiğin Yang geri gelsin.", "en": "Watch a short ad to get back up right here and recover the gold you lost.", "es": "Mira un anuncio corto, levántate aquí mismo y recupera el oro perdido.", "pt": "Assista a um anúncio curto, levante-se aqui mesmo e recupere o ouro perdido.", "de": "Sieh dir kurz Werbung an, steh direkt hier wieder auf und hol dein Gold zurück.", "fr": "Regarde une courte pub, relève-toi sur place et récupère l'or perdu.", "id": "Tonton iklan singkat, bangkit di tempat dan dapatkan kembali emasmu.", "ru": "Посмотри короткую рекламу, встань прямо здесь и верни потерянное золото."}, "adReward": {"tr": "Yerinde diril", "en": "Revive on the spot", "es": "Revive aquí mismo", "pt": "Reviva no local", "de": "Hier wiederbeleben", "fr": "Revivre sur place", "id": "Bangkit di tempat", "ru": "Воскреснуть на месте"}, "adBtn": {"tr": "Reklam izle, diril", "en": "Watch ad & revive", "es": "Ver anuncio y revivir", "pt": "Ver anúncio e reviver", "de": "Werbung & aufstehen", "fr": "Pub et revivre", "id": "Tonton iklan & bangkit", "ru": "Реклама и воскрешение"}, "noThanks": {"tr": "Hayır, teşekkürler", "en": "No, thanks", "es": "No, gracias", "pt": "Não, obrigado", "de": "Nein, danke", "fr": "Non merci", "id": "Tidak, terima kasih", "ru": "Нет, спасибо"}, "revived": {"tr": "Ayağa kalktın!", "en": "You're back on your feet!", "es": "¡Te levantaste!", "pt": "Você se levantou!", "de": "Du stehst wieder!", "fr": "Te revoilà debout !", "id": "Kamu bangkit lagi!", "ru": "Ты снова на ногах!"}, "revivedSub": {"tr": "Sefer devam ediyor.", "en": "The quest goes on.", "es": "La aventura continúa.", "pt": "A jornada continua.", "de": "Die Reise geht weiter.", "fr": "L'aventure continue.", "id": "Petualangan berlanjut.", "ru": "Поход продолжается."}, "warCry": {"tr": "Savaş Narası: 8 saniye boyunca %35 daha güçlü vuruyorsun.", "en": "War Cry: you hit 35% harder for 8 seconds.", "es": "Grito de Guerra: golpeas un 35% más fuerte durante 8 segundos.", "pt": "Grito de Guerra: você bate 35% mais forte por 8 segundos.", "de": "Kriegsschrei: 8 Sekunden lang 35 % mehr Schaden.", "fr": "Cri de guerre : tu frappes 35 % plus fort pendant 8 secondes.", "id": "Pekik Perang: seranganmu 35% lebih kuat selama 8 detik.", "ru": "Боевой клич: 8 секунд бьёшь на 35% сильнее."}, "noPot": {"tr": "İksirin kalmadı. Tüccar Meryem satıyor.", "en": "Out of potions. Merchant Meryem sells them.", "es": "No te quedan pociones. Mercader Meryem las vende.", "pt": "Acabaram as poções. A Mercadora Meryem vende.", "de": "Keine Tränke mehr. Händlerin Meryem verkauft welche.", "fr": "Plus de potions. Marchande Meryem en vend.", "id": "Ramuanmu habis. Pedagang Meryem menjualnya.", "ru": "Зелья кончились. Торговка Мерьем их продаёт."}, "noMp": {"tr": "Yeterli manan yok.", "en": "Not enough mana.", "es": "No tienes suficiente maná.", "pt": "Mana insuficiente.", "de": "Nicht genug Mana.", "fr": "Pas assez de mana.", "id": "Mana tidak cukup.", "ru": "Не хватает маны."}, "soulFound": {"tr": "Ruh Taşı buldun!", "en": "You found a Soul Stone!", "es": "¡Encontraste una Piedra del Alma!", "pt": "Você achou uma Pedra da Alma!", "de": "Seelenstein gefunden!", "fr": "Tu as trouvé une Pierre d'âme !", "id": "Kamu menemukan Batu Jiwa!", "ru": "Ты нашёл Камень души!"}, "potGain": {"tr": "+{n} İksir", "en": "Potion +{n}", "es": "Poción +{n}", "pt": "Poção +{n}", "de": "Trank +{n}", "fr": "Potion +{n}", "id": "Ramuan +{n}", "ru": "Зелье +{n}"}, "villageBonus": {"tr": "Köy bonusu", "en": "Village bonus", "es": "Bono de la aldea", "pt": "Bônus da vila", "de": "Dorfbonus", "fr": "Bonus du village", "id": "Bonus desa", "ru": "Бонус деревни"}, "smithDesc": {"tr": "Kılıcını ateşte döverim, evlat. Ama her darbe tutmaz. +4'ten sonra başarısız olursa kılıç bir kademe geriler, +5 ve üstü için bir Ruh Taşı isterim.", "en": "I'll forge your sword in the fire, kid. But not every strike takes. Above +4, a failure drops the sword one grade, and for +5 and up I need a Soul Stone.", "es": "Forjaré tu espada en el fuego, muchacho. Pero no todo golpe funciona. Desde +4, si falla, la espada baja un grado, y para +5 o más necesito una Piedra del Alma.", "pt": "Forjo sua espada no fogo, garoto. Mas nem todo golpe dá certo. Depois do +4, se falhar, a espada cai um nível, e para +5 ou mais preciso de uma Pedra da Alma.", "de": "Ich schmiede dein Schwert im Feuer, Kind. Doch nicht jeder Schlag gelingt. Ab +4 fällt das Schwert bei einem Fehlschlag eine Stufe zurück, und ab +5 brauche ich einen Seelenstein.", "fr": "Je forge ton épée dans le feu, petit. Mais chaque coup ne réussit pas. Au-delà de +4, un échec fait perdre un rang à l'épée, et à partir de +5 il me faut une Pierre d'âme.", "id": "Akan kutempa pedangmu di api, Nak. Tapi tak setiap tempaan berhasil. Di atas +4, kalau gagal pedang turun satu tingkat, dan untuk +5 ke atas aku butuh Batu Jiwa.", "ru": "Я закалю твой меч в огне, сынок. Но не каждый удар молота удачен. После +4 при неудаче меч теряет уровень, а для +5 и выше мне нужен Камень души."}, "atkPow": {"tr": "Saldırı gücü", "en": "Attack power", "es": "Poder de ataque", "pt": "Poder de ataque", "de": "Angriffskraft", "fr": "Puissance d'attaque", "id": "Kekuatan serang", "ru": "Сила атаки"}, "maxed": {"tr": "Bu kılıç artık en üst seviyede.", "en": "This sword is now at the maximum level.", "es": "Esta espada ya está al nivel máximo.", "pt": "Esta espada já está no nível máximo.", "de": "Dieses Schwert ist jetzt auf der höchsten Stufe.", "fr": "Cette épée est désormais au niveau maximum.", "id": "Pedang ini sudah di level tertinggi.", "ru": "Этот меч уже на максимальном уровне."}, "chance": {"tr": "+{n} için başarı şansı", "en": "Success chance for +{n}", "es": "Probabilidad de éxito a +{n}", "pt": "Chance de sucesso para +{n}", "de": "Erfolgschance für +{n}", "fr": "Chance de réussite pour +{n}", "id": "Peluang sukses ke +{n}", "ru": "Шанс успеха на +{n}"}, "pct": {"tr": "%{n}", "en": "{n}%", "es": "{n}%", "pt": "{n}%", "de": "{n} %", "fr": "{n} %", "id": "{n}%", "ru": "{n}%"}, "cost": {"tr": "Bedel", "en": "Cost", "es": "Costo", "pt": "Custo", "de": "Kosten", "fr": "Coût", "id": "Biaya", "ru": "Цена"}, "plusSoul": {"tr": " + 1 Ruh Taşı", "en": " + 1 Soul Stone", "es": " + 1 Piedra del Alma", "pt": " + 1 Pedra da Alma", "de": " + 1 Seelenstein", "fr": " + 1 Pierre d'âme", "id": " + 1 Batu Jiwa", "ru": " + 1 Камень души"}, "upgrade": {"tr": "Kılıcı yükselt", "en": "Upgrade sword", "es": "Mejorar espada", "pt": "Aprimorar espada", "de": "Schwert verbessern", "fr": "Améliorer l'épée", "id": "Tingkatkan pedang", "ru": "Улучшить меч"}, "close": {"tr": "Kapat", "en": "Close", "es": "Cerrar", "pt": "Fechar", "de": "Schließen", "fr": "Fermer", "id": "Tutup", "ru": "Закрыть"}, "upOk": {"tr": "Başarılı! Kılıç +{n} oldu.", "en": "Success! Your sword is now +{n}.", "es": "¡Éxito! Tu espada ahora es +{n}.", "pt": "Sucesso! Sua espada agora é +{n}.", "de": "Erfolg! Dein Schwert ist jetzt +{n}.", "fr": "Réussi ! Ton épée est maintenant +{n}.", "id": "Berhasil! Pedangmu kini +{n}.", "ru": "Успех! Теперь меч +{n}."}, "upCrack": {"tr": "Çelik çatladı. Kılıç +{n} seviyesine düştü.", "en": "The steel cracked. Sword dropped to +{n}.", "es": "El acero se agrietó. La espada bajó a +{n}.", "pt": "O aço rachou. A espada caiu para +{n}.", "de": "Der Stahl ist gerissen. Schwert fällt auf +{n}.", "fr": "L'acier s'est fendu. L'épée retombe à +{n}.", "id": "Bajanya retak. Pedang turun ke +{n}.", "ru": "Сталь треснула. Меч упал до +{n}."}, "upFail": {"tr": "Tutmadı. Malzeme yandı, kılıç aynı kaldı.", "en": "It didn't take. Materials burned, sword unchanged.", "es": "No funcionó. Se quemó el material, la espada sigue igual.", "pt": "Não deu certo. O material queimou, a espada ficou igual.", "de": "Misslungen. Material verbrannt, Schwert unverändert.", "fr": "Raté. Le matériau a brûlé, l'épée reste la même.", "id": "Gagal. Bahan terbakar, pedang tetap sama.", "ru": "Не вышло. Материал сгорел, меч не изменился."}, "shopDesc": {"tr": "Yola çıkan herkes çantasında iksir taşır. Senin {n} şişen var.", "en": "Every traveler carries potions. Potions in your bag: {n}.", "es": "Todo viajero lleva pociones. Pociones en tu bolsa: {n}.", "pt": "Todo viajante leva poções. Poções na sua bolsa: {n}.", "de": "Jeder Reisende hat Tränke dabei. Tränke in deiner Tasche: {n}.", "fr": "Tout voyageur emporte des potions. Potions dans ton sac : {n}.", "id": "Setiap pengembara membawa ramuan. Ramuan di tasmu: {n}.", "ru": "Каждый путник носит зелья. Зелий в сумке: {n}."}, "potHeal": {"tr": "Canın %45'ini doldurur", "en": "Restores 45% HP", "es": "Restaura 45% de vida", "pt": "Restaura 45% da vida", "de": "Stellt 45 % Leben her", "fr": "Rend 45 % de vie", "id": "Memulihkan 45% darah", "ru": "Восстанавливает 45% здоровья"}, "watchShort": {"tr": "Kısa bir reklam izle", "en": "Watch a short ad", "es": "Mira un anuncio corto", "pt": "Assista a um anúncio curto", "de": "Kurze Werbung ansehen", "fr": "Regarde une courte pub", "id": "Tonton iklan singkat", "ru": "Посмотри короткую рекламу"}, "free": {"tr": "▶ Ücretsiz", "en": "▶ Free", "es": "▶ Gratis", "pt": "▶ Grátis", "de": "▶ Gratis", "fr": "▶ Gratuit", "id": "▶ Gratis", "ru": "▶ Бесплатно"}, "bought1": {"tr": "1 iksir aldın.", "en": "You bought 1 potion.", "es": "Compraste 1 poción.", "pt": "Você comprou 1 poção.", "de": "1 Trank gekauft.", "fr": "Tu as acheté 1 potion.", "id": "Kamu membeli 1 ramuan.", "ru": "Куплено зелий: 1."}, "bought5": {"tr": "5 iksir aldın.", "en": "You bought 5 potions.", "es": "Compraste 5 pociones.", "pt": "Você comprou 5 poções.", "de": "5 Tränke gekauft.", "fr": "Tu as acheté 5 potions.", "id": "Kamu membeli 5 ramuan.", "ru": "Куплено зелий: 5."}, "adThanks": {"tr": "Reklam için teşekkürler: 2 iksir hediye.", "en": "Thanks for watching: 2 free potions!", "es": "Gracias por mirar: ¡2 pociones de regalo!", "pt": "Obrigado por assistir: 2 poções de presente!", "de": "Danke fürs Ansehen: 2 Tränke geschenkt!", "fr": "Merci : 2 potions offertes !", "id": "Terima kasih: 2 ramuan gratis!", "ru": "Спасибо за просмотр: 2 зелья в подарок!"}, "story": {"tr": "Gökten düşen Kara Taşlar topraklarımızı zehirliyor. Köyden çık, canavarları avla, taşları parçala, Ruh Taşlarıyla kılıcını Demirci Ata'ya güçlendirt.", "en": "Black Stones falling from the sky are poisoning our lands. Leave the village, hunt monsters, smash the stones, and have Smith Ata empower your sword with Soul Stones.", "es": "Las Piedras Negras que caen del cielo envenenan nuestras tierras. Sal de la aldea, caza monstruos, destroza las piedras y haz que Herrero Ata mejore tu espada con Piedras del Alma.", "pt": "As Pedras Negras que caem do céu envenenam nossas terras. Saia da vila, cace monstros, despedace as pedras e peça ao Ferreiro Ata para fortalecer sua espada com Pedras da Alma.", "de": "Schwarze Steine fallen vom Himmel und vergiften unser Land. Verlass das Dorf, jage Monster, zerschlage die Steine und lass Schmied Ata dein Schwert mit Seelensteinen stärken.", "fr": "Des Pierres Noires tombées du ciel empoisonnent nos terres. Quitte le village, chasse les monstres, brise les pierres et fais renforcer ton épée par Forgeron Ata grâce aux Pierres d'âme.", "id": "Batu Hitam yang jatuh dari langit meracuni tanah kami. Keluar dari desa, buru monster, hancurkan batu, dan minta Pandai Besi Ata memperkuat pedangmu dengan Batu Jiwa.", "ru": "Чёрные камни, падающие с неба, отравляют наши земли. Выйди из деревни, охоться на чудовищ, разбивай камни и проси Кузнеца Ату усилить твой меч Камнями души."}, "move": {"tr": "Hareket", "en": "Move", "es": "Mover", "pt": "Mover", "de": "Bewegen", "fr": "Déplacer", "id": "Gerak", "ru": "Движение"}, "moveHow": {"tr": "Ekranın soluna dokun, sürükle", "en": "Touch and drag on the left side", "es": "Toca y arrastra en la izquierda", "pt": "Toque e arraste no lado esquerdo", "de": "Links berühren und ziehen", "fr": "Touche et glisse à gauche", "id": "Sentuh dan geser di sisi kiri", "ru": "Коснись и веди слева"}, "camera": {"tr": "Kamera", "en": "Camera", "es": "Cámara", "pt": "Câmera", "de": "Kamera", "fr": "Caméra", "id": "Kamera", "ru": "Камера"}, "camHow": {"tr": "Sağ tarafta boş yeri sürükle", "en": "Drag an empty spot on the right", "es": "Arrastra un espacio libre a la derecha", "pt": "Arraste um espaço vazio à direita", "de": "Freie Fläche rechts ziehen", "fr": "Glisse une zone vide à droite", "id": "Geser area kosong di kanan", "ru": "Веди по пустому месту справа"}, "attack": {"tr": "Saldırı", "en": "Attack", "es": "Ataque", "pt": "Ataque", "de": "Angriff", "fr": "Attaque", "id": "Serangan", "ru": "Атака"}, "atkHow": {"tr": "Vur düğmesini basılı tut", "en": "Hold the Strike button", "es": "Mantén pulsado Golpe", "pt": "Segure o botão Golpe", "de": "Schlag-Taste gedrückt halten", "fr": "Maintiens le bouton Frappe", "id": "Tahan tombol Tebas", "ru": "Удерживай кнопку «Удар»"}, "keysHelp": {"tr": "Klavyede: WASD, Boşluk, Q / E / 3, R iksir, F konuş, fare tekerleği yakınlaştırır.", "en": "Keyboard: WASD, Space, Q / E / 3, R potion, F talk, mouse wheel zooms.", "es": "Teclado: WASD, Espacio, Q / E / 3, R poción, F hablar, la rueda del ratón hace zoom.", "pt": "Teclado: WASD, Espaço, Q / E / 3, R poção, F falar, a roda do mouse dá zoom.", "de": "Tastatur: WASD, Leertaste, Q / E / 3, R Trank, F reden, Mausrad zoomt.", "fr": "Clavier : WASD, Espace, Q / E / 3, R potion, F parler, la molette zoome.", "id": "Keyboard: WASD, Spasi, Q / E / 3, R ramuan, F bicara, roda mouse untuk zoom.", "ru": "Клавиатура: WASD, Пробел, Q / E / 3, R зелье, F говорить, колёсико мыши — масштаб."}, "continueQ": {"tr": "Sefere devam et (Sv. {n})", "en": "Continue quest (Lv. {n})", "es": "Continuar aventura (Nv. {n})", "pt": "Continuar jornada (Nv. {n})", "de": "Weiterspielen (St. {n})", "fr": "Continuer (Niv. {n})", "id": "Lanjutkan (Lv. {n})", "ru": "Продолжить (Ур. {n})"}, "startQ": {"tr": "Sefere başla", "en": "Begin the quest", "es": "Comenzar aventura", "pt": "Começar jornada", "de": "Reise beginnen", "fr": "Commencer l'aventure", "id": "Mulai petualangan", "ru": "Начать поход"}, "language": {"tr": "Dil", "en": "Language", "es": "Idioma", "pt": "Idioma", "de": "Sprache", "fr": "Langue", "id": "Bahasa", "ru": "Язык"}, "back": {"tr": "Geri", "en": "Back", "es": "Volver", "pt": "Voltar", "de": "Zurück", "fr": "Retour", "id": "Kembali", "ru": "Назад"}};
+var lang=null;
+try{var s=localStorage.getItem('sg_lang');if(s&&SUP.indexOf(s)>=0)lang=s}catch(e){}
+if(!lang){var ls=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']);
+  for(var i=0;i<ls.length&&!lang;i++){var p=String(ls[i]||'').toLowerCase().split(/[-_]/)[0];if(p==='in')p='id';if(SUP.indexOf(p)>=0)lang=p}}
+if(!lang)lang='en';
+window.SG_LANG=lang;document.documentElement.lang=lang;
+window.SG_LANGS=SUP;window.SG_LANG_NAMES=NAMES;
+window.t=function(key,params){var e=DICT[key],v=e?(e[lang]!=null?e[lang]:e.en!=null?e.en:e.tr):undefined;if(v==null)v=key;
+  if(params&&typeof v==='string')v=v.replace(/\{(\w+)\}/g,function(m,k){return params[k]!=null?params[k]:m});return v};
+window.SG_setLang=function(c){if(SUP.indexOf(c)<0)return;try{localStorage.setItem('sg_lang',c)}catch(e){}location.reload()};
+document.title=t('title');
+document.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.getAttribute('data-i18n'))});
+document.querySelectorAll('[data-i18n-aria]').forEach(function(el){el.setAttribute('aria-label',t(el.getAttribute('data-i18n-aria')))});
+})();
+</script>
+
+<script src="lib/three.min.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+if(!window.THREE){$('loading').textContent=t('noEngine');return}
+const cv=$('game'),uc=$('ui'),ux=uc.getContext('2d'),mini=$('mini'),mctx=mini.getContext('2d');
+let W=0,H=0,DPR=1;
+const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:(window.devicePixelRatio||1)<2,powerPreference:'high-performance'});
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+const scene=new THREE.Scene();const SKY=0x9db7c0;scene.background=new THREE.Color(SKY);scene.fog=new THREE.Fog(SKY,38,92);
+const camera=new THREE.PerspectiveCamera(50,1,.5,220);
+function resize(){W=innerWidth;H=innerHeight;DPR=Math.min(1.75,window.devicePixelRatio||1);renderer.setPixelRatio(DPR);renderer.setSize(W,H,false);
+  uc.width=W*DPR;uc.height=H*DPR;camera.aspect=W/H;camera.updateProjectionMatrix()}
+addEventListener('resize',resize);resize();
+
+/* ---------- dünya ölçüleri (mantık piksel cinsinden, 3B = px/20) ---------- */
+const WS=3200,C={x:1600,y:1600},VR=260,U=1/20;
+function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R=rng(7);
+function hAt(x,z){const a=x*U,b=z*U;
+  let h=Math.sin(a*.11)*Math.cos(b*.09)*1.4+Math.sin(a*.031+1.3)*Math.sin(b*.027+.4)*3.2+Math.sin(a*.23+b*.19)*.35;
+  const d=Math.hypot(x-C.x,z-C.y),f=Math.min(1,Math.max(0,(d-VR-40)/260));h=h*f+(1-f)*.05;
+  const e=Math.min(x,z,WS-x,WS-z);if(e<320)h+=Math.pow((320-e)/320,2)*16;return h}
+const ZONES=t('zones');
+function zoneAt(x,y){const d=Math.hypot(x-C.x,y-C.y);if(d<VR)return 0;return Math.min(7,1+Math.floor((d-VR)/300))}
+const farFromVillage=(x,y,m)=>Math.hypot(x-C.x,y-C.y)>VR+m;
+const onRoad=(x,y)=>{const dx=Math.abs(x-C.x),dy=Math.abs(y-C.y),d=Math.hypot(x-C.x,y-C.y);return d<VR+520&&(dx<34||dy<34)};
+
+/* ---------- ışık ---------- */
+scene.add(new THREE.HemisphereLight(0xdfeaf0,0x3b4a2c,.75));
+const sun=new THREE.DirectionalLight(0xffe0b0,.95);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
+Object.assign(sun.shadow.camera,{left:-26,right:26,top:26,bottom:-26,near:1,far:80});sun.shadow.bias=-.0015;sun.shadow.camera.updateProjectionMatrix();scene.add(sun);scene.add(sun.target);
+const stoneLights=[0,1,2].map(()=>{const l=new THREE.PointLight(0xff4a2a,0,14,2);scene.add(l);return l});
+
+/* ---------- malzeme yardımcıları ---------- */
+const phong=(c,o)=>new THREE.MeshPhongMaterial(Object.assign({color:c,flatShading:true,shininess:6},o||{}));
+const SH={grass:phong(0x4f7a3e),trunk:phong(0x4a3324),rock:phong(0x7a7d72),dark:phong(0x1b1a1f),wall:phong(0xc9b28a),roof:phong(0x8a2a22),
+  wood:phong(0x5a3f2a),stoneG:phong(0x6a6a62),water:phong(0x2c4f63,{shininess:60}),lamp:phong(0xffd27a,{emissive:0xffb040,emissiveIntensity:.9})};
+
+/* ---------- arazi ---------- */
+(function terrain(){const N=200,S=WS*U;const g=new THREE.PlaneGeometry(S,S,N,N);g.rotateX(-Math.PI/2);g.translate(S/2,0,S/2);
+  const pos=g.attributes.position,cols=[];const c=new THREE.Color();
+  for(let i=0;i<pos.count;i++){const x=pos.getX(i)/U,z=pos.getZ(i)/U,h=hAt(x,z);pos.setY(i,h);
+    const n=(Math.sin(x*.013)*Math.cos(z*.017)+Math.sin(x*.041+z*.03))*.5,zo=zoneAt(x,z),d=Math.hypot(x-C.x,z-C.y);
+    if(d<VR+10)c.setRGB(.47+n*.03,.38,.26);
+    else if(onRoad(x,z))c.setRGB(.44,.36,.25);
+    else if(h>7)c.setRGB(.42+n*.04,.43,.4);
+    else if(zo>=6)c.setRGB(.33+n*.04,.33+n*.03,.25);
+    else if(zo>=4)c.setRGB(.25+n*.04,.36+n*.05,.2);
+    else c.setRGB(.27+n*.05,.44+n*.06,.22);
+    cols.push(c.r,c.g,c.b)}
+  g.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));g.computeVertexNormals();
+  const m=new THREE.Mesh(g,phong(0xffffff,{vertexColors:true}));m.receiveShadow=true;scene.add(m);
+  const out=new THREE.Mesh(new THREE.PlaneGeometry(700,700),phong(0x3d4a36));out.rotation.x=-Math.PI/2;out.position.set(S/2,10,S/2);out.position.y=-.6;scene.add(out);
+})();
+
+/* ---------- örneklenmiş doğa ---------- */
+const trees=[],rocks=[];
+for(let i=0;i<900;i++){const x=40+R()*(WS-80),y=40+R()*(WS-80);if(farFromVillage(x,y,90)&&!onRoad(x,y)&&hAt(x,y)<9)trees.push({x,y,s:.8+R()*.7,k:R()<.55?0:1,c:R()})}
+for(let i=0;i<380;i++){const x=R()*WS,y=R()*WS;if(farFromVillage(x,y,30)&&!onRoad(x,y))rocks.push({x,y,s:.3+R()*.7,r:R()*6})}
+(function nature(){const mtx=new THREE.Matrix4(),q=new THREE.Quaternion(),sc=new THREE.Vector3(),p=new THREE.Vector3(),col=new THREE.Color();
+  const pine=trees.filter(t=>t.k===0),round=trees.filter(t=>t.k===1);
+  const inst=(geo,mat,list,fn,shadow)=>{const im=new THREE.InstancedMesh(geo,mat,list.length);list.forEach((t,i)=>{fn(t,i,im)});im.castShadow=!!shadow;im.receiveShadow=true;
+    im.instanceMatrix.needsUpdate=true;if(im.instanceColor)im.instanceColor.needsUpdate=true;scene.add(im);return im};
+  const set=(im,i,x,y,z,s,ry,c)=>{q.setFromAxisAngle(new THREE.Vector3(0,1,0),ry||0);sc.set(s,s,s);p.set(x,y,z);mtx.compose(p,q,sc);im.setMatrixAt(i,mtx);if(c!=null){col.set(c);im.setColorAt(i,col)}};
+  const trunkG=new THREE.CylinderGeometry(.16,.24,1.8,6);trunkG.translate(0,.9,0);
+  inst(trunkG,SH.trunk,trees,(t,i,im)=>set(im,i,t.x*U,hAt(t.x,t.y),t.y*U,t.s,t.c*6),true);
+  const coneA=new THREE.ConeGeometry(1.5,2.6,7);coneA.translate(0,2.6,0);const coneB=new THREE.ConeGeometry(1.1,2.1,7);coneB.translate(0,3.9,0);
+  const pc=['#24432c','#2b4d31','#1f3b28','#30553a'];
+  inst(coneA,phong(0xffffff),pine,(t,i,im)=>set(im,i,t.x*U,hAt(t.x,t.y),t.y*U,t.s,t.c*6,pc[Math.floor(t.c*4)]),true);
+  inst(coneB,phong(0xffffff),pine,(t,i,im)=>set(im,i,t.x*U,hAt(t.x,t.y),t.y*U,t.s,t.c*6,pc[Math.floor(t.c*4+1)%4]),true);
+  const ball=new THREE.IcosahedronGeometry(1.5,0);ball.translate(0,2.9,0);const rc=['#3e6a35','#4a7a3a','#355e30','#5a7f3a'];
+  inst(ball,phong(0xffffff),round,(t,i,im)=>set(im,i,t.x*U,hAt(t.x,t.y),t.y*U,t.s,t.c*6,rc[Math.floor(t.c*4)]),true);
+  const ball2=new THREE.IcosahedronGeometry(1,0);ball2.translate(.6,3.8,.2);
+  inst(ball2,phong(0xffffff),round,(t,i,im)=>set(im,i,t.x*U,hAt(t.x,t.y),t.y*U,t.s,t.c*6,rc[Math.floor(t.c*4+2)%4]),true);
+  const rockG=new THREE.DodecahedronGeometry(.8,0);rockG.scale(1,.6,1);
+  inst(rockG,SH.rock,rocks,(t,i,im)=>set(im,i,t.x*U,hAt(t.x,t.y)+.1,t.y*U,t.s,t.r),true);
+  const tuftG=new THREE.ConeGeometry(.12,.55,3);tuftG.translate(0,.25,0);const tufts=[];
+  for(let i=0;i<2600;i++){const x=R()*WS,y=R()*WS;if(farFromVillage(x,y,10)&&!onRoad(x,y)&&hAt(x,y)<7)tufts.push({x,y,c:R()})}
+  const tc=['#5d8a44','#4c7a3a','#6b9446','#c9a23f','#b9605a'];
+  inst(tuftG,phong(0xffffff),tufts,(t,i,im)=>set(im,i,t.x*U,hAt(t.x,t.y),t.y*U,.7+t.c*.8,t.c*6,tc[t.c>.96?3:t.c>.93?4:Math.floor(t.c*3)]),false);
+})();
+
+/* ---------- köy ---------- */
+const NPCS=[{id:'smith',name:t('npcSmith'),x:C.x-70,y:C.y-40,body:0x6d4f3a,hat:0x2a2420},{id:'shop',name:t('npcShop'),x:C.x+70,y:C.y-40,body:0x3f5f7a,hat:0x7a2a22}];
+(function village(){const box=(w,h,d,m,x,y,z,ry,g)=>{const me=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);me.position.set(x,y,z);me.rotation.y=ry||0;me.castShadow=me.receiveShadow=true;(g||scene).add(me);return me};
+  // sur
+  const posts=[];for(let a=0;a<Math.PI*2;a+=.045){if(Math.abs(Math.sin(a*2))<.32)continue;posts.push(a)}
+  const pg=new THREE.CylinderGeometry(.22,.26,2.6,6);pg.translate(0,1.3,0);const tip=new THREE.ConeGeometry(.24,.5,6);tip.translate(0,2.85,0);
+  const mtx=new THREE.Matrix4();[pg,tip].forEach(geo=>{const im=new THREE.InstancedMesh(geo,SH.wood,posts.length);posts.forEach((a,i)=>{const x=C.x+Math.cos(a)*VR,z=C.y+Math.sin(a)*VR;
+    mtx.makeTranslation(x*U,hAt(x,z)-.1,z*U);im.setMatrixAt(i,mtx)});im.castShadow=true;scene.add(im)});
+  // kapı direkleri ve fenerler
+  for(let k=0;k<4;k++){const a=k*Math.PI/2;for(const s of[-1,1]){const aa=a+s*.15,x=(C.x+Math.cos(aa)*VR)*U,z=(C.y+Math.sin(aa)*VR)*U;
+    box(.45,3.6,.45,SH.roof,x,1.8,z);box(.35,.35,.35,SH.lamp,x,3.8,z)}
+    const x=(C.x+Math.cos(a)*VR)*U,z=(C.y+Math.sin(a)*VR)*U;box(Math.abs(Math.cos(a))>.5?.4:4.2,.35,Math.abs(Math.cos(a))>.5?4.2:.4,SH.roof,x,3.7,z)}
+  // evler
+  const houses=[[-150,-130,0],[90,-150,0],[-170,90,.3],[110,100,-.3],[-30,170,0]];
+  for(const [hx,hz,ry] of houses){const g=new THREE.Group();g.position.set((C.x+hx)*U,0,(C.y+hz)*U);g.rotation.y=ry;scene.add(g);
+    box(4.2,2.4,3.2,SH.wall,0,1.2,0,0,g);box(4.4,.3,3.4,SH.wood,0,.15,0,0,g);
+    const roof=new THREE.Mesh(new THREE.ConeGeometry(3.6,1.8,4),SH.roof);roof.rotation.y=Math.PI/4;roof.scale.set(1.2,1,.95);roof.position.y=3.3;roof.castShadow=true;g.add(roof);
+    box(.9,1.5,.1,SH.wood,0,.75,1.61,0,g);box(.6,.5,.1,SH.lamp,-1.3,1.5,1.61,0,g);box(.6,.5,.1,SH.lamp,1.3,1.5,1.61,0,g)}
+  // kuyu
+  const well=new THREE.Mesh(new THREE.CylinderGeometry(1,1.1,.9,10,1,true),SH.stoneG);well.position.set(C.x*U,.45,(C.y+70)*U);well.castShadow=true;scene.add(well);
+  const wt=new THREE.Mesh(new THREE.CircleGeometry(.95,10),SH.water);wt.rotation.x=-Math.PI/2;wt.position.set(C.x*U,.6,(C.y+70)*U);scene.add(wt);
+  box(.15,2.2,.15,SH.wood,C.x*U-1,1.1,(C.y+70)*U);box(.15,2.2,.15,SH.wood,C.x*U+1,1.1,(C.y+70)*U);
+  const wr=new THREE.Mesh(new THREE.ConeGeometry(1.6,.8,4),SH.roof);wr.rotation.y=Math.PI/4;wr.position.set(C.x*U,2.5,(C.y+70)*U);scene.add(wr);
+  // demirci örsü ve ocak, tüccar tezgahı
+  box(.8,.6,.5,SH.dark,(C.x-70)*U+1.4,.3,(C.y-40)*U);box(1.4,1.1,1.2,SH.stoneG,(C.x-70)*U-1.6,.55,(C.y-40)*U-.5);
+  const fire=box(.8,.25,.6,SH.lamp,(C.x-70)*U-1.6,1.15,(C.y-40)*U-.5);
+  box(2.4,.9,.9,SH.wood,(C.x+70)*U,.45,(C.y-40)*U+1.1);box(2.6,.1,1.4,SH.roof,(C.x+70)*U,2.3,(C.y-40)*U+.9);
+  box(.1,2.3,.1,SH.wood,(C.x+70)*U-1.2,1.15,(C.y-40)*U+1.5);box(.1,2.3,.1,SH.wood,(C.x+70)*U+1.2,1.15,(C.y-40)*U+1.5);
+  const fl=new THREE.PointLight(0xff8a3a,1.2,9,2);fl.position.set((C.x-70)*U-1.6,1.8,(C.y-40)*U-.5);scene.add(fl);
+})();
+
+/* ---------- modeller ---------- */
+function humanoid(c){const g=new THREE.Group(),root=new THREE.Group();g.add(root);const mats=[];
+  const M=(hex,o)=>{const m=phong(hex,o);mats.push(m);return m};
+  const skin=M(c.skin),body=M(c.body),pants=M(c.pants),cloak=M(c.cloak),hair=M(c.hair),metal=M(c.metal,{shininess:60}),trim=M(0xd9b25a,{shininess:40}),blade=M(c.blade||0xcfd6dc,{shininess:90,emissive:0x000000});
+  const box=(w,h,d,m,x,y,z,p)=>{const me=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);me.position.set(x,y,z);me.castShadow=true;p.add(me);return me};
+  const leg=s=>{const l=new THREE.Group();l.position.set(s*.17,.82,0);root.add(l);box(.22,.55,.25,pants,0,-.28,0,l);box(.25,.28,.34,hair,0,-.68,.04,l);return l};
+  const legL=leg(-1),legR=leg(1);
+  box(.62,.72,.38,body,0,1.2,0,root);box(.66,.14,.42,c.belt?M(c.belt):hair,0,.9,0,root);box(.64,.5,.06,trim,0,.62,.17,root).scale.set(.5,1,1);
+  box(.26,.16,.44,metal,-.38,1.56,0,root);box(.26,.16,.44,metal,.38,1.56,0,root);
+  const head=new THREE.Group();head.position.y=1.8;root.add(head);
+  box(.36,.38,.36,skin,0,0,0,head);box(.4,.14,.42,hair,0,.22,-.02,head);box(.4,.3,.1,hair,0,.08,-.2,head);
+  if(c.hat==='band')box(.42,.08,.42,trim,0,.12,0,head);if(c.hat==='hood')box(.46,.34,.46,cloak,0,.12,-.03,head);
+  const eyeM=phong(0x1a1410);box(.06,.05,.02,eyeM,-.08,.03,.185,head);box(.06,.05,.02,eyeM,.08,.03,.185,head);
+  const cape=new THREE.Group();cape.position.set(0,1.56,-.21);root.add(cape);box(.6,1.1,.05,cloak,0,-.55,0,cape);
+  const arm=s=>{const a=new THREE.Group();a.position.set(s*.43,1.52,0);root.add(a);box(.18,.6,.2,body,0,-.3,0,a);box(.16,.15,.17,skin,0,-.66,0,a);return a};
+  const armL=arm(-1),armR=arm(1);
+  const sword=new THREE.Group();sword.position.set(0,-.68,.02);sword.rotation.x=1.35;armR.add(sword);
+  box(.07,.24,.07,hair,0,-.06,0,sword);box(.34,.06,.12,trim,0,.08,0,sword);box(.09,1.1,.03,blade,0,.66,0,sword);
+  armR.rotation.x=-.45;armL.rotation.x=-.1;
+  return{g,root,legL,legR,armL,armR,cape,head,sword,blade,mats,human:1}}
+const BEAST={kurt:{L:1.45,H:.55,W:.42,leg:.55,hd:.42,col:0x7b8088,belly:0xb3b8be},domuz:{L:1.3,H:.72,W:.62,leg:.38,hd:.52,col:0x5b3d2e,belly:0x7a5644},ayi:{L:2.1,H:1.15,W:1.05,leg:.72,hd:.72,col:0x4a3426,belly:0x6b4e3a}};
+function beast(type){const D=BEAST[type],g=new THREE.Group(),root=new THREE.Group();g.add(root);const mats=[];
+  const M=hex=>{const m=phong(hex);mats.push(m);return m};const col=M(D.col),bel=M(D.belly),dark=M(0x1a1410),white=M(0xeee2c8);
+  const eye=phong(0x1a1410,{emissive:0x000000});
+  const box=(w,h,d,m,x,y,z,p)=>{const me=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);me.position.set(x,y,z);me.castShadow=true;p.add(me);return me};
+  const by=D.leg+D.H/2;box(D.W,D.H,D.L,col,0,by,0,root);box(D.W*.8,D.H*.3,D.L*.8,bel,0,by-D.H*.42,0,root);
+  if(type==='ayi')box(D.W*.85,D.H*.35,D.L*.35,col,0,by+D.H*.55,D.L*.15,root);
+  if(type==='domuz')box(D.W*.25,D.H*.25,D.L*.7,dark,0,by+D.H*.6,0,root);
+  const head=new THREE.Group();head.position.set(0,D.leg+D.H*.78,D.L/2+D.hd*.3);root.add(head);
+  box(D.hd*.95,D.hd*.85,D.hd,col,0,0,0,head);
+  const sl=type==='kurt'?.75:type==='domuz'?.45:.5;box(D.hd*.55,D.hd*.42,D.hd*sl,bel,0,-D.hd*.15,D.hd*(.5+sl/2),head);
+  box(D.hd*.2,D.hd*.16,.03,dark,0,-D.hd*.05,D.hd*(.5+sl)+.01,head);
+  const e1=box(.07,.07,.03,eye,-D.hd*.25,D.hd*.12,D.hd*.5+.01,head),e2=box(.07,.07,.03,eye,D.hd*.25,D.hd*.12,D.hd*.5+.01,head);
+  if(type==='kurt'){for(const s of[-1,1]){const ear=new THREE.Mesh(new THREE.ConeGeometry(.1,.26,4),col);ear.position.set(s*D.hd*.3,D.hd*.55,-.02);head.add(ear)}}
+  else for(const s of[-1,1])box(D.hd*.22,D.hd*.2,.08,col,s*D.hd*.38,D.hd*.48,0,head);
+  if(type==='domuz')for(const s of[-1,1]){const t=box(.06,.22,.06,white,s*D.hd*.3,-.02,D.hd*.95,head);t.rotation.x=-.6}
+  const legs=[];for(const [sx,sz] of[[-1,1],[1,1],[-1,-1],[1,-1]]){const l=new THREE.Group();l.position.set(sx*D.W*.33,D.leg,sz*D.L*.34);root.add(l);
+    const t=Math.max(.15,D.W*.3);box(t,D.leg,t,col,0,-D.leg/2,0,l);box(t*1.05,.08,t*1.15,dark,0,-D.leg+.04,.02,l);legs.push(l)}
+  if(type!=='ayi'){const tail=new THREE.Group();tail.position.set(0,by+D.H*.3,-D.L/2);tail.rotation.x=type==='kurt'?-2.3:-2.8;root.add(tail);box(.12,type==='kurt'?.6:.25,.12,col,0,.3,0,tail)}
+  return{g,root,head,legs,mats,eyes:eye,beast:1}}
+function stoneModel(){const g=new THREE.Group();const body=phong(0x1e1a24,{shininess:70,specular:0x553344,emissive:0x220505});
+  const geo=new THREE.CylinderGeometry(.75,1.35,4.2,6,3);const p=geo.attributes.position;const r=rng(3);
+  for(let i=0;i<p.count;i++){const x=p.getX(i),z=p.getZ(i),f=1+.15*Math.sin(x*7+z*13);p.setX(i,x*f);p.setZ(i,z*f);if(p.getY(i)>2)p.setY(i,2.1+.5*(.5+.5*Math.sin(x*11+z*5)))}geo.computeVertexNormals();
+  const m=new THREE.Mesh(geo,body);m.position.y=2;m.rotation.set(.06,0,.05);m.castShadow=true;g.add(m);
+  const rune=phong(0xff4a2a,{emissive:0xff3010,emissiveIntensity:1});
+  for(let i=0;i<6;i++){const a=i/6*Math.PI*2+.26,rr=new THREE.Mesh(new THREE.BoxGeometry(.12,.5+(i%2)*.4,.05),rune);rr.position.set(Math.cos(a)*1.02,1.4+(i%3)*.7,Math.sin(a)*1.02);rr.rotation.y=-a+Math.PI/2;m.add(rr)}
+  const cracks=[];for(let i=0;i<3;i++){const cr=new THREE.Mesh(new THREE.BoxGeometry(.06,1.2,.06),rune);cr.position.set(Math.cos(i*2.1)*.95,-.6+i*.4,Math.sin(i*2.1)*.95);cr.rotation.z=.5;cr.visible=false;m.add(cr);cracks.push(cr)}
+  for(let i=0;i<7;i++){const s=new THREE.Mesh(new THREE.DodecahedronGeometry(.25+r()*.3,0),body);const a=r()*6.28;s.position.set(Math.cos(a)*(1.6+r()),.1,Math.sin(a)*(1.6+r()));g.add(s)}
+  const glowTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const gr=x.createRadialGradient(32,32,2,32,32,32);
+    gr.addColorStop(0,'rgba(255,70,30,.8)');gr.addColorStop(1,'rgba(255,70,30,0)');x.fillStyle=gr;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c)})();
+  const glow=new THREE.Mesh(new THREE.PlaneGeometry(7,7),new THREE.MeshBasicMaterial({map:glowTex,transparent:true,depthWrite:false}));glow.rotation.x=-Math.PI/2;glow.position.y=.08;g.add(glow);
+  return{g,root:m,rune,glow,cracks,mats:[body],stone:1}}
+
+/* ---------- oyuncu ---------- */
+const P={x:C.x,y:C.y+40,dir:-Math.PI/2,face:-Math.PI/2,lv:1,exp:0,gold:120,soul:0,wl:0,pot:5,hp:120,mp:50,
+  atkCd:0,swing:0,spin:0,s1:0,s2:0,s3:0,potCd:0,rage:0,hurtT:9,dead:0,dash:0,walk:0,moving:0,combo:0};
+const maxHp=()=>120+(P.lv-1)*24,maxMp=()=>50+(P.lv-1)*6;
+const needExp=lv=>Math.floor(40*Math.pow(lv,1.7)+20);
+const atkPow=()=>(12+(P.lv-1)*3.6)*(1+P.wl*.2+(P.wl>=7?.3:0))*(P.rage>0?1.35:1);
+const armor=()=>Math.min(.5,P.lv*.012);
+const hero=humanoid({skin:0xe0bf98,body:0x8a2a22,pants:0x2a2420,cloak:0x5a1814,hair:0x1a1410,metal:0xa8a39a,belt:0x3a2a1c,hat:'band'});
+hero.g.scale.setScalar(1.08);scene.add(hero.g);
+const rageAura=new THREE.Mesh(new THREE.CylinderGeometry(.9,.9,2.4,16,1,true),new THREE.MeshBasicMaterial({color:0xff4a2a,transparent:true,opacity:.25,side:THREE.DoubleSide,depthWrite:false}));
+rageAura.position.y=1.2;rageAura.visible=false;hero.g.add(rageAura);
+
+function load(d){if(!d)return;for(const k of['lv','exp','gold','soul','wl','pot'])if(typeof d[k]==='number')P[k]=d[k];P.hp=maxHp();P.mp=maxMp()}
+function snap(){return{lv:P.lv,exp:P.exp,gold:P.gold,soul:P.soul,wl:P.wl,pot:P.pot}}
+function save(){try{localStorage.setItem('karatas_v1',JSON.stringify(snap()))}catch(e){}}
+function stored(){try{return JSON.parse(localStorage.getItem('karatas_v1')||'null')}catch(e){return null}}
+
+/* ---------- NPC modelleri ---------- */
+for(const n of NPCS){n.m=humanoid({skin:0xd8b48c,body:n.body,pants:0x2a2420,cloak:0x2a2420,hair:0x3a3530,metal:0x6a5a4a,hat:n.id==='shop'?'hood':'band'});
+  n.m.sword.visible=n.id==='smith';n.m.g.position.set(n.x*U,0,n.y*U);n.m.g.rotation.y=0;scene.add(n.m.g)}
+
+/* ---------- düşmanlar ---------- */
+const TYPES={
+  kurt:{name:t('mWolf'),hp:45,dmg:7,spd:105,exp:14,r:14,beast:1},
+  domuz:{name:t('mBoar'),hp:85,dmg:10,spd:88,exp:24,r:16,beast:1},
+  haydut:{name:t('mBandit'),hp:135,dmg:15,spd:92,exp:42,r:14},
+  ayi:{name:t('mBear'),hp:310,dmg:24,spd:74,exp:95,r:24,beast:1},
+  tas:{name:t('mStone'),hp:1500,dmg:0,spd:0,exp:450,r:30}
+};
+const ZTYPES=[[],['kurt'],['kurt','domuz'],['domuz','haydut'],['haydut','ayi'],['ayi','haydut'],['ayi'],['ayi']];
+let E=[],drops=[],fx=[],floats=[],dying=[];
+function makeEnemy(type,x,y,L){const t=TYPES[type],m=1+(L-1)*.15,hp=Math.round(t.hp*m*(type==='tas'?1.4:1));
+  const e={type,t,x,y,hx:x,hy:y,L,hp,mhp:hp,dmg:t.dmg*m,exp:Math.round(t.exp*(1+(L-1)*.2)),aggro:0,cd:0,flash:0,wx:x,wy:y,wt:0,dir:Math.random()*6,face:0,kx:0,ky:0,phase:4,walk:0,lunge:0,rise:type==='tas'?1:0};
+  e.m=type==='tas'?stoneModel():t.beast?beast(type):humanoid({skin:0xc49a74,body:0x4f3d2a,pants:0x2e261c,cloak:0x3a2c20,hair:0x1a1410,metal:0x6a6058,blade:0x9aa0a6,hat:'hood'});
+  if(type==='tas'){e.light=stoneLights.find(l=>!l.userData.used);if(e.light)e.light.userData.used=1}
+  e.face=e.dir;scene.add(e.m.g);return e}
+function removeEnemyModel(e){scene.remove(e.m.g);if(e.light){e.light.userData.used=0;e.light.intensity=0}}
+function spawnEnemy(){for(let k=0;k<12;k++){const a=Math.random()*Math.PI*2,d=420+Math.random()*560;
+  const x=P.x+Math.cos(a)*d,y=P.y+Math.sin(a)*d;if(x<120||y<120||x>WS-120||y>WS-120)continue;const z=zoneAt(x,y);if(!z||!farFromVillage(x,y,80)||hAt(x,y)>8)continue;
+  const list=ZTYPES[z],type=list[Math.floor(Math.random()*list.length)];E.push(makeEnemy(type,x,y,(z-1)*4+1+Math.floor(Math.random()*3)));return}}
+function spawnStone(){for(let k=0;k<20;k++){const a=Math.random()*Math.PI*2,d=500+Math.random()*700;
+  const x=P.x+Math.cos(a)*d,y=P.y+Math.sin(a)*d;if(x<200||y<200||x>WS-200||y>WS-200)continue;const z=zoneAt(x,y);if(!z||!farFromVillage(x,y,200)||hAt(x,y)>7)continue;
+  E.push(makeEnemy('tas',x,y,z*4));banner(t('stoneFell'),t('stoneWhere',{zone:ZONES[z]}));shake=.5;return}}
+
+/* ---------- efektler ---------- */
+const ringGeo=new THREE.RingGeometry(.85,1,40);ringGeo.rotateX(-Math.PI/2);
+const torusGeo=new THREE.TorusGeometry(1,.08,6,40);torusGeo.rotateX(Math.PI/2);
+const cubeGeo=new THREE.BoxGeometry(.16,.16,.16);const pillarGeo=new THREE.CylinderGeometry(1,1,8,16,1,true);
+function addFx(k,x,y,col,o){const base=hAt(x,y);let mesh;const mat=new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:1,side:THREE.DoubleSide,depthWrite:false});
+  if(k==='ring'){mesh=new THREE.Mesh(ringGeo,mat);mesh.position.set(x*U,base+.1,y*U)}
+  else if(k==='spin'){mesh=new THREE.Mesh(torusGeo,mat);mesh.position.set(x*U,base+1,y*U)}
+  else if(k==='pillar'){mesh=new THREE.Mesh(pillarGeo,mat);mesh.position.set(x*U,base+4,y*U);mat.opacity=.5}
+  else if(k==='ghost'){mesh=new THREE.Mesh(new THREE.BoxGeometry(.7,1.8,.4),mat);mesh.position.set(x*U,base+1,y*U);mesh.rotation.y=Math.PI/2-P.face;mat.opacity=.35}
+  else if(k==='slash'){const g=new THREE.RingGeometry(1.2,1.9,24,1,-1.1,2.2);g.rotateX(-Math.PI/2);mesh=new THREE.Mesh(g,mat);mesh.position.set(x*U,base+1,y*U);mesh.rotation.y=-(o||0);mat.opacity=.7}
+  else if(k==='bits'){mesh=new THREE.Group();mesh.position.set(x*U,base+.6,y*U);const n=o&&o.n||10;for(let i=0;i<n;i++){const c=new THREE.Mesh(cubeGeo,mat);const a=Math.random()*6.28,s=2+Math.random()*4;
+    c.userData.v=new THREE.Vector3(Math.cos(a)*s,3+Math.random()*4,Math.sin(a)*s);mesh.add(c)}}
+  scene.add(mesh);fx.push({k,mesh,mat,t:0,life:k==='ghost'?.3:k==='pillar'?1.2:k==='slash'?.2:.65})}
+
+/* ---------- eşyalar ---------- */
+const coinGeo=new THREE.CylinderGeometry(.2,.2,.06,10),soulGeo=new THREE.OctahedronGeometry(.28,0),potGeo=new THREE.SphereGeometry(.2,8,6);
+const coinM=phong(0xd9b25a,{shininess:80,emissive:0x3a2a00}),soulM=phong(0xb48cf0,{emissive:0x6a3ac0,emissiveIntensity:.8}),potM=phong(0xc8402f,{shininess:60,emissive:0x400000});
+function addDrop(k,v,x,y){const mesh=new THREE.Mesh(k==='gold'?coinGeo:k==='soul'?soulGeo:potGeo,k==='gold'?coinM:k==='soul'?soulM:potM);if(k==='gold')mesh.rotation.x=Math.PI/2;
+  mesh.castShadow=true;scene.add(mesh);drops.push({k,v,x,y,t:0,mesh,vy:4+Math.random()*2,h:.6})}
+
+/* ---------- yardımcılar ---------- */
+function float(x,y,txt,col,big,h){floats.push({x,y,txt,col,big,t:0,h:h||2.4})}
+const logEl=$('log');
+function log(msg){const d=document.createElement('div');d.textContent=msg;logEl.appendChild(d);while(logEl.children.length>5)logEl.firstChild.remove();
+  setTimeout(()=>{d.style.opacity=0;setTimeout(()=>d.remove(),1000)},4500)}
+let bannerT=0;function banner(t,s){const b=$('banner');b.innerHTML='';b.append(t);if(s){const sm=document.createElement('small');sm.textContent=s;b.append(sm)}b.style.opacity=1;bannerT=2.6}
+function nearest(range){let best=null,bd=range;for(const e of E){const d=Math.hypot(e.x-P.x,e.y-P.y)-e.t.r;if(d<bd){bd=d;best=e}}return best}
+let shake=0,hitStop=0;
+
+function hit(e,mult){let dmg=atkPow()*mult*(.85+Math.random()*.3);const crit=Math.random()<.12;if(crit)dmg*=1.8;dmg=Math.round(dmg);
+  e.hp-=dmg;e.flash=.12;e.aggro=1;float(e.x,e.y,dmg,crit?'#ffd36a':'#fff',crit,e.type==='tas'?4.6:e.type==='ayi'?2.8:2);
+  addFx('bits',e.x,e.y,crit?0xffd36a:e.type==='tas'?0x2a2030:0xffffff,{n:crit?10:5});if(crit){shake=Math.max(shake,.18);hitStop=.05}
+  if(e.type!=='tas'){const a=Math.atan2(e.y-P.y,e.x-P.x);e.kx+=Math.cos(a)*150;e.ky+=Math.sin(a)*150}
+  else{const ph=Math.floor(e.hp/e.mhp*4);if(ph<e.phase&&e.hp>0){e.phase=ph;e.m.cracks.forEach((c,i)=>c.visible=i<4-ph);shake=.35;
+    for(let i=0;i<3;i++){const z=Math.max(1,zoneAt(e.x,e.y)),list=ZTYPES[z];
+    const m=makeEnemy(list[i%list.length],e.x+Math.cos(i*2.1)*80,e.y+Math.sin(i*2.1)*80,Math.max(1,e.L-1));m.aggro=1;E.push(m);addFx('ring',m.x,m.y,0xff4a2a)}float(e.x,e.y,t('stoneCrack'),'#ff8a6a',1,5.4)}}
+  if(e.hp<=0)kill(e)}
+function kill(e){E.splice(E.indexOf(e),1);let xp=e.exp;if(e.L<P.lv-6)xp=Math.round(xp*.3);gainExp(xp);
+  dying.push({e,t:0});if(e.light){e.light.userData.used=0}
+  addFx('bits',e.x,e.y,e.type==='tas'?0xff4a2a:0xd9b25a,{n:e.type==='tas'?24:10});if(e.type==='tas'){addFx('pillar',e.x,e.y,0xff4a2a);shake=.6}
+  const coins=e.type==='tas'?7:1,val=Math.round((e.type==='tas'?(40+e.L*8):(2+e.L*1.6))*(.7+Math.random()*.6));
+  for(let i=0;i<coins;i++)addDrop('gold',val,e.x+(Math.random()-.5)*50,e.y+(Math.random()-.5)*50);
+  if(e.type==='tas'){const n=1+(Math.random()<.4?1:0);for(let i=0;i<n;i++)addDrop('soul',1,e.x+(Math.random()-.5)*30,e.y+(Math.random()-.5)*30);
+    if(Math.random()<.6)addDrop('pot',2,e.x,e.y+20);log(t('stoneBroken'))}
+  else{if(Math.random()<.025*(e.type==='ayi'?3:1))addDrop('soul',1,e.x,e.y);if(Math.random()<.06)addDrop('pot',1,e.x+8,e.y)}}
+function gainExp(x){P.exp+=x;float(P.x,P.y,t('xp',{n:x}),'#9fd27a',0,2.9);
+  while(P.exp>=needExp(P.lv)){P.exp-=needExp(P.lv);P.lv++;P.hp=maxHp();P.mp=maxMp();banner(t('lvUp',{n:P.lv}),t('lvUpSub'));
+    addFx('pillar',P.x,P.y,0xd9b25a);addFx('ring',P.x,P.y,0xd9b25a);save()}}
+function hurt(dmg){if(P.dead||P.dash>0)return;dmg=Math.round(dmg*(1-armor())*(.85+Math.random()*.3));P.hp-=dmg;P.hurtT=0;float(P.x,P.y,'-'+dmg,'#ff6a50',0,2.6);shake=Math.max(shake,.12);
+  if(P.hp<=0){P.hp=0;P.dead=3;const lost=Math.floor(P.gold*.1);P.gold-=lost;banner(t('defeated'),t('defeatedSub',{n:lost}));save();
+    if(window.AdKit){P.dead=999;atkHeld=false;joy.id=null;joy.x=joy.y=0;
+      AdKit.offer({title:t('adTitle'),text:t('adText'),reward:t('adReward')+(lost?' · +'+t('goldN',{n:lost}):''),button:t('adBtn'),decline:t('noThanks'),timeout:8})
+        .then(ok=>{if(ok){P.dead=0;P.hp=Math.round(maxHp()*.6);P.mp=Math.max(P.mp,Math.round(maxMp()*.5));P.gold+=lost;for(const e of E)e.aggro=0;addFx('pillar',P.x,P.y,0x9fd27a);banner(t('revived'),t('revivedSub'));save()}else P.dead=.01})}}}
+
+/* ---------- beceriler ---------- */
+function attack(){if(P.dead||P.atkCd>0||P.dash>0)return;P.atkCd=.42;P.swing=.3;P.combo=(P.combo+1)%2;const t=nearest(170);if(t)P.dir=Math.atan2(t.y-P.y,t.x-P.x);P.face=P.dir;
+  addFx('slash',P.x,P.y,0xf5e6c0,P.dir);
+  for(const e of [...E]){const dx=e.x-P.x,dy=e.y-P.y,d=Math.hypot(dx,dy)-e.t.r;if(d>64)continue;
+    const da=Math.abs(((Math.atan2(dy,dx)-P.dir)+Math.PI*3)%(Math.PI*2)-Math.PI);if(da<1.2||d<10)hit(e,1)}}
+function skill1(){if(P.dead||P.s1>0||P.mp<20)return noMp(P.s1>0);P.mp-=20;P.s1=4;P.spin=.5;addFx('spin',P.x,P.y,0xd9b25a);addFx('ring',P.x,P.y,0xd9b25a);shake=.2;
+  for(const e of [...E])if(Math.hypot(e.x-P.x,e.y-P.y)-e.t.r<125)hit(e,2.2)}
+function skill2(){if(P.dead||P.s2>0||P.mp<15)return noMp(P.s2>0);P.mp-=15;P.s2=3;const t=nearest(260);if(t)P.dir=Math.atan2(t.y-P.y,t.x-P.x);P.face=P.dir;
+  P.dash=.2;P.dashHit=new Set()}
+function skill3(){if(P.dead||P.s3>0||P.mp<30)return noMp(P.s3>0);P.mp-=30;P.s3=20;P.rage=8;addFx('ring',P.x,P.y,0xff4a2a);addFx('pillar',P.x,P.y,0xff4a2a);
+  log(t('warCry'))}
+function potion(){if(P.dead||P.potCd>0)return;if(P.pot<=0){log(t('noPot'));return}if(P.hp>=maxHp())return;
+  P.pot--;P.potCd=1.5;const h=Math.round(maxHp()*.45);P.hp=Math.min(maxHp(),P.hp+h);float(P.x,P.y,'+'+h,'#9fd27a',0,2.6);addFx('ring',P.x,P.y,0x9fd27a)}
+function noMp(cd){if(!cd)log(t('noMp'))}
+
+/* ---------- girdi ---------- */
+const joy={id:null,ox:0,oy:0,x:0,y:0},cam={id:null,lx:0,yaw:.0,dist:13,pitch:.72};const keys={};
+cv.addEventListener('pointerdown',e=>{if(e.clientX<W*.5&&joy.id===null){joy.id=e.pointerId;joy.ox=e.clientX;joy.oy=e.clientY;joy.x=joy.y=0;cv.setPointerCapture(e.pointerId)}
+  else if(cam.id===null){cam.id=e.pointerId;cam.lx=e.clientX;cam.ly=e.clientY;cv.setPointerCapture(e.pointerId)}});
+cv.addEventListener('pointermove',e=>{if(e.pointerId===joy.id){let dx=e.clientX-joy.ox,dy=e.clientY-joy.oy;const d=Math.hypot(dx,dy),m=55;if(d>m){dx*=m/d;dy*=m/d}joy.x=dx/m;joy.y=dy/m}
+  else if(e.pointerId===cam.id){cam.yaw-=(e.clientX-cam.lx)*.008;cam.pitch=Math.max(.35,Math.min(1.15,cam.pitch+(e.clientY-cam.ly)*.004));cam.lx=e.clientX;cam.ly=e.clientY}});
+const endP=e=>{if(e.pointerId===joy.id){joy.id=null;joy.x=joy.y=0}if(e.pointerId===cam.id)cam.id=null};
+cv.addEventListener('pointerup',endP);cv.addEventListener('pointercancel',endP);
+cv.addEventListener('wheel',e=>{cam.dist=Math.max(8,Math.min(22,cam.dist+e.deltaY*.01));e.preventDefault()},{passive:false});
+let atkHeld=false;
+const bind=(id,fn)=>$(id).addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();fn()});
+bind('bAtk',()=>{atkHeld=true;attack()});
+addEventListener('pointerup',()=>atkHeld=false);addEventListener('pointercancel',()=>atkHeld=false);
+bind('bS1',skill1);bind('bS2',skill2);bind('bS3',skill3);bind('bPot',potion);
+addEventListener('keydown',e=>{if(!$('overlay').hidden)return;const k=e.key.toLowerCase();keys[k]=1;
+  if(k===' '){atkHeld=true;attack();e.preventDefault()}if(k==='q'||k==='1')skill1();if(k==='e'||k==='2')skill2();if(k==='3')skill3();if(k==='r')potion();if(k==='f'&&near)openNpc(near)});
+addEventListener('keyup',e=>{const k=e.key.toLowerCase();keys[k]=0;if(k===' ')atkHeld=false});
+
+/* ---------- NPC panelleri ---------- */
+let near=null;const talk=$('talk');talk.addEventListener('click',()=>near&&openNpc(near));
+const ov=$('overlay'),card=$('card');
+function close(){ov.hidden=true;save()}
+ov.addEventListener('pointerdown',e=>{if(e.target===ov)close()});
+const RATES=[100,95,90,80,70,60,50,40,30];const cost=wl=>Math.round(60*Math.pow(wl+1,1.8));
+function openNpc(n){atkHeld=false;joy.id=null;joy.x=joy.y=0;
+  const go=()=>{ov.hidden=false;n.id==='smith'?smith(''):shop('')};
+  if(!window.AdKit)return go();ov.hidden=false;card.innerHTML='';
+  AdKit.levelDone({title:t('villageBonus'),reward:'+'+t('goldN',{n:40})}).then(ok=>{if(ok){P.gold+=40;save()}go()})}
+function smith(msg,cls){const wl=P.wl,max=wl>=9,needSoul=wl>=4;
+  card.innerHTML=`<h2>${t('npcSmith')}</h2><p>${t('smithDesc')}</p>
+  <div class="weapon">${t('weapon',{n:wl})}</div>
+  <div class="row"><span>${t('atkPow')}</span><strong>${Math.round(atkPow()/(P.rage>0?1.35:1))}</strong></div>
+  ${max?'<p>'+t('maxed')+'</p>':`<div class="row"><span>${t('chance',{n:wl+1})}</span><em>${t('pct',{n:RATES[wl]})}</em></div>
+  <div class="row"><span>${t('cost')}</span><strong>${t('goldN',{n:cost(wl)})}${needSoul?t('plusSoul'):''}</strong></div>`}
+  <div class="result ${cls||''}">${msg}</div>
+  ${max?'':`<button class="act" id="up" ${(P.gold<cost(wl)||(needSoul&&P.soul<1))?'disabled':''}>${t('upgrade')}</button>`}
+  <button class="act ghost" id="cl">${t('close')}</button>`;
+  $('cl').onclick=close;const up=$('up');if(up)up.onclick=()=>{P.gold-=cost(wl);if(needSoul)P.soul--;
+    if(Math.random()*100<RATES[wl]){P.wl++;addFx('pillar',P.x,P.y,0xd9b25a);smith(t('upOk',{n:P.wl}),'ok')}
+    else{if(wl>=4){P.wl--;smith(t('upCrack',{n:P.wl}),'bad')}else smith(t('upFail'),'bad')}save()}}
+function shop(msg,cls){card.innerHTML=`<h2>${t('npcShop')}</h2><p>${t('shopDesc',{n:P.pot})}</p>
+  <div class="row"><span>${t('redPot')} ×1<br><small class="keys">${t('potHeal')}</small></span><button class="act" id="b1" ${P.gold<25?'disabled':''}>${t('goldN',{n:25})}</button></div>
+  <div class="row"><span>${t('redPot')} ×5</span><button class="act" id="b5" ${P.gold<110?'disabled':''}>${t('goldN',{n:110})}</button></div>
+  ${window.AdKit?'<div class="row"><span>'+t('redPot')+' ×2<br><small class="keys">'+t('watchShort')+'</small></span><button class="act" id="bAd" style="background:#2f9e6e;color:#fff">'+t('free')+'</button></div>':''}
+  <div class="result ${cls||''}">${msg}</div><button class="act ghost" id="cl">${t('close')}</button>`;
+  $('cl').onclick=close;$('b1').onclick=()=>{P.gold-=25;P.pot++;shop(t('bought1'),'ok')};$('b5').onclick=()=>{P.gold-=110;P.pot+=5;shop(t('bought5'),'ok')};
+  const ba=$('bAd');if(ba)ba.onclick=()=>{ba.disabled=true;AdKit.rewarded('potion').then(ok=>{if(ok){P.pot+=2;save();shop(t('adThanks'),'ok')}else shop('')})}}
+function langList(){ov.hidden=false;card.innerHTML=`<h2>🌐 ${t('language')}</h2><div class="langs">${SG_LANGS.map(c=>`<button class="act ghost${c===SG_LANG?' cur':''}" data-lang="${c}" lang="${c}">${SG_LANG_NAMES[c]}</button>`).join('')}</div>
+  <button class="act ghost" id="lb">${t('back')}</button>`;
+  $('lb').onclick=intro;card.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{const c=b.dataset.lang;if(c===SG_LANG)return intro();save();SG_setLang(c)})}
+function intro(){ov.hidden=false;card.innerHTML=`<div class="ihead"><h2>${t('title')}</h2><button class="act ghost" id="langBtn" aria-label="${t('language')}">🌐 ${SG_LANG_NAMES[SG_LANG]}</button></div>
+  <p>${t('story')}</p>
+  <div class="row"><span>${t('move')}</span><strong>${t('moveHow')}</strong></div>
+  <div class="row"><span>${t('camera')}</span><strong>${t('camHow')}</strong></div>
+  <div class="row"><span>${t('attack')}</span><strong>${t('atkHow')}</strong></div>
+  <p class="keys">${t('keysHelp')}</p>
+  <button class="act" id="go">${P.lv>1?t('continueQ',{n:P.lv}):t('startQ')}</button>`;$('go').onclick=()=>{ov.hidden=true};$('langBtn').onclick=langList}
+
+/* ---------- güncelleme ---------- */
+let spawnT=0,stoneT=8,saveT=0;
+const angLerp=(a,b,t)=>{let d=((b-a+Math.PI*3)%(Math.PI*2))-Math.PI;return a+d*Math.min(1,t)};
+function update(dt){
+  if(bannerT>0){bannerT-=dt;if(bannerT<=0)$('banner').style.opacity=0}
+  for(const k of['atkCd','swing','spin','s1','s2','s3','potCd','rage'])P[k]=Math.max(0,P[k]-dt);P.hurtT+=dt;
+  if(P.dead){P.dead-=dt;if(P.dead<=0){P.dead=0;P.x=C.x;P.y=C.y+40;P.hp=maxHp();P.mp=maxMp();for(const e of E)e.aggro=0}}
+  else{
+    let jx=joy.x,jy=joy.y;if(keys.a||keys.arrowleft)jx-=1;if(keys.d||keys.arrowright)jx+=1;if(keys.w||keys.arrowup)jy-=1;if(keys.s||keys.arrowdown)jy+=1;
+    const ml=Math.hypot(jx,jy);if(ml>1){jx/=ml;jy/=ml}
+    const cy=Math.cos(cam.yaw),sy=Math.sin(cam.yaw);const mx=jx*cy+jy*sy,my=-jx*sy+jy*cy;
+    P.moving=0;
+    if(P.dash>0){P.dash-=dt;const s=950*dt;P.x+=Math.cos(P.dir)*s;P.y+=Math.sin(P.dir)*s;addFx('ghost',P.x,P.y,0xff4a2a);
+      for(const e of [...E])if(!P.dashHit.has(e)&&Math.hypot(e.x-P.x,e.y-P.y)<e.t.r+32){P.dashHit.add(e);hit(e,1.6)}}
+    else if(ml>.1){const sp=180*(P.swing>0?.5:1);P.x+=mx*sp*dt;P.y+=my*sp*dt;if(P.swing<=0){P.dir=Math.atan2(my,mx)}P.walk+=dt*11*ml;P.moving=ml}
+    P.x=Math.max(140,Math.min(WS-140,P.x));P.y=Math.max(140,Math.min(WS-140,P.y));
+    if(atkHeld)attack();
+    const inV=Math.hypot(P.x-C.x,P.y-C.y)<VR;
+    P.mp=Math.min(maxMp(),P.mp+dt*(inV?12:3));if(P.hurtT>4)P.hp=Math.min(maxHp(),P.hp+dt*maxHp()*(inV?.12:.012));
+  }
+  P.face=angLerp(P.face,P.dir,dt*16);
+  const pInV=Math.hypot(P.x-C.x,P.y-C.y)<VR;
+  for(const e of E){e.flash=Math.max(0,e.flash-dt);e.x+=e.kx*dt;e.y+=e.ky*dt;e.kx*=Math.pow(.002,dt);e.ky*=Math.pow(.002,dt);e.rise=Math.max(0,e.rise-dt*.8);
+    if(e.type==='tas')continue;
+    const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy);
+    if(!P.dead&&!pInV&&d<200)e.aggro=1;if(P.dead||pInV||d>650)e.aggro=0;
+    e.cd=Math.max(0,e.cd-dt);e.moving=0;
+    if(e.aggro){e.dir=Math.atan2(dy,dx);if(d>e.t.r+20){e.x+=dx/d*e.t.spd*dt;e.y+=dy/d*e.t.spd*dt;e.walk+=dt*12;e.moving=1}
+      else if(e.cd<=0){e.cd=1.15;e.lunge=.3;setTimeout(()=>{if(E.includes(e)&&Math.hypot(P.x-e.x,P.y-e.y)<e.t.r+40)hurt(e.dmg)},150)}}
+    else{e.wt-=dt;if(e.wt<=0){e.wt=2+Math.random()*3;e.wx=e.hx+(Math.random()-.5)*220;e.wy=e.hy+(Math.random()-.5)*220}
+      const wx=e.wx-e.x,wy=e.wy-e.y,wd=Math.hypot(wx,wy);if(wd>8){e.x+=wx/wd*e.t.spd*.35*dt;e.y+=wy/wd*e.t.spd*.35*dt;e.dir=Math.atan2(wy,wx);e.walk+=dt*5;e.moving=.5}}
+    e.lunge=Math.max(0,e.lunge-dt);e.face=angLerp(e.face,e.dir,dt*8);
+    const cd=Math.hypot(e.x-C.x,e.y-C.y);if(cd<VR+25){e.x=C.x+(e.x-C.x)/cd*(VR+25);e.y=C.y+(e.y-C.y)/cd*(VR+25)}
+    e.x=Math.max(130,Math.min(WS-130,e.x));e.y=Math.max(130,Math.min(WS-130,e.y));
+  }
+  for(let i=0;i<E.length;i++)for(let j=i+1;j<E.length;j++){const a=E[i],b=E[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,m=a.t.r+b.t.r;
+    if(d<m){const p=(m-d)/2;if(a.type!=='tas'){a.x-=dx/d*p;a.y-=dy/d*p}if(b.type!=='tas'){b.x+=dx/d*p;b.y+=dy/d*p}}}
+  E=E.filter(e=>{const keep=e.type==='tas'||e.aggro||Math.hypot(e.x-P.x,e.y-P.y)<1500;if(!keep)removeEnemyModel(e);return keep});
+  spawnT-=dt;if(spawnT<=0){spawnT=1;if(E.filter(e=>e.type!=='tas').length<30)spawnEnemy()}
+  stoneT-=dt;if(stoneT<=0){stoneT=40+Math.random()*25;if(E.filter(e=>e.type==='tas').length<3)spawnStone()}
+  for(const d of [...drops]){d.t+=dt;d.vy-=18*dt;d.h=Math.max(.35,d.h+d.vy*dt);if(d.h<=.35)d.vy=0;const dist=Math.hypot(P.x-d.x,P.y-d.y);
+    if(dist<100&&d.t>.5&&!P.dead){d.x+=(P.x-d.x)*dt*8;d.y+=(P.y-d.y)*dt*8}
+    let gone=false;
+    if(dist<22&&d.t>.5){gone=true;
+      if(d.k==='gold'){P.gold+=d.v;float(P.x,P.y,'+'+t('goldN',{n:d.v}),'#d9b25a',0,2.2)}
+      if(d.k==='soul'){P.soul+=d.v;log(t('soulFound'));float(P.x,P.y,t('soul'),'#c9a6ff',1,2.8)}
+      if(d.k==='pot'){P.pot+=d.v;float(P.x,P.y,t('potGain',{n:d.v}),'#ff8a6a',0,2.4)}}
+    if(d.t>90)gone=true;if(gone){scene.remove(d.mesh);drops.splice(drops.indexOf(d),1)}}
+  for(const f of floats)f.t+=dt;floats=floats.filter(f=>f.t<1.1);
+  near=null;if(!P.dead)for(const n of NPCS)if(Math.hypot(n.x-P.x,n.y-P.y)<80)near=n;
+  talk.hidden=!near||!ov.hidden;if(near)talk.textContent=t('talkTo',{name:near.name});
+  saveT+=dt;if(saveT>10){saveT=0;save()}
+}
+
+/* ---------- 3B senkron ve animasyon ---------- */
+function setFlash(m,on){for(const mt of m.mats)if(mt.emissive&&!mt.userData.keep){mt.emissive.setHex(on?0x777777:0)}}
+function animHuman(m,walk,moving,swing,dt){const s=Math.sin(walk)*.7*Math.min(1,moving);
+  m.legL.rotation.x=s;m.legR.rotation.x=-s;m.armL.rotation.x=-s*.6-.1;m.root.position.y=Math.abs(Math.cos(walk))*.06*Math.min(1,moving);
+  m.cape.rotation.x=.15+moving*.35+Math.sin(walk*.5)*.05;
+  if(swing>0){const p=1-swing;m.armR.rotation.x=-2.7+p*2.5;m.armR.rotation.z=.5-p*.9;m.root.rotation.y=.6-p*1.1}
+  else{m.armR.rotation.x+=(-.45+s*.3-m.armR.rotation.x)*Math.min(1,dt*12);m.armR.rotation.z*=.8;m.root.rotation.y*=.8}}
+function animBeast(m,walk,moving,lunge){const s=Math.sin(walk)*.6*Math.min(1,moving);
+  m.legs[0].rotation.x=s;m.legs[3].rotation.x=s;m.legs[1].rotation.x=-s;m.legs[2].rotation.x=-s;
+  m.root.position.y=Math.abs(Math.sin(walk))*.05*moving;m.head.rotation.x=lunge>0?-.4*Math.sin(lunge/.3*Math.PI):Math.sin(walk*.5)*.05;
+  m.root.position.z=lunge>0?Math.sin(lunge/.3*Math.PI)*.5:0}
+function sync(dt){
+  const hx=P.x*U,hz=P.y*U;hero.g.visible=!P.dead;hero.g.position.set(hx,hAt(P.x,P.y),hz);
+  hero.g.rotation.y=Math.PI/2-P.face+(P.spin>0?(1-P.spin/.5)*Math.PI*4:0);
+  animHuman(hero,P.walk,P.moving,P.swing>0?P.swing/.3:0,dt);
+  const glow=P.wl>=7?0x9a5cff:P.wl>=4?0xffb23a:0;hero.blade.emissive.setHex(glow);hero.blade.emissiveIntensity=glow?.6+Math.sin(time*5)*.3:0;hero.blade.userData.keep=1;
+  rageAura.visible=P.rage>0;rageAura.material.opacity=.18+Math.sin(time*10)*.08;rageAura.rotation.y+=dt*3;
+  for(const n of NPCS){n.m.root.position.y=Math.sin(time*2+n.x)*.02;const a=Math.atan2(P.y-n.y,P.x-n.x);n.m.g.rotation.y=Math.hypot(P.x-n.x,P.y-n.y)<200?Math.PI/2-a:0;
+    if(n.id==='smith'){n.m.armR.rotation.x=-1.6+Math.abs(Math.sin(time*3))*1.2}}
+  let li=0;
+  for(const e of E){const m=e.m,d=Math.hypot(e.x-P.x,e.y-P.y);m.g.visible=d<1050;if(!m.g.visible)continue;
+    m.g.position.set(e.x*U,hAt(e.x,e.y)+(e.rise>0?e.rise*e.rise*25:0),e.y*U);
+    if(e.type==='tas'){const pulse=.6+Math.sin(time*3+e.x)*.4;m.rune.emissiveIntensity=.6+pulse*.8;m.glow.material.opacity=.5+pulse*.5;m.root.rotation.y+=dt*.15;
+      setFlash(m,e.flash>0);if(e.light){e.light.position.set(e.x*U,hAt(e.x,e.y)+2.5,e.y*U);e.light.intensity=e.rise>0?0:1.4+pulse*.8}continue}
+    m.g.rotation.y=Math.PI/2-e.face;setFlash(m,e.flash>0);
+    if(m.human)animHuman(m,e.walk,e.moving,e.lunge>0?e.lunge/.3:0,dt);else{animBeast(m,e.walk,e.moving,e.lunge);m.eyes.emissive.setHex(e.aggro?0xff2a10:0)}}
+  for(const d of [...dying]){d.t+=dt;const g=d.e.m.g;if(d.e.type==='tas'){g.scale.setScalar(Math.max(.01,1-d.t*2));g.position.y-=dt*2}
+    else{g.rotation.z=Math.min(1.5,d.t*5);g.position.y-=d.t>.4?dt*1.5:0}
+    if(d.t>.9){removeEnemyModel(d.e);dying.splice(dying.indexOf(d),1)}}
+  for(const d of drops){d.mesh.position.set(d.x*U,hAt(d.x,d.y)+d.h+(d.vy===0?Math.sin(time*4+d.x)*.08:0),d.y*U);d.mesh.rotation.y+=dt*3}
+  for(const f of [...fx]){f.t+=dt;const k=f.t/f.life;
+    if(f.k==='ring'){f.mesh.scale.setScalar(1+k*4.5);f.mat.opacity=1-k}
+    else if(f.k==='spin'){f.mesh.scale.setScalar(1+k*5.5);f.mat.opacity=1-k;f.mesh.rotation.y+=dt*10}
+    else if(f.k==='pillar'){f.mesh.scale.set(1-k*.6,1,1-k*.6);f.mat.opacity=.5*(1-k)}
+    else if(f.k==='ghost'){f.mat.opacity=.35*(1-k)}
+    else if(f.k==='slash'){f.mat.opacity=.7*(1-k);f.mesh.scale.setScalar(1+k*.4)}
+    else if(f.k==='bits'){f.mat.opacity=1-k;for(const c of f.mesh.children){c.userData.v.y-=20*dt;c.position.addScaledVector(c.userData.v,dt);c.rotation.x+=dt*8}}
+    if(f.t>=f.life){scene.remove(f.mesh);f.mat.dispose();if(f.k==='slash'||f.k==='ghost')f.mesh.geometry.dispose();fx.splice(fx.indexOf(f),1)}}
+  // kamera
+  const tgt=new THREE.Vector3(hx,hAt(P.x,P.y)+1.4,hz);const dist=cam.dist*(W<H?1.15:1);
+  const sk=shake>0?(Math.random()-.5)*shake*.6:0;
+  camera.position.set(tgt.x+Math.sin(cam.yaw)*Math.cos(cam.pitch)*dist+sk,tgt.y+Math.sin(cam.pitch)*dist+sk,tgt.z+Math.cos(cam.yaw)*Math.cos(cam.pitch)*dist);
+  const ground=hAt((camera.position.x)/U,(camera.position.z)/U)+1;if(camera.position.y<ground)camera.position.y=ground;
+  camera.lookAt(tgt);
+  sun.position.set(hx+18,hAt(P.x,P.y)+30,hz+12);sun.target.position.set(hx,0,hz);
+}
+
+/* ---------- 2B katman: isimler, sayılar, joystick ---------- */
+const v3=new THREE.Vector3();
+function toScreen(x,y,h){v3.set(x*U,hAt(x,y)+h,y*U).project(camera);if(v3.z>1)return null;return[(v3.x+1)/2*W,(1-v3.y)/2*H]}
+function drawUI(){ux.setTransform(DPR,0,0,DPR,0,0);ux.clearRect(0,0,W,H);ux.textAlign='center';ux.lineJoin='round';
+  for(const e of E){if(!e.m.g.visible)continue;const d=Math.hypot(e.x-P.x,e.y-P.y);if(d>700&&e.type!=='tas')continue;
+    const s=toScreen(e.x,e.y,e.type==='tas'?5.2:e.type==='ayi'?2.6:e.t.beast?1.8:2.5);if(!s)continue;
+    ux.font=`${e.type==='tas'?700:600} 12px "Alegreya Sans",sans-serif`;ux.lineWidth=3;ux.strokeStyle='#000b';
+    const lbl=t('lvAbbr',{n:e.L})+' '+e.t.name;ux.fillStyle=e.type==='tas'?'#ff8a6a':(e.aggro?'#ffb39e':'#ece4cf');ux.strokeText(lbl,s[0],s[1]);ux.fillText(lbl,s[0],s[1]);
+    if(e.hp<e.mhp||e.type==='tas'){const w=e.type==='tas'?72:40;ux.fillStyle='#000c';ux.fillRect(s[0]-w/2-1,s[1]+4,w+2,6);ux.fillStyle='#c8402f';ux.fillRect(s[0]-w/2,s[1]+5,w*Math.max(0,e.hp/e.mhp),4)}}
+  for(const n of NPCS){const s=toScreen(n.x,n.y,2.6);if(!s)continue;ux.font='700 13px "Cormorant SC",serif';ux.lineWidth=3;ux.strokeStyle='#000b';ux.fillStyle='#d9b25a';
+    ux.strokeText(n.name,s[0],s[1]);ux.fillText(n.name,s[0],s[1]);ux.font='700 18px serif';ux.strokeText('!',s[0],s[1]-16+Math.sin(time*4)*2);ux.fillText('!',s[0],s[1]-16+Math.sin(time*4)*2)}
+  if(!P.dead){const s=toScreen(P.x,P.y,2.75);if(s){ux.font='700 12px "Alegreya Sans",sans-serif';ux.lineWidth=3;ux.strokeStyle='#000b';ux.fillStyle='#ece4cf';ux.strokeText(t('hero'),s[0],s[1]);ux.fillText(t('hero'),s[0],s[1])}}
+  for(const f of floats){const s=toScreen(f.x,f.y,f.h+f.t*1.6);if(!s)continue;ux.globalAlpha=Math.min(1,(1.1-f.t)*2.5);
+    const sc=f.big?1+Math.max(0,.25-f.t)*2:1;ux.font=`800 ${Math.round((f.big?20:14)*sc)}px "Alegreya Sans",sans-serif`;ux.lineWidth=4;ux.strokeStyle='#000c';ux.fillStyle=f.col;
+    ux.strokeText(f.txt,s[0],s[1]);ux.fillText(f.txt,s[0],s[1])}ux.globalAlpha=1;
+  if(joy.id!==null){ux.strokeStyle='#d9b25a88';ux.lineWidth=2;ux.fillStyle='#0006';ux.beginPath();ux.arc(joy.ox,joy.oy,55,0,7);ux.fill();ux.stroke();
+    ux.fillStyle='#d9b25acc';ux.beginPath();ux.arc(joy.ox+joy.x*55,joy.oy+joy.y*55,22,0,7);ux.fill()}
+  else if(time<14&&ov.hidden){ux.globalAlpha=.55*(1-time/14);ux.strokeStyle='#d9b25a';ux.lineWidth=2;ux.beginPath();ux.arc(90,H-110,55,0,7);ux.stroke();
+    ux.font='600 12px "Alegreya Sans",sans-serif';ux.fillStyle='#ece4cf';ux.fillText(t('drag'),90,H-106);ux.globalAlpha=1}
+  if(P.dead){ux.fillStyle='rgba(60,0,0,.4)';ux.fillRect(0,0,W,H)}
+  else if(P.hp<maxHp()*.25){const g=ux.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.max(W,H)*.7);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,`rgba(160,20,10,${.3+Math.sin(time*6)*.1})`);ux.fillStyle=g;ux.fillRect(0,0,W,H)}
+}
+function drawMini(){mctx.setTransform(1,0,0,1,0,0);mctx.clearRect(0,0,208,208);mctx.save();mctx.beginPath();mctx.arc(104,104,104,0,7);mctx.clip();
+  mctx.translate(104,104);mctx.rotate(cam.yaw);mctx.translate(-104,-104);
+  const scale=208/1400,ox=P.x-700,oy=P.y-700;const M=(x,y)=>[(x-ox)*scale,(y-oy)*scale];
+  mctx.fillStyle='#1d3022';mctx.fillRect(-100,-100,408,408);
+  for(let z=7;z>=1;z--){const [cx,cy]=M(C.x,C.y);mctx.fillStyle=z%2?'#1f3524':'#243c28';mctx.beginPath();mctx.arc(cx,cy,(VR+z*300)*scale,0,7);mctx.fill()}
+  const [vx,vy]=M(C.x,C.y);mctx.fillStyle='#75634a';mctx.beginPath();mctx.arc(vx,vy,VR*scale,0,7);mctx.fill();
+  mctx.strokeStyle='#5a4a36';mctx.lineWidth=68*scale;mctx.beginPath();mctx.moveTo(vx-(VR+520)*scale,vy);mctx.lineTo(vx+(VR+520)*scale,vy);mctx.moveTo(vx,vy-(VR+520)*scale);mctx.lineTo(vx,vy+(VR+520)*scale);mctx.stroke();
+  mctx.fillStyle='#0009';const [a0,b0]=M(140,140),[a1,b1]=M(WS-140,WS-140);mctx.beginPath();mctx.rect(-300,-300,808,808);mctx.rect(a0,b0,a1-a0,b1-b0);mctx.fill('evenodd');
+  for(const e of E){let [x,y]=M(e.x,e.y);if(e.type==='tas')continue;mctx.fillStyle=e.aggro?'#ff9a7a':'#c8402f';mctx.fillRect(x-2,y-2,4,4)}
+  for(const n of NPCS){const [x,y]=M(n.x,n.y);mctx.fillStyle='#d9b25a';mctx.fillRect(x-2.5,y-2.5,5,5)}
+  mctx.restore();mctx.save();
+  for(const e of E){if(e.type!=='tas')continue;let dx=(e.x-P.x)*scale,dy=(e.y-P.y)*scale;const c=Math.cos(cam.yaw),s=Math.sin(cam.yaw);let rx=dx*c-dy*s,ry=dx*s+dy*c;
+    const d=Math.hypot(rx,ry);if(d>92){rx*=92/d;ry*=92/d}const x=104+rx,y=104+ry;mctx.fillStyle='#ff5a3c';mctx.strokeStyle='#000';mctx.lineWidth=1;
+    mctx.beginPath();mctx.moveTo(x,y-7);mctx.lineTo(x+6,y);mctx.lineTo(x,y+7);mctx.lineTo(x-6,y);mctx.closePath();mctx.fill();mctx.stroke()}
+  mctx.fillStyle='#fff';mctx.translate(104,104);mctx.rotate(P.face+cam.yaw);mctx.beginPath();mctx.moveTo(8,0);mctx.lineTo(-5,-5);mctx.lineTo(-5,5);mctx.fill();mctx.restore()}
+
+let hudT=0;
+function hud(){const mh=maxHp(),mm=maxMp(),ne=needExp(P.lv);
+  $('hpI').style.transform=`scaleX(${P.hp/mh})`;$('hpT').textContent=Math.ceil(P.hp)+' / '+mh;
+  $('mpI').style.transform=`scaleX(${P.mp/mm})`;$('mpT').textContent=Math.floor(P.mp)+' / '+mm;
+  $('exI').style.transform=`scaleX(${P.exp/ne})`;$('lv').textContent=P.lv;$('gold').textContent=P.gold;$('soul').textContent=P.soul;$('potN').textContent=t('potN',{n:P.pot});
+  const z=zoneAt(P.x,P.y);$('zone').textContent=ZONES[z]+(z?' · '+t('lvAbbr',{n:(z-1)*4+1})+'+':'');
+  for(const [id,k,m,mp] of[['bS1','s1',4,20],['bS2','s2',3,15],['bS3','s3',20,30],['bPot','potCd',1.5,0]]){const b=$(id);b.querySelector('.cd').style.transform=`scaleY(${P[k]/m})`;b.style.opacity=(mp&&P.mp<mp)?.55:1}}
+
+let last=0,time=0,running=false;
+function loop(t){let dt=Math.min(.05,(t-last)/1000||0);last=t;time+=dt;shake=Math.max(0,shake-dt);
+  if(hitStop>0){hitStop-=dt;dt*=.15}
+  if(ov.hidden)update(dt);sync(dt);renderer.render(scene,camera);drawUI();
+  hudT-=dt;if(hudT<=0){hudT=.08;hud();drawMini()}requestAnimationFrame(loop)}
+function start(data){if(running)return;running=true;load(data||stored());for(let i=0;i<14;i++)spawnEnemy();hud();
+  $('loading').hidden=true;intro();requestAnimationFrame(loop)}
+try{window.claude?.hot?.snapshot?.(()=>snap())}catch(e){}
+window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data&&Object.keys(window.claude.hot.data).length?window.claude.hot.data:null);
+addEventListener('pagehide',save);
+})();
+</script>
+
+</body></html>
