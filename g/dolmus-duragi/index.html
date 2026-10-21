@@ -1,0 +1,522 @@
+<!doctype html><html lang="tr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<script>window.ADKIT_CONFIG={everyLevels:3,minGapSec:90};</script>
+<script src="../../adkit-web.js" data-pkg="com.sampagames.dolmusduragi"></script>
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head><body>
+<title>Dolmus Stop: Bus Color Puzzle – Play Free Online | Sampa Games</title>
+<meta name="description" content="Get every passenger on the right minibus and clear the stop. Play free in your browser, then get it on Google Play.">
+<link rel="canonical" href="https://sampagames.github.io/g/dolmus-duragi/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap">
+<style>
+/* Düzen: tek ekran oyun. Üstte yolcu kuyruğu, ortada durak cepleri, altta otopark. Gece İstanbul asfaltı. */
+:root{
+  --gece:#14303a;      /* zemin */
+  --asfalt:#26333a;    /* otopark */
+  --serit:#f2c230;     /* sarı yol çizgisi, ana vurgu */
+  --kaldirim:#3d5a63;  /* durak kaldırımı */
+  --yazi:#f4f1e8;
+  --soluk:#9fb7bd;
+  --kirmizi:#ff5d55;
+  --f-baslik:"Lilita One","Arial Rounded MT Bold",system-ui,sans-serif;
+  --f-govde:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--gece);color:var(--yazi);font-family:var(--f-govde);overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+#probe{position:fixed;left:0;top:0;width:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);pointer-events:none;visibility:hidden}
+.hud{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 0;display:flex;align-items:center;gap:10px;pointer-events:none}
+.hud>*{pointer-events:auto}
+.lvl{font-family:var(--f-baslik);font-size:22px;letter-spacing:.5px;line-height:1}
+.lvl small{display:block;font-family:var(--f-govde);font-weight:800;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--soluk);margin-bottom:3px}
+.sp{flex:1}
+.pill{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:6px 12px;font-weight:900;font-variant-numeric:tabular-nums}
+.pill svg{width:16px;height:16px}
+.ib{width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.28);color:var(--yazi);display:grid;place-items:center;cursor:pointer}
+.ib svg{width:20px;height:20px}
+.ib:focus-visible,.bst:focus-visible,.btn:focus-visible{outline:3px solid var(--serit);outline-offset:2px}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:0 16px calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;justify-content:center;gap:12px;pointer-events:none}
+.bst{pointer-events:auto;position:relative;display:flex;align-items:center;gap:8px;background:#1c2a30;border:2px solid #34505a;color:var(--yazi);border-radius:16px;padding:8px 14px 8px 10px;font-family:var(--f-govde);font-weight:900;font-size:14px;cursor:pointer}
+.bst svg{width:26px;height:26px}
+.bst .n{position:absolute;top:-8px;right:-8px;min-width:22px;height:22px;border-radius:11px;background:var(--serit);color:#1b1b1b;font-size:12px;display:grid;place-items:center;padding:0 5px}
+.bst .n.ad{background:#5cd18a}
+.bst[aria-pressed="true"]{border-color:var(--serit);background:#3a3313}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 64px);transform:translateX(-50%);background:rgba(10,20,24,.9);border:1px solid rgba(255,255,255,.1);padding:8px 14px;border-radius:12px;font-weight:800;font-size:14px;max-width:calc(100% - 32px);text-align:center;pointer-events:none;transition:opacity .25s}
+.ov{position:fixed;inset:0;display:grid;place-items:center;padding:16px;background:rgba(6,14,18,.72);backdrop-filter:blur(3px)}
+.card{width:min(360px,100%);background:#1b2c33;border:2px solid #34505a;border-radius:22px;padding:22px 20px;text-align:center;display:grid;gap:12px;max-height:calc(100% - 32px);overflow:auto}
+.card h1{font-family:var(--f-baslik);font-weight:400;font-size:40px;line-height:.95;margin:0;color:var(--serit);text-wrap:balance}
+.card h2{font-family:var(--f-baslik);font-weight:400;font-size:30px;margin:0;text-wrap:balance}
+.card p{margin:0;color:var(--soluk);font-weight:600;line-height:1.45}
+.card .kick{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;font-weight:900;color:var(--soluk)}
+.btn{font-family:var(--f-govde);font-weight:900;font-size:17px;border-radius:14px;padding:13px 16px;border:0;cursor:pointer;background:#2f4a53;color:var(--yazi)}
+.btn.y{background:var(--serit);color:#1b1b1b;box-shadow:0 4px 0 #a9830f}
+.btn.g{background:#5cd18a;color:#0f2a1a;box-shadow:0 4px 0 #2f8a52}
+.rules{display:grid;gap:8px;text-align:left;font-weight:700;font-size:14px;color:var(--yazi)}
+.rules div{display:flex;gap:10px;align-items:flex-start}
+.rules b{flex:none;width:24px;height:24px;border-radius:8px;background:#2f4a53;display:grid;place-items:center;font-size:12px;color:var(--serit)}
+.adbox{display:grid;place-items:center;gap:8px}
+.adbox .cd{font-family:var(--f-baslik);font-size:56px;color:var(--serit)}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+.lngb{justify-self:center;font-family:var(--f-govde);font-weight:900;font-size:13px;border-radius:999px;padding:6px 12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.28);color:var(--soluk);cursor:pointer}
+.lngb:focus-visible{outline:3px solid var(--serit);outline-offset:2px}
+.lnglist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lnglist .btn{font-size:15px;padding:11px 8px}
+.lnglist .btn.on{background:var(--serit);color:#1b1b1b}
+.card .rules span{overflow-wrap:anywhere}
+</style>
+
+<canvas id="c" aria-label="Oyun alanı" data-i18n-aria="canvasAria"></canvas>
+<div id="probe"></div>
+
+<div class="hud">
+  <div class="lvl"><small data-i18n="hudStop">Durak</small><span id="lvlN">1</span></div>
+  <div class="sp"></div>
+  <div class="pill" title="Bekleyen yolcu" data-i18n-title="waiting" data-i18n-aria="waiting"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z"/></svg><span id="left">0</span></div>
+  <button class="ib" id="sndBtn" aria-label="Sesi aç/kapat" data-i18n-aria="soundAria"></button>
+  <button class="ib" id="rstBtn" aria-label="Bölümü yeniden başlat" data-i18n-aria="restartAria"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
+</div>
+
+<div class="bar">
+  <button class="bst" id="bDurak" aria-label="Fazladan durak cebi aç" data-i18n-aria="bayAria"><svg viewBox="0 0 32 32"><rect x="3" y="8" width="26" height="18" rx="4" fill="#3d5a63"/><path d="M16 11v12M10 17h12" stroke="#f2c230" stroke-width="3.4" stroke-linecap="round"/></svg><span data-i18n="bayBtn">Durak</span><span class="n" id="nDurak">1</span></button>
+  <button class="bst" id="bVinc" aria-pressed="false" aria-label="Vinçle sıkışmış aracı kaldır" data-i18n-aria="craneAria"><svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M6 28V6h20" stroke="#f2c230" stroke-width="3"/><path d="M22 6v8" stroke="#9fb7bd" stroke-width="2"/><path d="M18 14h8l-1 4h-6z" fill="#9fb7bd"/><path d="M3 28h8" stroke="#f2c230" stroke-width="3"/></svg><span data-i18n="craneBtn">Vinç</span><span class="n" id="nVinc">1</span></button>
+</div>
+
+<div class="toast" id="toast" style="opacity:0"></div>
+<div class="ov" id="ov" hidden><div class="card" id="card"></div></div>
+
+<script>
+/* ---------- i18n (Sampa Games) ---------- */
+(function(){
+var LANGS=["tr", "en", "es", "pt", "de", "fr", "id", "ru"], NAMES={"tr": "Türkçe", "en": "English", "es": "Español", "pt": "Português", "de": "Deutsch", "fr": "Français", "id": "Bahasa Indonesia", "ru": "Русский"}, D={"title":{"tr":"Dolmuş Durağı","en":"Dolmus Stop","es":"Dolmus Stop","pt":"Dolmus Stop","de":"Dolmus Stop","fr":"Dolmus Stop","id":"Dolmus Stop","ru":"Dolmus Stop"},"canvasAria":{"tr":"Oyun alanı","en":"Game area","es":"Área de juego","pt":"Área do jogo","de":"Spielfeld","fr":"Zone de jeu","id":"Area permainan","ru":"Игровое поле"},"hudStop":{"tr":"Durak","en":"Stop","es":"Parada","pt":"Parada","de":"Haltestelle","fr":"Arrêt","id":"Halte","ru":"Остановка"},"waiting":{"tr":"Bekleyen yolcu","en":"Waiting passengers","es":"Pasajeros esperando","pt":"Passageiros esperando","de":"Wartende Fahrgäste","fr":"Passagers en attente","id":"Penumpang menunggu","ru":"Пассажиров в очереди"},"soundAria":{"tr":"Sesi aç/kapat","en":"Sound on/off","es":"Activar/desactivar sonido","pt":"Ligar/desligar som","de":"Ton an/aus","fr":"Activer/couper le son","id":"Suara nyala/mati","ru":"Вкл./выкл. звук"},"restartAria":{"tr":"Bölümü yeniden başlat","en":"Restart level","es":"Reiniciar nivel","pt":"Reiniciar fase","de":"Level neu starten","fr":"Recommencer le niveau","id":"Ulangi level","ru":"Начать уровень заново"},"bayAria":{"tr":"Fazladan durak cebi aç","en":"Open an extra bay","es":"Abrir un lugar extra","pt":"Abrir uma vaga extra","de":"Zusätzlichen Platz öffnen","fr":"Ouvrir une place en plus","id":"Buka tempat tambahan","ru":"Открыть доп. место"},"bayBtn":{"tr":"Durak","en":"Bay","es":"Lugar","pt":"Vaga","de":"Platz","fr":"Place","id":"Tempat","ru":"Место"},"craneAria":{"tr":"Vinçle sıkışmış aracı kaldır","en":"Lift a stuck minibus with the crane","es":"Levanta un minibús atascado con la grúa","pt":"Erga uma van presa com o guindaste","de":"Eingeklemmten Minibus mit dem Kran heben","fr":"Soulever un minibus coincé avec la grue","id":"Angkat minibus yang terjebak dengan derek","ru":"Поднять застрявшую маршрутку краном"},"craneBtn":{"tr":"Vinç","en":"Crane","es":"Grúa","pt":"Guindaste","de":"Kran","fr":"Grue","id":"Derek","ru":"Кран"},"adKick":{"tr":"Ödüllü reklam · deneme","en":"Rewarded ad · demo","es":"Anuncio con premio · demo","pt":"Anúncio premiado · demo","de":"Belohnungswerbung · Demo","fr":"Pub récompensée · démo","id":"Iklan berhadiah · demo","ru":"Реклама с наградой · демо"},"tut1":{"tr":"Bir dolmuşa dokun. Önü açıksa durağa gelir, renk tutan yolcular biner.","en":"Tap a minibus. If its path is clear, it pulls into the stop and matching passengers board.","es":"Toca un minibús. Si tiene el camino libre, llega a la parada y suben los pasajeros de su color.","pt":"Toque numa van. Se o caminho estiver livre, ela vai até a parada e os passageiros da mesma cor embarcam.","de":"Tippe auf einen Minibus. Ist der Weg frei, fährt er zur Haltestelle und Fahrgäste seiner Farbe steigen ein.","fr":"Touche un minibus. Si la voie est libre, il rejoint l'arrêt et les passagers de sa couleur montent.","id":"Ketuk minibus. Jika jalannya kosong, ia ke halte dan penumpang berwarna sama naik.","ru":"Нажми на маршрутку. Если путь свободен, она подъедет к остановке и сядут пассажиры её цвета."},"tut3":{"tr":"Dolmuş dolmadan kalkmaz. Durakta 5 cep var, idareli kullan.","en":"A minibus won't leave until it's full. The stop has 5 bays, use them wisely.","es":"El minibús no sale hasta llenarse. La parada tiene 5 lugares, úsalos con cuidado.","pt":"A van só sai quando lota. A parada tem 5 vagas, use com cuidado.","de":"Ein Minibus fährt erst voll los. Die Haltestelle hat 5 Plätze – nutze sie klug.","fr":"Un minibus ne part que plein. L'arrêt a 5 places, utilise-les bien.","id":"Minibus baru berangkat kalau penuh. Halte punya 5 tempat, pakai dengan bijak.","ru":"Маршрутка не уедет, пока не заполнится. На остановке 5 мест — используй их с умом."},"tut6":{"tr":"Sıkıştın mı? Vinç, önü kapalı bir aracı kaldırıp durağa taşır.","en":"Stuck? The crane lifts a blocked minibus straight to the stop.","es":"¿Atascado? La grúa levanta un minibús bloqueado y lo lleva a la parada.","pt":"Travou? O guindaste levanta uma van bloqueada e a leva até a parada.","de":"Festgefahren? Der Kran hebt einen blockierten Minibus direkt zur Haltestelle.","fr":"Coincé ? La grue soulève un minibus bloqué jusqu'à l'arrêt.","id":"Buntu? Derek mengangkat minibus yang terhalang langsung ke halte.","ru":"Застрял? Кран поднимет заблокированную маршрутку и перенесёт к остановке."},"stopFull":{"tr":"Durak dolu. Önce bir dolmuşun dolmasını bekle.","en":"The stop is full. Wait for a minibus to fill up first.","es":"La parada está llena. Espera a que se llene un minibús.","pt":"A parada está cheia. Espere uma van lotar primeiro.","de":"Haltestelle voll. Warte, bis ein Minibus voll ist.","fr":"L'arrêt est plein. Attends qu'un minibus se remplisse.","id":"Halte penuh. Tunggu sampai satu minibus penuh dulu.","ru":"Остановка занята. Подожди, пока маршрутка заполнится."},"adCrane":{"tr":"Reklam bitince 1 vinç hakkı kazanacaksın.","en":"Watch the ad to the end to earn 1 crane.","es":"Al terminar el anuncio ganarás 1 grúa.","pt":"Ao fim do anúncio você ganha 1 guindaste.","de":"Nach der Werbung bekommst du 1 Kran.","fr":"À la fin de la pub, tu gagnes 1 grue.","id":"Setelah iklan selesai, kamu dapat 1 derek.","ru":"После рекламы получишь 1 кран."},"craneReady":{"tr":"Vinç hazır. Kullanmak için tekrar dokun.","en":"Crane ready. Tap again to use it.","es":"Grúa lista. Toca otra vez para usarla.","pt":"Guindaste pronto. Toque de novo para usar.","de":"Kran bereit. Tippe erneut, um ihn zu nutzen.","fr":"Grue prête. Touche encore pour l'utiliser.","id":"Derek siap. Ketuk lagi untuk memakainya.","ru":"Кран готов. Нажми ещё раз, чтобы использовать."},"craneOn":{"tr":"Vinç açık. Kaldırmak istediğin araca dokun.","en":"Crane on. Tap the minibus you want to lift.","es":"Grúa activa. Toca el minibús que quieras levantar.","pt":"Guindaste ativo. Toque na van que quer levantar.","de":"Kran aktiv. Tippe auf den Minibus, den du heben willst.","fr":"Grue active. Touche le minibus à soulever.","id":"Derek aktif. Ketuk minibus yang ingin diangkat.","ru":"Кран включён. Нажми на маршрутку, которую нужно поднять."},"maxBays":{"tr":"Durakta en fazla 7 cep olabilir.","en":"A stop can have at most 7 bays.","es":"La parada admite como máximo 7 lugares.","pt":"A parada pode ter no máximo 7 vagas.","de":"Eine Haltestelle hat höchstens 7 Plätze.","fr":"Un arrêt a au maximum 7 places.","id":"Halte maksimal punya 7 tempat.","ru":"На остановке может быть не больше 7 мест."},"adBay":{"tr":"Reklam bitince 1 fazladan durak cebi kazanacaksın.","en":"Watch the ad to the end to earn 1 extra bay.","es":"Al terminar el anuncio ganarás 1 lugar extra.","pt":"Ao fim do anúncio você ganha 1 vaga extra.","de":"Nach der Werbung bekommst du 1 Extra-Platz.","fr":"À la fin de la pub, tu gagnes 1 place en plus.","id":"Setelah iklan selesai, kamu dapat 1 tempat tambahan.","ru":"После рекламы получишь 1 доп. место."},"bayAdded":{"tr":"Durak hakkı eklendi. Açmak için tekrar dokun.","en":"Extra bay added. Tap again to open it.","es":"Lugar extra añadido. Toca otra vez para abrirlo.","pt":"Vaga extra adicionada. Toque de novo para abrir.","de":"Extra-Platz erhalten. Tippe erneut zum Öffnen.","fr":"Place bonus ajoutée. Touche encore pour l'ouvrir.","id":"Tempat tambahan didapat. Ketuk lagi untuk membukanya.","ru":"Доп. место получено. Нажми ещё раз, чтобы открыть."},"newBay":{"tr":"Yeni cep açıldı.","en":"New bay opened.","es":"Nuevo lugar abierto.","pt":"Nova vaga aberta.","de":"Neuer Platz geöffnet.","fr":"Nouvelle place ouverte.","id":"Tempat baru dibuka.","ru":"Открыто новое место."},"newBayGo":{"tr":"Yeni cep açıldı, devam!","en":"New bay open, keep going!","es":"¡Nuevo lugar abierto, sigue!","pt":"Nova vaga aberta, continue!","de":"Neuer Platz offen, weiter geht's!","fr":"Nouvelle place ouverte, continue !","id":"Tempat baru dibuka, lanjut!","ru":"Новое место открыто, вперёд!"},"winKick":{"tr":"{n}. durak tamam","en":"Stop {n} done","es":"Parada {n} completada","pt":"Parada {n} concluída","de":"Haltestelle {n} geschafft","fr":"Arrêt {n} terminé","id":"Halte {n} selesai","ru":"Остановка {n} пройдена"},"winTitle":{"tr":"Herkes yerine oturdu","en":"Everyone's seated","es":"Todos sentados","pt":"Todo mundo sentado","de":"Alle haben Platz","fr":"Tout le monde est assis","id":"Semua dapat kursi","ru":"Все расселись"},"winStats":{"tr":"{p} yolcu, {v} dolmuş, {s} saniye","en":"{p} passengers, {v} minibuses, {s} seconds","es":"{p} pasajeros, {v} minibuses, {s} segundos","pt":"{p} passageiros, {v} vans, {s} segundos","de":"{p} Fahrgäste, {v} Minibusse, {s} Sekunden","fr":"{p} passagers, {v} minibus, {s} secondes","id":"{p} penumpang, {v} minibus, {s} detik","ru":"Пассажиры: {p} · маршрутки: {v} · {s} с"},"noHelp":{"tr":" · yardımsız","en":" · no boosts","es":" · sin ayudas","pt":" · sem ajuda","de":" · ohne Hilfe","fr":" · sans aide","id":" · tanpa bantuan","ru":" · без бонусов"},"gift":{"tr":" Her 5 durakta bir hediye: +1 Durak, +1 Vinç.","en":" Gift every 5 stops: +1 Bay, +1 Crane.","es":" Regalo cada 5 paradas: +1 Lugar, +1 Grúa.","pt":" Presente a cada 5 paradas: +1 Vaga, +1 Guindaste.","de":" Geschenk alle 5 Haltestellen: +1 Platz, +1 Kran.","fr":" Cadeau tous les 5 arrêts : +1 Place, +1 Grue.","id":" Hadiah tiap 5 halte: +1 Tempat, +1 Derek.","ru":" Подарок каждые 5 остановок: +1 место, +1 кран."},"nextBtn":{"tr":"Sonraki durak","en":"Next stop","es":"Siguiente parada","pt":"Próxima parada","de":"Nächste Haltestelle","fr":"Arrêt suivant","id":"Halte berikutnya","ru":"Следующая остановка"},"loseKick":{"tr":"Durak tıkandı","en":"Stop jammed","es":"Parada atascada","pt":"Parada travada","de":"Haltestelle verstopft","fr":"Arrêt bloqué","id":"Halte macet","ru":"Остановка забита"},"loseTitle":{"tr":"Sıradaki yolcu bekliyor","en":"The next passenger is waiting","es":"El siguiente pasajero espera","pt":"O próximo passageiro está esperando","de":"Der nächste Fahrgast wartet","fr":"Le prochain passager attend","id":"Penumpang berikutnya menunggu","ru":"Следующий пассажир ждёт"},"loseText":{"tr":"{a} / {b} yolcu bindi. Ceplerin hepsi dolu ve öndeki {color} yolcuya uygun yer yok.","en":"{a} / {b} passengers boarded. All bays are full and there's no room for the next passenger ({color}).","es":"{a} / {b} pasajeros a bordo. Todos los lugares están llenos y no hay sitio para el siguiente pasajero ({color}).","pt":"{a} / {b} passageiros embarcaram. Todas as vagas estão ocupadas e não há lugar para o próximo passageiro ({color}).","de":"{a} / {b} Fahrgäste eingestiegen. Alle Plätze sind belegt und für den nächsten Fahrgast ({color}) ist nichts frei.","fr":"{a} / {b} passagers à bord. Toutes les places sont prises et rien ne convient au prochain passager ({color}).","id":"{a} / {b} penumpang naik. Semua tempat penuh dan tak ada ruang untuk penumpang berikutnya ({color}).","ru":"Пассажиров в салоне: {a} / {b}. Все места заняты, а следующему пассажиру ({color}) некуда сесть."},"useCont":{"tr":"Durak hakkını kullan ({n})","en":"Use extra bay ({n})","es":"Usar lugar extra ({n})","pt":"Usar vaga extra ({n})","de":"Extra-Platz nutzen ({n})","fr":"Utiliser une place bonus ({n})","id":"Pakai tempat tambahan ({n})","ru":"Взять доп. место ({n})"},"adCont":{"tr":"Reklam izle, +1 cep ile devam et","en":"Watch an ad, continue with +1 bay","es":"Mira un anuncio y sigue con +1 lugar","pt":"Veja um anúncio e continue com +1 vaga","de":"Werbung ansehen, mit +1 Platz weiter","fr":"Regarde une pub, continue avec +1 place","id":"Tonton iklan, lanjut dengan +1 tempat","ru":"Смотреть рекламу, +1 место"},"retry":{"tr":"Baştan dene","en":"Try again","es":"Intentar de nuevo","pt":"Tentar de novo","de":"Nochmal versuchen","fr":"Réessayer","id":"Coba lagi","ru":"Заново"},"adBonusTitle":{"tr":"Durak bonusu","en":"Stop bonus","es":"Bono de parada","pt":"Bônus da parada","de":"Haltestellen-Bonus","fr":"Bonus d'arrêt","id":"Bonus halte","ru":"Бонус остановки"},"plusCrane":{"tr":"+1 Vinç","en":"+1 Crane","es":"+1 Grúa","pt":"+1 Guindaste","de":"+1 Kran","fr":"+1 Grue","id":"+1 Derek","ru":"+1 кран"},"bonusToast":{"tr":"Bonus: +1 Vinç","en":"Bonus: +1 Crane","es":"Bono: +1 Grúa","pt":"Bônus: +1 Guindaste","de":"Bonus: +1 Kran","fr":"Bonus : +1 Grue","id":"Bonus: +1 Derek","ru":"Бонус: +1 кран"},"adRevive":{"tr":"Reklam bitince durağa yeni bir cep eklenecek.","en":"After the ad, a new bay will be added to the stop.","es":"Al terminar el anuncio, se añadirá un lugar nuevo a la parada.","pt":"Ao fim do anúncio, uma nova vaga será adicionada à parada.","de":"Nach der Werbung bekommt die Haltestelle einen neuen Platz.","fr":"Après la pub, une nouvelle place sera ajoutée à l'arrêt.","id":"Setelah iklan, halte dapat satu tempat baru.","ru":"После рекламы на остановке появится новое место."},"sign":{"tr":"DOLMUŞ DURAĞI · {n} CEP","en":"DOLMUS STOP · {n} BAYS","es":"DOLMUS STOP · {n} LUGARES","pt":"DOLMUS STOP · {n} VAGAS","de":"DOLMUS STOP · {n} PLÄTZE","fr":"DOLMUS STOP · {n} PLACES","id":"DOLMUS STOP · {n} TEMPAT","ru":"DOLMUS STOP · {n} МЕСТ"},"introKick":{"tr":"Bir İstanbul bulmacası","en":"An Istanbul puzzle","es":"Un rompecabezas de Estambul","pt":"Um quebra-cabeça de Istambul","de":"Ein Istanbul-Rätsel","fr":"Un puzzle d'Istanbul","id":"Teka-teki dari Istanbul","ru":"Головоломка из Стамбула"},"rule1":{"tr":"Otoparktaki bir dolmuşa dokun. Tavandaki ok yönünde önü açıksa çıkar ve durağa yanaşır.","en":"Tap a dolmus (shared minibus) in the lot. If the way is clear in the direction of its roof arrow, it drives out and pulls into the stop.","es":"Toca un dolmus (minibús compartido) en el estacionamiento. Si el camino está libre hacia donde apunta la flecha del techo, sale y llega a la parada.","pt":"Toque num dolmus (van compartilhada) no estacionamento. Se o caminho estiver livre na direção da seta do teto, ela sai e encosta na parada.","de":"Tippe auf einen Dolmus (Sammel-Minibus) auf dem Parkplatz. Ist der Weg in Richtung des Dachpfeils frei, fährt er raus und hält an der Haltestelle.","fr":"Touche un dolmus (minibus partagé) sur le parking. Si la voie est libre dans le sens de la flèche sur le toit, il sort et se gare à l'arrêt.","id":"Ketuk dolmus (minibus angkutan bersama) di parkiran. Jika jalan searah panah di atapnya kosong, ia keluar dan merapat ke halte.","ru":"Нажми на долмуш (маршрутку) на стоянке. Если путь по стрелке на крыше свободен, она выедет и встанет к остановке."},"rule2":{"tr":"Kuyruktaki yolcular kendi renklerindeki dolmuşa biner.","en":"Passengers in line board the minibus of their own color.","es":"Los pasajeros de la fila suben al minibús de su color.","pt":"Os passageiros da fila embarcam na van da sua cor.","de":"Wartende Fahrgäste steigen in den Minibus ihrer Farbe.","fr":"Les passagers de la file montent dans le minibus de leur couleur.","id":"Penumpang di antrean naik minibus yang warnanya sama.","ru":"Пассажиры из очереди садятся в маршрутку своего цвета."},"rule3":{"tr":"Dolmuş dolmadan kalkmaz. Cepler dolar ve öndeki yolcuya yer kalmazsa durak tıkanır.","en":"A minibus won't leave until it's full. If all bays fill up and the next passenger has no seat, the stop jams.","es":"El minibús no sale hasta llenarse. Si todos los lugares se ocupan y el siguiente pasajero no tiene sitio, la parada se atasca.","pt":"A van só sai quando lota. Se as vagas encherem e o próximo passageiro não tiver lugar, a parada trava.","de":"Ein Minibus fährt erst voll los. Sind alle Plätze belegt und der nächste Fahrgast findet keinen Sitz, ist die Haltestelle verstopft.","fr":"Un minibus ne part que plein. Si toutes les places sont prises et que le prochain passager n'a pas de siège, l'arrêt est bloqué.","id":"Minibus baru berangkat kalau penuh. Jika semua tempat terisi dan penumpang berikutnya tak dapat kursi, halte macet.","ru":"Маршрутка не уедет, пока не заполнится. Если все места заняты и следующему пассажиру некуда сесть, остановка встанет."},"contBtn":{"tr":"{n}. duraktan devam et","en":"Continue from stop {n}","es":"Seguir desde la parada {n}","pt":"Continuar da parada {n}","de":"Weiter ab Haltestelle {n}","fr":"Reprendre à l'arrêt {n}","id":"Lanjut dari halte {n}","ru":"Продолжить с остановки {n}"},"startBtn":{"tr":"Kontağı çevir","en":"Start the engine","es":"Arranca el motor","pt":"Dar a partida","de":"Motor an!","fr":"Démarre le moteur","id":"Nyalakan mesin","ru":"Заводи мотор"},"langTitle":{"tr":"Dil","en":"Language","es":"Idioma","pt":"Idioma","de":"Sprache","fr":"Langue","id":"Bahasa","ru":"Язык"},"langAria":{"tr":"Dili değiştir","en":"Change language","es":"Cambiar idioma","pt":"Mudar idioma","de":"Sprache ändern","fr":"Changer de langue","id":"Ganti bahasa","ru":"Сменить язык"},"back":{"tr":"Geri","en":"Back","es":"Volver","pt":"Voltar","de":"Zurück","fr":"Retour","id":"Kembali","ru":"Назад"},"col0":{"tr":"sarı","en":"yellow","es":"amarillo","pt":"amarelo","de":"gelb","fr":"jaune","id":"kuning","ru":"жёлтый"},"col1":{"tr":"kırmızı","en":"red","es":"rojo","pt":"vermelho","de":"rot","fr":"rouge","id":"merah","ru":"красный"},"col2":{"tr":"mavi","en":"blue","es":"azul","pt":"azul","de":"blau","fr":"bleu","id":"biru","ru":"синий"},"col3":{"tr":"yeşil","en":"green","es":"verde","pt":"verde","de":"grün","fr":"vert","id":"hijau","ru":"зелёный"},"col4":{"tr":"mor","en":"purple","es":"morado","pt":"roxo","de":"lila","fr":"violet","id":"ungu","ru":"фиолетовый"},"col5":{"tr":"turuncu","en":"orange","es":"naranja","pt":"laranja","de":"orange","fr":"orange","id":"oranye","ru":"оранжевый"},"col6":{"tr":"pembe","en":"pink","es":"rosa","pt":"rosa","de":"rosa","fr":"rose","id":"merah muda","ru":"розовый"},"col7":{"tr":"turkuaz","en":"turquoise","es":"turquesa","pt":"turquesa","de":"türkis","fr":"turquoise","id":"toska","ru":"бирюзовый"}};
+var lang=null;
+try{var s=localStorage.getItem('sg_lang');if(s&&LANGS.indexOf(s)>=0)lang=s}catch(e){}
+if(!lang){var nl=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']);
+  for(var i=0;i<nl.length&&!lang;i++){var p=String(nl[i]||'').toLowerCase().split(/[-_]/)[0];if(p==='in')p='id';if(LANGS.indexOf(p)>=0)lang=p}}
+if(!lang)lang='en';
+window.SG_LANG=lang;window.SG_LANGS=LANGS;window.SG_LANG_NAMES=NAMES;
+document.documentElement.lang=lang;
+window.t=function(k,params){var e=D[k],s=e?(e[lang]!=null?e[lang]:e.en!=null?e.en:e.tr):null;if(s==null)s=k;
+  if(params)s=s.replace(/\{(\w+)\}/g,function(m,n){return params[n]!=null?params[n]:m});return s};
+window.sgSetLang=function(c){try{localStorage.setItem('sg_lang',c)}catch(e){}location.reload()};
+document.title=t('title');
+var q=function(sel,f){Array.prototype.forEach.call(document.querySelectorAll(sel),f)};
+q('[data-i18n]',function(el){el.textContent=t(el.getAttribute('data-i18n'))});
+q('[data-i18n-aria]',function(el){el.setAttribute('aria-label',t(el.getAttribute('data-i18n-aria')))});
+q('[data-i18n-title]',function(el){el.setAttribute('title',t(el.getAttribute('data-i18n-title')))});
+})();
+</script>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+
+/* ---------- kayıt ---------- */
+const KEY='dolmus-duragi-v1';
+let S={level:1,sound:true,durak:1,vinc:1,best:1};
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s)S=Object.assign(S,s)}catch(e){}
+const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+/* ---------- renkler ---------- */
+const COLORS=[
+  {n:'sarı',c:'#f6c531',d:'#b98c0c'},{n:'kırmızı',c:'#ef4f4a',d:'#a8231f'},{n:'mavi',c:'#3f8cf0',d:'#1f56a8'},
+  {n:'yeşil',c:'#42c66b',d:'#22843f'},{n:'mor',c:'#9a63e8',d:'#6233a8'},{n:'turuncu',c:'#ff8f2e',d:'#b8590c'},
+  {n:'pembe',c:'#ff74b5',d:'#b83a77'},{n:'turkuaz',c:'#22c8c0',d:'#118680'}];
+const DIRS=[[0,-1],[1,0],[0,1],[-1,0]];
+const ANG=[-Math.PI/2,0,Math.PI/2,Math.PI];
+
+/* ---------- bölüm üreteci ----------
+   Araçlar sırayla, önleri o anda açıkken yerleştirilir. Ters sırayla çıkarmak her zaman çözümdür.
+   Yolcu kuyruğu bu çözüm sırasından üretilip pencere içinde karıştırılır. */
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function params(n){
+  const cols=Math.min(4+Math.floor((n+2)/4),8), rows=Math.min(5+Math.floor((n+1)/3),11);
+  const target=Math.min(3+Math.round(n*1.05),Math.floor(cols*rows/2.3));
+  const colors=Math.min(2+Math.floor((n+1)/3),n<30?6:8);
+  const maxL=n<3?2:n<12?3:4;
+  const mix=n<3?1:n<8?2:n<20?3:4;
+  return{cols,rows,target,colors,maxL,mix};
+}
+function genLevel(n,k=0){
+  const P=params(n),r=rng(n*7919+k*104729+13),{cols,rows}=P;
+  const occ=new Int16Array(cols*rows).fill(-1),vs=[];
+  const inb=(x,y)=>x>=0&&y>=0&&x<cols&&y<rows;
+  for(let t=0;t<cols*rows*30&&vs.length<P.target;t++){
+    const x0=Math.floor(r()*cols),y0=Math.floor(r()*rows),d=Math.floor(r()*4);
+    let L=2+Math.floor(Math.pow(r(),1.4)*(P.maxL-1));
+    const [dx,dy]=DIRS[d],cells=[];let ok=true;
+    for(let i=0;i<L;i++){const x=x0+dx*i,y=y0+dy*i;if(!inb(x,y)||occ[y*cols+x]!==-1){ok=false;break}cells.push([x,y])}
+    if(!ok)continue;
+    const [hx,hy]=cells[L-1];
+    for(let x=hx+dx,y=hy+dy;inb(x,y);x+=dx,y+=dy)if(occ[y*cols+x]!==-1){ok=false;break}
+    if(!ok)continue;
+    const id=vs.length;vs.push({id,cells,dir:d,L,cap:L*2,color:0});
+    for(const[x,y]of cells)occ[y*cols+x]=id;
+  }
+  // renk: her renk en az bir kez
+  const order=[...Array(vs.length).keys()].sort(()=>r()-.5);
+  order.forEach((id,i)=>vs[id].color=i<P.colors?i%P.colors:Math.floor(r()*P.colors));
+  // kuyruk: çözüm sırası (ters ekleme), pencere içinde karıştır
+  // Çözüm sırasında aynı anda en fazla P.mix dolmuş açık kalır (durakta 5 cep var), yolcular bunlardan karışık gelir.
+  const q=[],ord=[];for(let i=vs.length-1;i>=0;i--)ord.push({c:vs[i].color,left:vs[i].cap});
+  let open=ord.splice(0,P.mix);
+  while(open.length){const o=open[Math.floor(r()*open.length)];q.push(o.c);
+    if(--o.left===0){open=open.filter(x=>x!==o);if(ord.length)open.push(ord.shift())}}
+  return{cols,rows,vs,occ,queue:q};
+}
+
+/* ---------- ses ---------- */
+let AC=null;
+function tone(f,d=.14,type='sine',v=.12,to=0,delay=0){
+  if(!S.sound)return;
+  try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+    const t=AC.currentTime+delay,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t);
+    if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);
+    o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.02)}catch(e){}
+}
+const sfx={
+  go:()=>{tone(220,.12,'square',.05,330);tone(330,.18,'triangle',.07,520,.05)},
+  bump:()=>{tone(130,.2,'square',.06,80)},
+  board:i=>tone(520+(i%6)*60,.06,'triangle',.05),
+  korna:()=>{tone(392,.12,'square',.06);tone(392,.16,'square',.06,0,.16)},
+  full:()=>{tone(440,.14,'square',.05);tone(554,.2,'square',.05,0,.13)},
+  win:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.28,'triangle',.1,0,i*.1)),
+  lose:()=>[330,262,196].forEach((f,i)=>tone(f,.32,'sine',.12,0,i*.15)),
+  no:()=>tone(180,.12,'sine',.08)
+};
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+
+/* ---------- ödüllü reklam köprüsü ----------
+   Mobil paket AdKit.rewarded sağlarsa onu kullanır; tarayıcıda 3 sn'lik deneme ekranı gösterir. */
+function rewarded(label,cb,placement){
+  if(window.AdKit&&typeof window.AdKit.rewarded==='function'){
+    const prev=paused;paused=true;
+    window.AdKit.rewarded(placement||'reward').then(ok=>{paused=prev;if(ok)cb()},()=>{paused=prev});return}
+  const prevPaused=paused;paused=true;let n=3;
+  openCard(`<div class="kick">${t('adKick')}</div><div class="adbox"><div class="cd" id="adN">3</div><p>${label}</p></div>`);
+  const iv=setInterval(()=>{n--;const el=$('adN');if(el)el.textContent=n;if(n<=0){clearInterval(iv);closeCard();paused=prevPaused;cb()}},1000);
+}
+
+/* ---------- oyun durumu ---------- */
+let G=null,paused=false;
+function start(n){
+  n=Math.max(1,n);
+  let lv=genLevel(n);
+  for(let k=1;k<6&&lv.vs.length<params(n).target*.8;k++)lv=genLevel(n,k);
+  const veh=lv.vs.map(v=>({...v,state:'park',bay:-1,seats:0,incoming:0,off:0,t:0,flash:0,px:0,py:0,ang:ANG[v.dir]}));
+  G={n,cols:lv.cols,rows:lv.rows,occ:lv.occ,veh,queue:lv.queue,total:lv.queue.length,
+     bays:5,bayVeh:[],fly:[],boardT:0,crane:false,done:false,shake:0,boarded:0,usedBoost:false,continued:false,t0:performance.now(),walk:0};
+  G.bayVeh=Array(G.bays).fill(-1);
+  S.level=n;persist();
+  $('lvlN').textContent=n;setCrane(false);updHud();closeCard();layout();
+  if(n===1)toast(t('tut1'),4200);
+  else if(n===3)toast(t('tut3'),3800);
+  else if(n===6)toast(t('tut6'),3800);
+}
+const freeBay=()=>G.bayVeh.indexOf(-1);
+
+function rayInfo(v){
+  const[hx,hy]=v.cells[v.cells.length-1],[dx,dy]=DIRS[v.dir];let x=hx+dx,y=hy+dy,free=0;
+  while(x>=0&&y>=0&&x<G.cols&&y<G.rows){const o=G.occ[y*G.cols+x];if(o!==-1)return{free,blocker:o};free++;x+=dx;y+=dy}
+  return{free,blocker:-1};
+}
+function tap(v){
+  if(G.done||paused||v.state!=='park')return;
+  const b=freeBay();
+  if(b<0){toast(t('stopFull'));sfx.no();buzz(20);return}
+  const ri=rayInfo(v);
+  if(ri.blocker!==-1&&!G.crane){
+    v.state='bump';v.t=0;v.bumpTo=ri.free+.28;G.veh[ri.blocker].flash=1;v.flash=1;sfx.bump();buzz([20,30,20]);return;
+  }
+  for(const[x,y]of v.cells)G.occ[y*G.cols+x]=-1;
+  v.bay=b;G.bayVeh[b]=v.id;
+  if(G.crane&&ri.blocker!==-1){
+    S.vinc--;persist();G.usedBoost=true;setCrane(false);updHud();
+    const c=cellCenter(v);v.sx=c.x;v.sy=c.y;v.sa=v.ang;v.state='lift';v.t=0;tone(300,.4,'sawtooth',.04,600);
+  }else{
+    if(G.crane)setCrane(false);
+    v.state='exit';v.off=0;v.dist=ri.free+v.L/2+.9;v.spd=0;sfx.go();buzz(8);
+  }
+}
+
+/* ---------- güçlendiriciler ---------- */
+function setCrane(on){G&&(G.crane=on);$('bVinc').setAttribute('aria-pressed',on?'true':'false')}
+$('bVinc').onclick=()=>{
+  if(!G||G.done)return;
+  if(G.crane){setCrane(false);return}
+  if(S.vinc<=0){rewarded(t('adCrane'),()=>{S.vinc++;persist();updHud();toast(t('craneReady'))},'boost');return}
+  setCrane(true);toast(t('craneOn'));
+};
+$('bDurak').onclick=()=>{
+  if(!G||G.done)return;
+  if(G.bays>=7){toast(t('maxBays'));return}
+  if(S.durak<=0){rewarded(t('adBay'),()=>{S.durak++;persist();updHud();toast(t('bayAdded'))},'boost');return}
+  S.durak--;persist();addBay();G.usedBoost=true;updHud();toast(t('newBay'));
+};
+function addBay(){G.bays++;G.bayVeh.push(-1);layout()}
+
+/* ---------- güncelleme ---------- */
+function update(dt){
+  if(!G||paused)return;
+  G.walk+=dt;
+  for(const v of G.veh){
+    v.flash=Math.max(0,v.flash-dt*2.5);
+    if(v.state==='bump'){v.t+=dt;const T=.32,p=v.t/T;v.off=v.bumpTo*(p<.5?Math.sin(p*Math.PI):Math.sin(p*Math.PI));if(v.t>=T){v.off=0;v.state='park'}}
+    else if(v.state==='exit'){v.spd=Math.min(v.spd+dt*60,16);v.off+=v.spd*dt;
+      if(v.off>=v.dist){const c=cellCenter(v);v.sx=c.x+DIRS[v.dir][0]*v.off*cs;v.sy=c.y+DIRS[v.dir][1]*v.off*cs;v.sa=v.ang;v.state='travel';v.t=0}}
+    else if(v.state==='lift'){v.t+=dt;if(v.t>=.45){v.state='travel';v.t=0;v.sx=v.px;v.sy=v.py;v.sa=v.ang}}
+    else if(v.state==='travel'){v.t+=dt;if(v.t>=.42){v.state='bay';v.ang=-Math.PI/2;tone(660,.05,'triangle',.05)}}
+    else if(v.state==='bay'&&v.seats>=v.cap&&!v.incoming){v.state='full';v.t=0;sfx.full()}
+    else if(v.state==='full'){v.t+=dt;if(v.t>.2){v.state='depart';v.t=0;G.bayVeh[v.bay]=-1;v.bay0=v.bay;v.bay=-1}}
+    else if(v.state==='depart'){v.t+=dt;if(v.t>=.6)v.state='gone'}
+  }
+  // yolcu uçuşları
+  for(const f of G.fly){f.t+=dt/.2;if(f.t>=1&&!f.done){f.done=true;const v=G.veh[f.v];v.seats++;v.incoming--;}}
+  G.fly=G.fly.filter(f=>!f.done);
+  // binme
+  G.boardT-=dt;
+  while(G.boardT<=0&&G.queue.length){
+    const c=G.queue[0];let best=null;
+    for(const id of G.bayVeh){if(id<0)continue;const v=G.veh[id];
+      if(v.state==='bay'&&v.color===c&&v.seats+v.incoming<v.cap&&(!best||v.seats+v.incoming>best.seats+best.incoming))best=v}
+    if(!best)break;
+    G.queue.shift();best.incoming++;G.boarded++;
+    G.fly.push({v:best.id,c,t:0,fx:qFront.x,fy:qFront.y});
+    sfx.board(G.boarded);G.boardT+=.075;updHud();
+  }
+  if(G.boardT<0)G.boardT=0;
+  G.shake=Math.max(0,G.shake-dt*3);
+  checkEnd();
+}
+function checkEnd(){
+  if(G.done)return;
+  const alive=G.veh.filter(v=>v.state!=='gone');
+  if(!G.queue.length&&!alive.length&&!G.fly.length){win();return}
+  if(!G.queue.length)return;
+  const busy=G.fly.length||G.veh.some(v=>['exit','lift','travel','full','bump'].includes(v.state));
+  if(busy)return;
+  if(freeBay()>=0)return;
+  const c=G.queue[0];
+  if(G.bayVeh.some(id=>{const v=G.veh[id];return v.color===c&&v.seats+v.incoming<v.cap}))return;
+  lose();
+}
+
+/* ---------- bitiş ---------- */
+function win(){
+  G.done=true;sfx.win();buzz([20,40,20]);
+  const next=G.n+1;S.level=next;S.best=Math.max(S.best||1,next);
+  const gift=G.n%5===0;if(gift){S.durak++;S.vinc++}
+  persist();updHud();
+  const secs=Math.round((performance.now()-G.t0)/1000);
+  setTimeout(()=>openCard(`<div class="kick">${t('winKick',{n:G.n})}</div><h2>${t('winTitle')}</h2>
+    <p>${t('winStats',{p:G.total,v:G.veh.length,s:secs})}${G.usedBoost?'':t('noHelp')}.${gift?t('gift'):''}</p>
+    <button class="btn y" data-a="next">${t('nextBtn')}</button>`),500);
+}
+function lose(){
+  G.done=true;sfx.lose();buzz([40,60,40]);G.shake=1;
+  setTimeout(()=>openCard(`<div class="kick">${t('loseKick')}</div><h2>${t('loseTitle')}</h2>
+    <p>${t('loseText',{a:G.total-G.queue.length,b:G.total,color:t('col'+G.queue[0])})}</p>
+    ${S.durak>0&&G.bays<7?`<button class="btn y" data-a="usecont">${t('useCont',{n:S.durak})}</button>`:''}
+    ${G.bays<7?'<button class="btn g" data-a="adcont">'+t('adCont')+'</button>':''}
+    <button class="btn" data-a="retry">${t('retry')}</button>`),450);
+}
+
+/* ---------- arayüz ---------- */
+let toastT=0;
+function toast(t,ms=2600){const el=$('toast');el.textContent=t;el.style.opacity=1;clearTimeout(toastT);toastT=setTimeout(()=>el.style.opacity=0,ms)}
+function openCard(h){$('card').innerHTML=h;$('ov').hidden=false;const b=$('card').querySelector('button');b&&b.focus({preventScroll:true})}
+function closeCard(){$('ov').hidden=true}
+function updHud(){
+  $('left').textContent=G?G.queue.length:0;
+  const nd=$('nDurak'),nv=$('nVinc');
+  nd.textContent=S.durak>0?S.durak:'+';nd.className='n'+(S.durak>0?'':' ad');
+  nv.textContent=S.vinc>0?S.vinc:'+';nv.className='n'+(S.vinc>0?'':' ad');
+}
+const SND_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+const SND_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+const sndIcon=()=>$('sndBtn').innerHTML=S.sound?SND_ON:SND_OFF;sndIcon();
+$('sndBtn').onclick=()=>{S.sound=!S.sound;persist();sndIcon()};
+$('rstBtn').onclick=()=>G&&start(G.n);
+$('card').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const a=b.dataset.a;
+  if(a==='next'){
+    if(window.AdKit&&window.AdKit.levelDone){closeCard();paused=true;
+      window.AdKit.levelDone({title:t('adBonusTitle'),reward:t('plusCrane')}).then(ok=>{paused=false;start(S.level);if(ok){S.vinc++;persist();updHud();toast(t('bonusToast'))}})}
+    else start(S.level);
+  }
+  else if(a==='retry')start(G.n);
+  else if(a==='play'){closeCard();paused=false;sfx.korna()}
+  else if(a==='lang')showLangs();
+  else if(a==='intro')showIntro();
+  else if(a==='setlang'){persist();if(b.dataset.l===window.SG_LANG)showIntro();else window.sgSetLang(b.dataset.l)}
+  else if(a==='usecont'){S.durak--;persist();G.done=false;G.usedBoost=true;addBay();updHud();closeCard();toast(t('newBayGo'))}
+  else if(a==='adcont'){
+    rewarded(t('adRevive'),()=>{G.done=false;G.continued=true;addBay();closeCard();toast(t('newBayGo'))},'revive');
+}
+});
+
+/* ---------- yerleşim ---------- */
+const cv=$('c'),ctx=cv.getContext('2d');
+let W=1,H=1,DPR=1,cs=40,lot={x:0,y:0,w:0,h:0},bayY=0,bayW=60,bayVW=30,qY=0,qFront={x:0,y:0},sT=0,sB=0;
+function layout(){
+  DPR=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+  const pc=getComputedStyle($('probe'));sT=parseFloat(pc.paddingTop)||0;sB=parseFloat(pc.paddingBottom)||0;
+  if(!G)return;
+  const top=sT+64,bottom=H-sB-74;
+  const maxW=Math.min(W-32,560);
+  qY=top+22;
+  bayW=Math.min(maxW/G.bays,78);bayVW=Math.min(bayW*.62,34);
+  const bayH=bayVW*.95*4+18;
+  bayY=qY+40;
+  const lotTop=bayY+bayH+26,availH=bottom-lotTop-14;
+  cs=Math.max(18,Math.min((maxW-16)/G.cols,availH/G.rows,62));
+  lot.w=cs*G.cols;lot.h=cs*G.rows;lot.x=(W-lot.w)/2;lot.y=lotTop+Math.max(0,(availH-lot.h)/2);
+  qFront={x:W/2+Math.min(maxW,bayW*G.bays)/2-10,y:qY};
+}
+addEventListener('resize',layout);
+const bayX=i=>W/2-(bayW*G.bays)/2+bayW*(i+.5);
+const bayCY=v=>bayY+8+bayVW*.95*v.L/2;
+function cellCenter(v){let x=0,y=0;for(const[cx,cy]of v.cells){x+=cx;y+=cy}x/=v.cells.length;y/=v.cells.length;return{x:lot.x+(x+.5)*cs,y:lot.y+(y+.5)*cs}}
+
+/* ---------- çizim ---------- */
+function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,h,r):ctx.rect(x,y,w,h)}
+function drawVeh(x,y,ang,len,wid,col,o){
+  ctx.save();ctx.translate(x,y);ctx.rotate(ang);
+  const C=COLORS[col];
+  ctx.fillStyle='rgba(0,0,0,.35)';rr(-len/2+2,-wid/2+4,len,wid,wid*.28);ctx.fill();
+  ctx.fillStyle='#111';const ww=len*.16,wh=wid*.14;
+  for(const sx of[-len/2+len*.14,len/2-len*.3])for(const sy of[-wid/2-wh*.5,wid/2-wh*.5]){rr(sx,sy,ww,wh,2);ctx.fill()}
+  ctx.fillStyle=C.d;rr(-len/2,-wid/2,len,wid,wid*.28);ctx.fill();
+  ctx.fillStyle=C.c;rr(-len/2+1.5,-wid/2+1.5,len-3,wid-4,wid*.24);ctx.fill();
+  // ön cam
+  ctx.fillStyle='#1d3440';rr(len/2-wid*.42,-wid/2+wid*.14,wid*.26,wid*.72,wid*.08);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.25)';ctx.fillRect(len/2-wid*.38,-wid/2+wid*.2,wid*.05,wid*.3);
+  // yan pencereler / koltuklar
+  if(o.seats!=null){
+    const n=o.cap/2,sp=(len-wid*.75)/n;
+    for(let i=0;i<o.cap;i++){const col_=Math.floor(i/2),side=i%2;
+      const px=-len/2+wid*.2+sp*(col_+.5),py=(side?1:-1)*wid*.22;
+      ctx.fillStyle=i<o.seats?'#fff':'rgba(0,0,0,.28)';ctx.beginPath();ctx.arc(px,py,Math.max(2,wid*.12),0,7);ctx.fill()}
+  }else{
+    // tavan: yön oku
+    ctx.strokeStyle='rgba(255,255,255,.92)';ctx.lineWidth=Math.max(2,wid*.12);ctx.lineCap='round';ctx.lineJoin='round';
+    const ax=-len/2+wid*.35,bx=len/2-wid*.62,h=wid*.2;
+    ctx.beginPath();ctx.moveTo(ax,0);ctx.lineTo(bx,0);ctx.moveTo(bx-h*1.2,-h*1.2);ctx.lineTo(bx,0);ctx.lineTo(bx-h*1.2,h*1.2);ctx.stroke();
+  }
+  // tavan levhası (dolmuş ışığı)
+  if(len>wid*1.6){ctx.fillStyle='#f4f1e8';rr(-wid*.18-len*.12,-wid*.5+1,wid*.36,3,1);ctx.fill()}
+  if(o.flash>0){ctx.fillStyle=`rgba(255,80,70,${o.flash*.6})`;rr(-len/2,-wid/2,len,wid,wid*.28);ctx.fill()}
+  if(o.hi){ctx.strokeStyle='#f2c230';ctx.lineWidth=2;ctx.setLineDash([4,3]);rr(-len/2-3,-wid/2-3,len+6,wid+6,wid*.3);ctx.stroke();ctx.setLineDash([])}
+  ctx.restore();
+}
+function drawPerson(x,y,r,col,bob){
+  const C=COLORS[col];y+=bob;
+  ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(x,y+r*1.5,r*.9,r*.35,0,0,7);ctx.fill();
+  ctx.fillStyle=C.d;rr(x-r*.85,y-r*.1,r*1.7,r*1.55,r*.6);ctx.fill();
+  ctx.fillStyle=C.c;rr(x-r*.75,y-r*.05,r*1.5,r*1.4,r*.55);ctx.fill();
+  ctx.fillStyle='#f3d3b4';ctx.beginPath();ctx.arc(x,y-r*.55,r*.55,0,7);ctx.fill();
+}
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+function draw(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.fillStyle='#14303a';ctx.fillRect(0,0,W,H);
+  if(!G)return;
+  const sh=G.shake*6;ctx.save();if(sh)ctx.translate((Math.random()-.5)*sh,(Math.random()-.5)*sh);
+  // yol halkası
+  const pad=Math.max(10,cs*.32);
+  ctx.fillStyle='#1d2a30';rr(lot.x-pad,lot.y-pad,lot.w+pad*2,lot.h+pad*2,pad*1.2);ctx.fill();
+  ctx.strokeStyle='rgba(242,194,48,.55)';ctx.lineWidth=2;ctx.setLineDash([10,9]);rr(lot.x-pad/2,lot.y-pad/2,lot.w+pad,lot.h+pad,pad);ctx.stroke();ctx.setLineDash([]);
+  // otopark
+  ctx.fillStyle='#26333a';rr(lot.x,lot.y,lot.w,lot.h,6);ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=1;
+  for(let i=1;i<G.cols;i++){ctx.beginPath();ctx.moveTo(lot.x+i*cs,lot.y+4);ctx.lineTo(lot.x+i*cs,lot.y+lot.h-4);ctx.stroke()}
+  for(let j=1;j<G.rows;j++){ctx.beginPath();ctx.moveTo(lot.x+4,lot.y+j*cs);ctx.lineTo(lot.x+lot.w-4,lot.y+j*cs);ctx.stroke()}
+  // durak kaldırımı
+  const bw=bayW*G.bays,bx0=W/2-bw/2,bayH=bayVW*.95*4+18;
+  ctx.fillStyle='#3d5a63';rr(bx0-8,bayY-6,bw+16,bayH+10,14);ctx.fill();
+  for(let i=0;i<G.bays;i++){
+    const x=bayX(i);ctx.fillStyle=G.bayVeh[i]<0?'rgba(0,0,0,.22)':'rgba(0,0,0,.12)';rr(x-bayW/2+4,bayY,bayW-8,bayH-2,10);ctx.fill();
+    ctx.strokeStyle='rgba(242,194,48,.45)';ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(x-bayW/2+8,bayY+bayH-8);ctx.lineTo(x+bayW/2-8,bayY+bayH-8);ctx.stroke();ctx.setLineDash([]);
+  }
+  // durak tabelası
+  ctx.font=`900 10px ${getComputedStyle(document.body).fontFamily}`;ctx.fillStyle='#9fb7bd';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText(t('sign',{n:G.bays}),bx0,bayY-13);
+  // park halindeki araçlar
+  for(const v of G.veh){
+    if(!['park','bump','exit'].includes(v.state))continue;
+    const c=cellCenter(v),off=v.off||0;
+    v.px=c.x+DIRS[v.dir][0]*off*cs;v.py=c.y+DIRS[v.dir][1]*off*cs;
+    drawVeh(v.px,v.py,v.ang,v.L*cs-cs*.16,cs*.74,v.color,{flash:v.flash,hi:G.crane&&v.state==='park'});
+  }
+  // vinç, yolculuk, durak
+  for(const v of G.veh){
+    const len=bayVW*.95*v.L-4,wid=bayVW;
+    if(v.state==='lift'){
+      const p=ease(Math.min(1,v.t/.45)),c=cellCenter(v);v.px=c.x;v.py=c.y-p*cs*.6;
+      const k=1+p*.15;ctx.save();ctx.globalAlpha=1;
+      drawVeh(v.px,v.py,v.ang,(v.L*cs-cs*.16)*k,cs*.74*k,v.color,{});
+      ctx.strokeStyle='#f2c230';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(v.px,v.py);ctx.lineTo(v.px,0);ctx.stroke();ctx.restore();
+    }else if(v.state==='travel'){
+      const p=ease(Math.min(1,v.t/.42)),tx=bayX(v.bay),ty=bayCY(v);
+      const mx=(v.sx+tx)/2,my=Math.min(v.sy,ty)-30;
+      const x=(1-p)*(1-p)*v.sx+2*(1-p)*p*mx+p*p*tx,y=(1-p)*(1-p)*v.sy+2*(1-p)*p*my+p*p*ty;
+      let da=-Math.PI/2-v.sa;da=Math.atan2(Math.sin(da),Math.cos(da));
+      const s0=v.L*cs-cs*.16,w0=cs*.74;
+      drawVeh(x,y,v.sa+da*p,s0+(len-s0)*p,w0+(wid-w0)*p,v.color,{});
+    }else if(v.state==='bay'||v.state==='full'){
+      const b=v.state==='full'?Math.sin(v.t*60)*1.2:0;
+      drawVeh(bayX(v.bay)+b,bayCY(v),-Math.PI/2,len,wid,v.color,{seats:v.seats,cap:v.cap});
+    }else if(v.state==='depart'){
+      const p=Math.min(1,v.t/.6),e=p*p;
+      drawVeh(bayX(v.bay0),bayCY(v)-e*(bayY+200),-Math.PI/2,len,wid,v.color,{seats:v.cap,cap:v.cap});
+    }
+  }
+  // kuyruk
+  const pr=Math.min(9,bayVW*.3),gap=pr*2.3,maxN=Math.max(4,Math.floor((qFront.x-(W/2-bw/2)-40)/gap));
+  const qs=G.queue.slice(0,maxN);
+  for(let i=qs.length-1;i>=0;i--){
+    const bob=Math.abs(Math.sin(G.walk*6+i*.9))*-1.5;
+    drawPerson(qFront.x-i*gap,qY,pr,qs[i],i===0?0:bob);
+  }
+  if(G.queue.length>maxN){ctx.fillStyle='#9fb7bd';ctx.textAlign='right';ctx.font=`900 13px ${getComputedStyle(document.body).fontFamily}`;
+    ctx.fillText('+'+(G.queue.length-maxN),qFront.x-maxN*gap+pr,qY)}
+  for(const f of G.fly){
+    const v=G.veh[f.v];if(v.bay<0)continue;const p=ease(Math.min(1,f.t)),tx=bayX(v.bay),ty=bayCY(v);
+    drawPerson(f.fx+(tx-f.fx)*p,f.fy+(ty-f.fy)*p-Math.sin(p*Math.PI)*24,pr*(1-p*.4),f.c,0);
+  }
+  ctx.restore();
+}
+
+/* ---------- girdi ---------- */
+cv.addEventListener('pointerdown',e=>{
+  if(!G||G.done||paused||!$('ov').hidden)return;
+  const x=e.clientX,y=e.clientY,cx=Math.floor((x-lot.x)/cs),cy=Math.floor((y-lot.y)/cs);
+  if(cx<0||cy<0||cx>=G.cols||cy>=G.rows)return;
+  const id=G.occ[cy*G.cols+cx];if(id>=0)tap(G.veh[id]);
+});
+
+/* ---------- döngü ---------- */
+let last=performance.now();
+function frame(t){const dt=Math.min(.05,(t-last)/1000);last=t;update(dt);draw();requestAnimationFrame(frame)}
+
+if(location.hash==='#demo')window.__dd={get G(){return G},tap,rayInfo,cellCenter};
+layout();
+start(S.level||1);
+paused=true;
+function showIntro(){openCard(`<div class="kick">${t('introKick')}</div><h1>${t('title')}</h1>
+  <div class="rules">
+    <div><b>1</b><span>${t('rule1')}</span></div>
+    <div><b>2</b><span>${t('rule2')}</span></div>
+    <div><b>3</b><span>${t('rule3')}</span></div>
+  </div>
+  <button class="btn y" data-a="play">${(S.level||1)>1?t('contBtn',{n:S.level}):t('startBtn')}</button>
+  <button class="lngb" data-a="lang" aria-label="${t('langAria')}">🌐 ${window.SG_LANG_NAMES[window.SG_LANG]}</button>`)}
+function showLangs(){openCard(`<h2>🌐 ${t('langTitle')}</h2><div class="lnglist">${window.SG_LANGS.map(c=>`<button class="btn${c===window.SG_LANG?' on':''}" data-a="setlang" data-l="${c}" lang="${c}">${window.SG_LANG_NAMES[c]}</button>`).join('')}</div>
+  <button class="btn" data-a="intro">${t('back')}</button>`)}
+showIntro();
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>
