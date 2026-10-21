@@ -1,0 +1,886 @@
+<!doctype html><html><head>
+<script>window.ADKIT_CONFIG={};</script>
+<script src="../../adkit-web.js" data-pkg="com.sampagames.dugumustasi"></script>
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Knot Master: Untangle Puzzle – Play Free Online | Sampa Games</title>
+<meta name="description" content="Drag the pins and untangle the ropes. A calm puzzle you can&#x27;t put down. Play free in your browser, then get it on Google Play.">
+<link rel="canonical" href="https://sampagames.github.io/g/dugum-ustasi/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;700;800;900&display=swap">
+<style>
+/* Layout: tam ekran tuval (gece mavisi keçe) + üstte HUD, altta araç çubuğu; menüler tuvalin üstünde kayan paneller. Tek, koyu oyun dünyası. */
+:root{
+  --bg:#111a33; --felt:#1b2750; --panel:#1f2b57; --panel-2:#283668;
+  --ink:#f6efe2; --muted:#a3add0; --brass:#f0b95a; --brass-dk:#b9822d;
+  --coral:#ff6a5c; --mint:#5fe3b2; --line:rgba(246,239,226,.12);
+  --f-display:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%;background:var(--bg);color:var(--ink);overflow:hidden}
+body{font-family:var(--f-body);-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+#app{position:fixed;inset:0;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+#cv{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button:focus-visible{outline:3px solid var(--brass);outline-offset:3px}
+.ico{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none}
+
+/* HUD */
+#hud{position:absolute;top:env(safe-area-inset-top,0px);left:0;right:0;padding:10px 16px 0;display:flex;align-items:center;gap:10px;z-index:5}
+#hud .mid{flex:1;min-width:0;text-align:center}
+#hud .lvl{font-family:var(--f-display);font-size:22px;letter-spacing:.5px;line-height:1}
+#crossPill{display:inline-flex;align-items:center;gap:6px;margin-top:5px;font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--coral);font-variant-numeric:tabular-nums}
+#crossPill.ok{color:var(--mint)}
+#prog{height:4px;border-radius:4px;background:var(--line);margin:8px 16px 0;overflow:hidden;position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:5}
+#prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--coral),var(--brass),var(--mint));transition:width .25s}
+.iconbtn{width:44px;height:44px;border-radius:14px;background:var(--panel);display:grid;place-items:center;box-shadow:0 3px 0 #0b1128;flex:none}
+.iconbtn svg{width:22px;height:22px}
+.coins{display:inline-flex;align-items:center;gap:6px;background:var(--panel);padding:8px 12px;border-radius:999px;font-weight:900;font-variant-numeric:tabular-nums;box-shadow:0 3px 0 #0b1128}
+.coins.bump{animation:bump .4s}
+@keyframes bump{40%{transform:scale(1.18)}}
+
+#tools{position:absolute;left:0;right:0;bottom:env(safe-area-inset-bottom,0px);padding:0 16px 14px;display:flex;justify-content:center;gap:14px;z-index:5}
+.tool{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);position:relative}
+.tool .iconbtn{width:56px;height:56px;border-radius:18px}
+.tool .badge{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--brass);color:#2a1a05;font-size:12px;display:grid;place-items:center}
+.tool:disabled{opacity:.4}
+
+/* Screens */
+.screen{position:absolute;inset:0;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 20px);overflow-y:auto;z-index:6;display:flex;flex-direction:column;gap:16px}
+.screen.dim{background:rgba(13,19,40,.86);backdrop-filter:blur(4px)}
+.topbar{display:flex;align-items:center;gap:10px}
+.topbar h2{flex:1;font-family:var(--f-display);font-size:26px;font-weight:400;margin:0}
+.wrap{max-width:440px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+
+#home{justify-content:space-between}
+.logo{text-align:center;margin-top:8vh}
+.logo h1{font-family:var(--f-display);font-weight:400;font-size:clamp(48px,15vw,72px);line-height:.9;margin:0;color:var(--ink);text-shadow:0 4px 0 #0b1128,0 0 30px rgba(240,185,90,.35)}
+.logo h1 span{color:var(--brass);display:block}
+.logo p{color:var(--muted);font-weight:700;margin:14px auto 0;max-width:28ch}
+.streak{display:inline-flex;gap:8px;align-items:center;margin-top:14px;padding:6px 12px;border-radius:999px;background:rgba(240,185,90,.12);color:var(--brass);font-weight:800;font-size:13px}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:15px 18px;border-radius:18px;font-weight:900;font-size:17px;background:var(--panel-2);box-shadow:0 4px 0 #0b1128;transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #0b1128}
+.btn.primary{background:var(--brass);color:#2a1a05;box-shadow:0 5px 0 var(--brass-dk)}
+.btn.primary:active{box-shadow:0 2px 0 var(--brass-dk)}
+.btn.big{font-family:var(--f-display);font-weight:400;font-size:28px;padding:16px;flex-direction:column;gap:0;letter-spacing:.5px}
+.btn.big small{font-family:var(--f-body);font-size:13px;font-weight:800;opacity:.75}
+.btn.ad{background:linear-gradient(180deg,#2f8f74,#23725c);box-shadow:0 4px 0 #154937;color:#eafff6}
+.btn:disabled{opacity:.45;filter:grayscale(.6)}
+.tag{font-size:10px;font-weight:900;letter-spacing:.08em;padding:3px 6px;border-radius:6px;background:rgba(0,0,0,.25);text-transform:uppercase}
+.row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:16px;background:var(--panel);box-shadow:0 3px 0 #0b1128;font-size:12px;font-weight:800;position:relative}
+.tile svg{width:26px;height:26px}
+.dot{position:absolute;top:8px;right:12px;width:10px;height:10px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 3px var(--panel);animation:pulse 1.4s infinite}
+@keyframes pulse{50%{transform:scale(1.35)}}
+
+/* Levels */
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.lv{aspect-ratio:1;max-width:100%;border-radius:16px;background:var(--panel);box-shadow:0 3px 0 #0b1128;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:var(--f-display);font-size:20px}
+.lv .st{font-size:10px;letter-spacing:1px;color:var(--brass);font-family:var(--f-body)}
+.lv .st b{color:#3a4778}
+.lv.cur{background:var(--brass);color:#2a1a05;box-shadow:0 3px 0 var(--brass-dk);animation:pulse 2s infinite}
+.lv.cur .st b{color:#9a6d22}
+.lv.lock{opacity:.35}
+
+/* Cards */
+.card{background:var(--panel);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 4px 0 #0b1128}
+.card h3{margin:0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.skin{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center}
+.swatch{height:40px;border-radius:12px;max-width:100%}
+.skin b{display:block;font-size:16px}
+.skin span{font-size:12px;color:var(--muted);font-weight:700}
+.skin .btn{padding:10px 12px;font-size:14px;border-radius:12px}
+.meter{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,#ff6a5c,#f0b95a,#5fe3b2,#58b7ff,#b57bff)}
+.note{font-size:12px;color:var(--muted);font-weight:700;margin:0}
+
+/* Sheets */
+.sheet{position:absolute;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;background:rgba(8,12,28,.6);padding:16px;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px)}
+.sheet .card{width:100%;max-width:420px;animation:rise .35s cubic-bezier(.2,1.3,.4,1)}
+@keyframes rise{from{transform:translateY(60px);opacity:0}}
+.sheet h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0;text-align:center;text-wrap:balance}
+.stars{display:flex;justify-content:center;gap:8px}
+.stars svg{width:54px;height:54px;color:#33406f;transition:color .2s}
+.stars svg.on{color:var(--brass);animation:starpop .5s cubic-bezier(.2,1.6,.4,1) both}
+.stars svg:nth-child(2){transform:translateY(-10px);width:64px;height:64px}
+@keyframes starpop{from{transform:scale(0) rotate(-60deg)}}
+.stats{display:flex;justify-content:center;gap:22px;font-weight:800;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.stats b{display:block;color:var(--ink);font-size:22px;text-align:center}
+.gain{font-family:var(--f-display);font-size:34px;text-align:center;color:var(--brass);display:flex;justify-content:center;align-items:center;gap:8px}
+
+/* Daily */
+.jar{width:150px;height:150px;margin:6px auto;position:relative}
+.jar.shake{animation:shake .5s 2}
+@keyframes shake{25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.prize{text-align:center;font-family:var(--f-display);font-size:26px;color:var(--mint);min-height:32px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.week div{border-radius:10px;padding:8px 0;text-align:center;font-size:11px;font-weight:800;background:var(--panel-2);color:var(--muted)}
+.week div.on{background:var(--brass);color:#2a1a05}
+
+/* Settings / dev */
+.set{display:flex;align-items:center;justify-content:space-between;font-weight:800}
+.switch{width:52px;height:30px;border-radius:15px;background:var(--panel-2);position:relative}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--muted);transition:.2s}
+.switch[aria-checked="true"]{background:var(--mint)}
+.switch[aria-checked="true"]::after{left:25px;background:#fff}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 4px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:800}
+
+/* Ad */
+#ad{position:absolute;inset:0;z-index:50;background:#070b18;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center}
+#ad .adtop{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);left:16px;right:16px;display:flex;justify-content:space-between;align-items:center}
+#ad .ring{width:64px;height:64px}
+#ad h3{font-family:var(--f-display);font-weight:400;font-size:30px;margin:0}
+#ad p{color:var(--muted);font-weight:700;margin:0;max-width:30ch}
+#adWarn{position:absolute;inset:0;background:rgba(7,11,24,.92);display:flex;align-items:center;justify-content:center;padding:24px}
+#toast{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 80px);transform:translate(-50%,-20px);background:var(--ink);color:var(--bg);font-weight:800;padding:10px 16px;border-radius:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* i18n: language picker */
+.langbtn{display:inline-flex;align-items:center;gap:6px;background:var(--panel);padding:8px 12px;border-radius:999px;font-weight:900;font-size:14px;box-shadow:0 3px 0 #0b1128;max-width:60%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.set .langbtn{background:var(--panel-2);max-width:65%}
+.langlist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.langlist .btn{padding:12px 8px;font-size:15px;border-radius:14px}
+.tool{max-width:96px;text-align:center;line-height:1.15}
+.tile{overflow-wrap:anywhere;text-align:center;line-height:1.15}
+.week div{padding-left:2px;padding-right:2px;line-height:1.15;overflow-wrap:anywhere;display:flex;align-items:center;justify-content:center}
+.skin{grid-template-columns:64px minmax(0,1fr) auto}
+.skin .btn.ad{flex-wrap:wrap;max-width:140px;gap:4px 6px;text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div id="app">
+  <canvas id="cv"></canvas>
+
+  <header id="hud" hidden>
+    <button class="iconbtn" id="bBack" aria-label="Menüye dön" data-i18n-aria="back_menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="mid"><div class="lvl" id="hLvl" data-i18n="lvl" data-i18n-p='{"n":1}'>Bölüm 1</div><div id="crossPill"><span id="hCross">0</span></div></div>
+    <div class="coins" id="hCoins"></div>
+  </header>
+  <div id="prog" hidden><i id="progBar"></i></div>
+  <nav id="tools" hidden>
+    <button class="tool" id="bUndo"><span class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg></span><span data-i18n="undo">Geri al</span></button>
+    <button class="tool" id="bHint"><span class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0012 3z"/></svg></span><span data-i18n="hint">İpucu</span><span class="badge" id="hintBadge">0</span></button>
+    <button class="tool" id="bReset"><span class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 11-2.3-5.7"/><path d="M20 4v5h-5"/></svg></span><span data-i18n="restart">Baştan</span></button>
+  </nav>
+
+  <section id="home" class="screen">
+    <div class="wrap">
+      <div class="topbar"><button class="langbtn" id="bLang" data-lang-open aria-label="Dil" data-i18n-aria="language">🌐 <span data-lang-name>Türkçe</span></button><span style="flex:1"></span><div class="coins" id="mCoins"></div></div>
+      <div class="logo">
+        <h1>Düğüm<span>Ustası</span></h1>
+        <p data-i18n="tagline">Pimleri sürükle, ipleri birbirinden ayır. Hiçbir ip kesişmediğinde düğüm çözülür.</p>
+        <div class="streak" id="streak"></div>
+      </div>
+    </div>
+    <div class="wrap">
+      <button class="btn primary big" id="bPlay"><span data-i18n="play">Oyna</span><small id="playSub">Bölüm 1</small></button>
+      <div class="row">
+        <button class="tile" id="bLevels"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span data-i18n="levels">Bölümler</span></button>
+        <button class="tile" id="bShop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 8h16l-1.5 12h-13z"/><path d="M8 8a4 4 0 018 0"/></svg><span data-i18n="shop">İp Dükkânı</span></button>
+        <button class="tile" id="bDaily"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 13h18M12 9v12M12 9c-2-4-7-4-6-1s6 1 6 1 5 2 6-1-4-3-6 1"/></svg><span data-i18n="gift">Hediye</span><span class="dot" id="dailyDot" hidden></span></button>
+        <button class="tile" id="bSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><span data-i18n="settings">Ayarlar</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="levels" class="screen dim" hidden>
+    <div class="wrap">
+      <div class="topbar"><button class="iconbtn" data-close aria-label="Geri" data-i18n-aria="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2 data-i18n="levels">Bölümler</h2><div class="coins" data-coins></div></div>
+      <div class="grid" id="lvGrid"></div>
+    </div>
+  </section>
+
+  <section id="shop" class="screen dim" hidden>
+    <div class="wrap">
+      <div class="topbar"><button class="iconbtn" data-close aria-label="Geri" data-i18n-aria="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2 data-i18n="shop">İp Dükkânı</h2><div class="coins" data-coins></div></div>
+      <div class="card"><h3 data-i18n="rope_colors">İp renkleri</h3><div id="skinList" style="display:flex;flex-direction:column;gap:14px"></div></div>
+      <div class="card"><h3 data-i18n="hints_title">İpuçları</h3>
+        <div class="skin"><div class="swatch" style="background:radial-gradient(circle,#f0b95a 30%,#2b3a70 32%)"></div><div><b data-i18n="hints_n" data-i18n-p='{"n":3}'>3 ipucu</b><span><span data-i18n="have">Elinde:</span> <span id="shopHints">0</span></span></div><button class="btn primary" id="buyHints"></button></div>
+      </div>
+      <div class="card"><h3 data-i18n="earn_spools">Makara biriktir</h3>
+        <button class="btn ad" id="adCoins"></button>
+        <p class="note" id="adCoinsNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="daily" class="screen dim" hidden>
+    <div class="wrap">
+      <div class="topbar"><button class="iconbtn" data-close aria-label="Geri" data-i18n-aria="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2 data-i18n="daily_title">Günlük hediye</h2><div class="coins" data-coins></div></div>
+      <div class="card" style="text-align:center">
+        <h3 data-i18n="login_streak">Giriş serisi</h3>
+        <div class="week" id="week"></div>
+        <p class="note" data-i18n="daily_note">Her gün gel, seri büyüsün: hediye kutusuna gün başına +5 makara eklenir (en çok 7 gün).</p>
+      </div>
+      <div class="card">
+        <svg class="jar" id="jar" viewBox="0 0 150 150"><defs><linearGradient id="jg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffcf7a"/><stop offset="1" stop-color="#d9902f"/></linearGradient></defs><rect x="22" y="58" width="106" height="78" rx="12" fill="url(#jg)"/><rect x="14" y="40" width="122" height="26" rx="8" fill="#ff6a5c"/><rect x="66" y="40" width="18" height="96" fill="#ffe2a8"/><path d="M75 40c-18-26-42-20-34-6s34 6 34 6 26 8 34-6-16-20-34 6" fill="none" stroke="#ff6a5c" stroke-width="7" stroke-linecap="round"/></svg>
+        <div class="prize" id="prize"></div>
+        <button class="btn primary" id="openGift"></button>
+        <p class="note" id="giftNote" style="text-align:center"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="settings" class="screen dim" hidden>
+    <div class="wrap">
+      <div class="topbar"><button class="iconbtn" data-close aria-label="Geri" data-i18n-aria="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button><h2 data-i18n="settings">Ayarlar</h2></div>
+      <div class="card">
+        <div class="set"><span data-i18n="sound">Ses</span><button class="switch" role="switch" id="swSound" aria-label="Ses" data-i18n-aria="sound"></button></div>
+        <div class="set"><span data-i18n="vibration">Titreşim</span><button class="switch" role="switch" id="swVib" aria-label="Titreşim" data-i18n-aria="vibration"></button></div>
+        <div class="set"><span data-i18n="language">Dil</span><button class="langbtn" data-lang-open>🌐 <span data-lang-name>Türkçe</span></button></div>
+      </div>
+      <div class="card" hidden><h3 data-i18n="dev_title">Ödüllü reklam akışı (geliştirici görünümü)</h3>
+        <div class="tbl"><table><thead><tr><th data-i18n="th_place">Yerleşim</th><th data-i18n="th_offer">Teklif</th><th data-i18n="th_req">İstek</th><th data-i18n="th_done">Tamam</th><th data-i18n="th_quit">Vazgeçti</th><th data-i18n="th_fail">Hata</th><th data-i18n="th_left">Kalan</th></tr></thead><tbody id="devBody"></tbody></table></div>
+        <p class="note" id="devNote"></p>
+      </div>
+      <div class="card"><h3 data-i18n="save_title">Kayıt</h3>
+        <p class="note" data-i18n="save_note">İlerleme bu cihazda otomatik kaydedilir. Yarım kalan bölüm, pimlerin son konumuyla açılır.</p>
+        <button class="btn" id="bWipe" data-i18n="wipe">İlerlemeyi sıfırla</button>
+        <div id="wipeConfirm" hidden style="display:flex;gap:10px"><button class="btn" id="wipeNo" style="flex:1" data-i18n="cancel">Vazgeç</button><button class="btn" id="wipeYes" style="flex:1;background:var(--coral)" data-i18n="wipe_yes">Evet, sıfırla</button></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sheet" id="sheetWin" hidden>
+    <div class="card">
+      <h2 id="winTitle" data-i18n="win0">Düğüm çözüldü!</h2>
+      <div class="stars" id="winStars"></div>
+      <div class="stats"><div><b id="wMoves">0</b><span data-i18n="moves">hamle</span></div><div><b id="wTime">0:00</b><span data-i18n="time">süre</span></div><div><b id="wNodes">0</b><span data-i18n="pins">pim</span></div></div>
+      <div class="gain" id="wGain"></div>
+      <button class="btn ad" id="bDouble"></button>
+      <div style="display:flex;gap:10px"><button class="btn" id="bReplay" style="flex:1" data-i18n="replay">Tekrar</button><button class="btn primary" id="bNext" style="flex:2" data-i18n="next">Sonraki bölüm</button></div>
+    </div>
+  </div>
+
+  <div class="sheet" id="sheetHint" hidden>
+    <div class="card">
+      <h2 data-i18n="stuck">Takıldın mı?</h2>
+      <p class="note" style="text-align:center" data-i18n="hint_note">İpucu, en çok karışıklık yaratan pimi doğru yerine taşır.</p>
+      <button class="btn primary" id="hUse"></button>
+      <button class="btn" id="hBuy"></button>
+      <button class="btn ad" id="hAd"></button>
+      <button class="btn ad" id="hSkip"></button>
+      <button class="btn" data-sheetclose data-i18n="close">Kapat</button>
+    </div>
+  </div>
+
+  <div class="sheet" id="sheetLang" hidden>
+    <div class="card">
+      <h2 data-i18n="language">Dil</h2>
+      <div class="langlist" id="langList"></div>
+      <button class="btn" data-sheetclose data-i18n="close">Kapat</button>
+    </div>
+  </div>
+
+  <div id="ad" hidden>
+    <div class="adtop"><span class="tag" style="background:#ffffff1f" data-i18n="ad_test">Reklam · deneme</span><button class="iconbtn" id="adClose" aria-label="Reklamı kapat" data-i18n-aria="ad_close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <svg class="ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="none" stroke="#ffffff22" stroke-width="6"/><circle id="adRing" cx="32" cy="32" r="28" fill="none" stroke="#5fe3b2" stroke-width="6" stroke-linecap="round" stroke-dasharray="176" stroke-dashoffset="176" transform="rotate(-90 32 32)"/><text id="adSec" x="32" y="39" text-anchor="middle" font-size="20" font-weight="900" fill="#f6efe2">5</text></svg>
+    <h3 data-i18n="ad_here">Burada gerçek reklam oynar</h3>
+    <p id="adWhat" data-i18n="ad_what">Mobil sürümde AdMob ödüllü videosu bu ekranın yerini alır.</p>
+    <button class="btn primary" id="adClaim" hidden data-i18n="claim">Ödülü al</button>
+    <div id="adWarn" hidden><div class="card" style="max-width:340px"><h3 style="text-align:center;color:var(--ink);font-size:16px;text-transform:none;letter-spacing:0" data-i18n="ad_warn">Şimdi kapatırsan ödülü alamazsın.</h3><button class="btn primary" id="adKeep" data-i18n="keep_watching">İzlemeye devam et</button><button class="btn" id="adQuit" data-i18n="quit_noreward">Ödülsüz kapat</button></div></div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<script>
+/* ---------- Sampa Games i18n ---------- */
+(function () {
+  var LANGS = ['tr', 'en', 'es', 'pt', 'de', 'fr', 'id', 'ru'];
+  var NAMES = { tr: 'Türkçe', en: 'English', es: 'Español', pt: 'Português', de: 'Deutsch', fr: 'Français', id: 'Bahasa Indonesia', ru: 'Русский' };
+  var DICT = {"title": {"tr": "Düğüm Ustası", "en": "Knot Master", "es": "Knot Master", "pt": "Knot Master", "de": "Knot Master", "fr": "Knot Master", "id": "Knot Master", "ru": "Knot Master"}, "logo1": {"tr": "Düğüm", "en": "Knot", "es": "Knot", "pt": "Knot", "de": "Knot", "fr": "Knot", "id": "Knot", "ru": "Knot"}, "logo2": {"tr": "Ustası", "en": "Master", "es": "Master", "pt": "Master", "de": "Master", "fr": "Master", "id": "Master", "ru": "Master"}, "back_menu": {"tr": "Menüye dön", "en": "Back to menu", "es": "Volver al menú", "pt": "Voltar ao menu", "de": "Zurück zum Menü", "fr": "Retour au menu", "id": "Kembali ke menu", "ru": "В меню"}, "back": {"tr": "Geri", "en": "Back", "es": "Atrás", "pt": "Voltar", "de": "Zurück", "fr": "Retour", "id": "Kembali", "ru": "Назад"}, "lvl": {"tr": "Bölüm {n}", "en": "Level {n}", "es": "Nivel {n}", "pt": "Fase {n}", "de": "Level {n}", "fr": "Niveau {n}", "id": "Level {n}", "ru": "Уровень {n}"}, "undo": {"tr": "Geri al", "en": "Undo", "es": "Deshacer", "pt": "Desfazer", "de": "Zurück", "fr": "Annuler", "id": "Urungkan", "ru": "Отмена"}, "hint": {"tr": "İpucu", "en": "Hint", "es": "Pista", "pt": "Dica", "de": "Tipp", "fr": "Indice", "id": "Petunjuk", "ru": "Подсказка"}, "restart": {"tr": "Baştan", "en": "Restart", "es": "Reiniciar", "pt": "Reiniciar", "de": "Neustart", "fr": "Recommencer", "id": "Ulangi", "ru": "Заново"}, "tagline": {"tr": "Pimleri sürükle, ipleri birbirinden ayır. Hiçbir ip kesişmediğinde düğüm çözülür.", "en": "Drag the pins and pull the ropes apart. The knot comes loose when no ropes cross.", "es": "Arrastra los pines y separa las cuerdas. El nudo se deshace cuando ninguna cuerda se cruza.", "pt": "Arraste os pinos e separe as cordas. O nó se desfaz quando nenhuma corda se cruza.", "de": "Zieh die Pins und entwirre die Seile. Der Knoten löst sich, wenn sich kein Seil mehr kreuzt.", "fr": "Fais glisser les clous et sépare les cordes. Le nœud se défait quand plus aucune corde ne se croise.", "id": "Geser pin dan pisahkan tali-talinya. Simpul terurai saat tak ada tali yang bersilangan.", "ru": "Двигай колышки и распутывай верёвки. Узел развязан, когда ни одна верёвка не пересекается."}, "play": {"tr": "Oyna", "en": "Play", "es": "Jugar", "pt": "Jogar", "de": "Spielen", "fr": "Jouer", "id": "Main", "ru": "Играть"}, "levels": {"tr": "Bölümler", "en": "Levels", "es": "Niveles", "pt": "Fases", "de": "Level", "fr": "Niveaux", "id": "Level", "ru": "Уровни"}, "shop": {"tr": "İp Dükkânı", "en": "Rope Shop", "es": "Tienda", "pt": "Loja", "de": "Seil-Shop", "fr": "Boutique", "id": "Toko Tali", "ru": "Магазин"}, "gift": {"tr": "Hediye", "en": "Gift", "es": "Regalo", "pt": "Presente", "de": "Geschenk", "fr": "Cadeau", "id": "Hadiah", "ru": "Подарок"}, "settings": {"tr": "Ayarlar", "en": "Settings", "es": "Ajustes", "pt": "Ajustes", "de": "Optionen", "fr": "Réglages", "id": "Pengaturan", "ru": "Настройки"}, "rope_colors": {"tr": "İp renkleri", "en": "Rope colors", "es": "Colores de cuerda", "pt": "Cores de corda", "de": "Seilfarben", "fr": "Couleurs de corde", "id": "Warna tali", "ru": "Цвета верёвок"}, "hints_title": {"tr": "İpuçları", "en": "Hints", "es": "Pistas", "pt": "Dicas", "de": "Tipps", "fr": "Indices", "id": "Petunjuk", "ru": "Подсказки"}, "hints_n": {"tr": "{n} ipucu", "en": {"one": "{n} hint", "other": "{n} hints"}, "es": {"one": "{n} pista", "other": "{n} pistas"}, "pt": {"one": "{n} dica", "other": "{n} dicas"}, "de": {"one": "{n} Tipp", "other": "{n} Tipps"}, "fr": {"one": "{n} indice", "other": "{n} indices"}, "id": "{n} petunjuk", "ru": {"one": "{n} подсказка", "other": "{n} подсказки", "few": "{n} подсказки", "many": "{n} подсказок"}}, "have": {"tr": "Elinde:", "en": "You have:", "es": "Tienes:", "pt": "Você tem:", "de": "Vorrat:", "fr": "Tu en as :", "id": "Dimiliki:", "ru": "У тебя:"}, "earn_spools": {"tr": "Makara biriktir", "en": "Collect spools", "es": "Junta carretes", "pt": "Junte carretéis", "de": "Spulen sammeln", "fr": "Gagne des bobines", "id": "Kumpulkan gulungan", "ru": "Собирай катушки"}, "daily_title": {"tr": "Günlük hediye", "en": "Daily gift", "es": "Regalo diario", "pt": "Presente diário", "de": "Tagesgeschenk", "fr": "Cadeau du jour", "id": "Hadiah harian", "ru": "Ежедневный подарок"}, "login_streak": {"tr": "Giriş serisi", "en": "Login streak", "es": "Racha diaria", "pt": "Sequência diária", "de": "Login-Serie", "fr": "Série de connexions", "id": "Runtunan masuk", "ru": "Серия входов"}, "daily_note": {"tr": "Her gün gel, seri büyüsün: hediye kutusuna gün başına +5 makara eklenir (en çok 7 gün).", "en": "Come back every day to grow your streak: each day adds +5 spools to the gift box (up to 7 days).", "es": "Vuelve cada día y haz crecer tu racha: cada día suma +5 carretes a la caja de regalo (hasta 7 días).", "pt": "Volte todo dia e aumente sua sequência: cada dia soma +5 carretéis à caixa de presente (até 7 dias).", "de": "Komm jeden Tag wieder, damit deine Serie wächst: Pro Tag kommen +5 Spulen in die Geschenkbox (max. 7 Tage).", "fr": "Reviens chaque jour pour allonger ta série : chaque jour ajoute +5 bobines au coffret cadeau (7 jours max).", "id": "Datang setiap hari agar runtunanmu bertambah: tiap hari menambah +5 gulungan ke kotak hadiah (maks. 7 hari).", "ru": "Заходи каждый день, чтобы серия росла: каждый день добавляет +5 катушек в подарочную коробку (до 7 дней)."}, "sound": {"tr": "Ses", "en": "Sound", "es": "Sonido", "pt": "Som", "de": "Sound", "fr": "Son", "id": "Suara", "ru": "Звук"}, "vibration": {"tr": "Titreşim", "en": "Vibration", "es": "Vibración", "pt": "Vibração", "de": "Vibration", "fr": "Vibrations", "id": "Getar", "ru": "Вибрация"}, "language": {"tr": "Dil", "en": "Language", "es": "Idioma", "pt": "Idioma", "de": "Sprache", "fr": "Langue", "id": "Bahasa", "ru": "Язык"}, "save_title": {"tr": "Kayıt", "en": "Saving", "es": "Guardado", "pt": "Salvamento", "de": "Speicherstand", "fr": "Sauvegarde", "id": "Penyimpanan", "ru": "Сохранение"}, "save_note": {"tr": "İlerleme bu cihazda otomatik kaydedilir. Yarım kalan bölüm, pimlerin son konumuyla açılır.", "en": "Progress is saved automatically on this device. An unfinished level reopens with the pins where you left them.", "es": "El progreso se guarda automáticamente en este dispositivo. Un nivel a medias se reabre con los pines donde los dejaste.", "pt": "O progresso é salvo automaticamente neste aparelho. Uma fase inacabada reabre com os pinos onde você os deixou.", "de": "Dein Fortschritt wird auf diesem Gerät automatisch gespeichert. Ein angefangenes Level öffnet sich mit den Pins dort, wo du sie gelassen hast.", "fr": "La progression est sauvegardée automatiquement sur cet appareil. Un niveau inachevé reprend avec les clous là où tu les as laissés.", "id": "Progres tersimpan otomatis di perangkat ini. Level yang belum selesai dibuka lagi dengan pin di posisi terakhirnya.", "ru": "Прогресс автоматически сохраняется на этом устройстве. Незаконченный уровень откроется с колышками там, где ты их оставил."}, "wipe": {"tr": "İlerlemeyi sıfırla", "en": "Reset progress", "es": "Borrar progreso", "pt": "Apagar progresso", "de": "Fortschritt löschen", "fr": "Réinitialiser", "id": "Atur ulang progres", "ru": "Сбросить прогресс"}, "cancel": {"tr": "Vazgeç", "en": "Cancel", "es": "Cancelar", "pt": "Cancelar", "de": "Abbrechen", "fr": "Annuler", "id": "Batal", "ru": "Отмена"}, "wipe_yes": {"tr": "Evet, sıfırla", "en": "Yes, reset", "es": "Sí, borrar", "pt": "Sim, apagar", "de": "Ja, löschen", "fr": "Oui, effacer", "id": "Ya, atur ulang", "ru": "Да, сбросить"}, "win0": {"tr": "Düğüm çözüldü!", "en": "Knot undone!", "es": "¡Nudo deshecho!", "pt": "Nó desfeito!", "de": "Knoten gelöst!", "fr": "Nœud défait !", "id": "Simpul terurai!", "ru": "Узел развязан!"}, "win1": {"tr": "Tertemiz!", "en": "Neat!", "es": "¡Bien limpio!", "pt": "Caprichado!", "de": "Sauber!", "fr": "Tout propre !", "id": "Rapi!", "ru": "Чисто!"}, "win2": {"tr": "Usta işi!", "en": "Masterful!", "es": "¡Obra maestra!", "pt": "Coisa de mestre!", "de": "Meisterhaft!", "fr": "Du grand art !", "id": "Kerja ahli!", "ru": "Мастерски!"}, "win3": {"tr": "Kusursuz!", "en": "Flawless!", "es": "¡Perfecto!", "pt": "Perfeito!", "de": "Makellos!", "fr": "Parfait !", "id": "Sempurna!", "ru": "Безупречно!"}, "moves": {"tr": "hamle", "en": "moves", "es": "movimientos", "pt": "movimentos", "de": "Züge", "fr": "coups", "id": "langkah", "ru": "ходы"}, "time": {"tr": "süre", "en": "time", "es": "tiempo", "pt": "tempo", "de": "Zeit", "fr": "temps", "id": "waktu", "ru": "время"}, "pins": {"tr": "pim", "en": "pins", "es": "pines", "pt": "pinos", "de": "Pins", "fr": "clous", "id": "pin", "ru": "колышки"}, "replay": {"tr": "Tekrar", "en": "Replay", "es": "Repetir", "pt": "Repetir", "de": "Nochmal", "fr": "Rejouer", "id": "Ulangi", "ru": "Ещё раз"}, "next": {"tr": "Sonraki bölüm", "en": "Next level", "es": "Siguiente nivel", "pt": "Próxima fase", "de": "Nächstes Level", "fr": "Niveau suivant", "id": "Level berikutnya", "ru": "Следующий уровень"}, "stuck": {"tr": "Takıldın mı?", "en": "Stuck?", "es": "¿Atascado?", "pt": "Travou?", "de": "Festgefahren?", "fr": "Bloqué ?", "id": "Buntu?", "ru": "Застрял?"}, "hint_note": {"tr": "İpucu, en çok karışıklık yaratan pimi doğru yerine taşır.", "en": "A hint moves the most tangled pin to its correct spot.", "es": "Una pista mueve el pin más enredado a su lugar correcto.", "pt": "A dica move o pino mais embolado para o lugar certo.", "de": "Ein Tipp setzt den Pin, der das meiste Chaos macht, an die richtige Stelle.", "fr": "Un indice place le clou le plus emmêlé au bon endroit.", "id": "Petunjuk memindahkan pin paling kusut ke tempat yang benar.", "ru": "Подсказка ставит самый запутанный колышек на правильное место."}, "close": {"tr": "Kapat", "en": "Close", "es": "Cerrar", "pt": "Fechar", "de": "Schließen", "fr": "Fermer", "id": "Tutup", "ru": "Закрыть"}, "ad_test": {"tr": "Reklam · deneme", "en": "Ad · test", "es": "Anuncio · prueba", "pt": "Anúncio · teste", "de": "Werbung · Test", "fr": "Pub · test", "id": "Iklan · uji", "ru": "Реклама · тест"}, "ad_close": {"tr": "Reklamı kapat", "en": "Close ad", "es": "Cerrar anuncio", "pt": "Fechar anúncio", "de": "Werbung schließen", "fr": "Fermer la pub", "id": "Tutup iklan", "ru": "Закрыть рекламу"}, "ad_here": {"tr": "Burada gerçek reklam oynar", "en": "A real ad plays here", "es": "Aquí se muestra un anuncio real", "pt": "Aqui passa um anúncio real", "de": "Hier läuft echte Werbung", "fr": "Ici passe une vraie pub", "id": "Iklan asli diputar di sini", "ru": "Здесь будет настоящая реклама"}, "ad_what": {"tr": "Mobil sürümde AdMob ödüllü videosu bu ekranın yerini alır.", "en": "In the mobile version, an AdMob rewarded video replaces this screen.", "es": "En la versión móvil, un video con recompensa de AdMob reemplaza esta pantalla.", "pt": "Na versão mobile, um vídeo premiado do AdMob substitui esta tela.", "de": "In der App ersetzt ein AdMob-Belohnungsvideo diesen Bildschirm.", "fr": "Dans la version mobile, une vidéo récompensée AdMob remplace cet écran.", "id": "Di versi seluler, video berhadiah AdMob menggantikan layar ini.", "ru": "В мобильной версии вместо этого экрана будет видео AdMob с наградой."}, "reward_is": {"tr": "Ödül: {r}.", "en": "Reward: {r}.", "es": "Recompensa: {r}.", "pt": "Prêmio: {r}.", "de": "Belohnung: {r}.", "fr": "Récompense : {r}.", "id": "Hadiah: {r}.", "ru": "Награда: {r}."}, "claim": {"tr": "Ödülü al", "en": "Claim reward", "es": "Reclamar premio", "pt": "Pegar prêmio", "de": "Belohnung holen", "fr": "Récupérer", "id": "Ambil hadiah", "ru": "Забрать награду"}, "ad_warn": {"tr": "Şimdi kapatırsan ödülü alamazsın.", "en": "Close now and you won't get the reward.", "es": "Si cierras ahora, no recibirás la recompensa.", "pt": "Se fechar agora, você perde o prêmio.", "de": "Wenn du jetzt schließt, gibt's keine Belohnung.", "fr": "Si tu fermes maintenant, tu n'auras pas la récompense.", "id": "Kalau ditutup sekarang, kamu tak dapat hadiah.", "ru": "Если закроешь сейчас, награды не будет."}, "keep_watching": {"tr": "İzlemeye devam et", "en": "Keep watching", "es": "Seguir viendo", "pt": "Continuar assistindo", "de": "Weiterschauen", "fr": "Continuer", "id": "Lanjut menonton", "ru": "Смотреть дальше"}, "quit_noreward": {"tr": "Ödülsüz kapat", "en": "Close without reward", "es": "Cerrar sin premio", "pt": "Fechar sem prêmio", "de": "Ohne Belohnung schließen", "fr": "Fermer sans récompense", "id": "Tutup tanpa hadiah", "ru": "Закрыть без награды"}, "skip_level": {"tr": "Bölüm atla", "en": "Skip level", "es": "Saltar nivel", "pt": "Pular fase", "de": "Level überspringen", "fr": "Passer le niveau", "id": "Lewati level", "ru": "Пропустить уровень"}, "skip_level_btn": {"tr": "Bölümü atla", "en": "Skip level", "es": "Saltar nivel", "pt": "Pular fase", "de": "Level überspringen", "fr": "Passer le niveau", "id": "Lewati level", "ru": "Пропустить уровень"}, "double_reward": {"tr": "2 kat ödül", "en": "2× reward", "es": "Premio x2", "pt": "Prêmio 2x", "de": "2× Belohnung", "fr": "Récompense x2", "id": "Hadiah 2×", "ru": "Награда ×2"}, "gift_box": {"tr": "Hediye kutusu", "en": "Gift box", "es": "Caja de regalo", "pt": "Caixa de presente", "de": "Geschenkbox", "fr": "Coffret cadeau", "id": "Kotak hadiah", "ru": "Подарочная коробка"}, "rainbow_rope": {"tr": "Gökkuşağı ip", "en": "Rainbow rope", "es": "Cuerda arcoíris", "pt": "Corda arco-íris", "de": "Regenbogenseil", "fr": "Corde arc-en-ciel", "id": "Tali pelangi", "ru": "Радужная верёвка"}, "skin_klasik": {"tr": "Kenevir", "en": "Hemp", "es": "Cáñamo", "pt": "Cânhamo", "de": "Hanf", "fr": "Chanvre", "id": "Rami", "ru": "Пенька"}, "skin_mercan": {"tr": "Mercan", "en": "Coral", "es": "Coral", "pt": "Coral", "de": "Koralle", "fr": "Corail", "id": "Koral", "ru": "Коралл"}, "skin_okyanus": {"tr": "Okyanus", "en": "Ocean", "es": "Océano", "pt": "Oceano", "de": "Ozean", "fr": "Océan", "id": "Samudra", "ru": "Океан"}, "skin_altin": {"tr": "Sırma", "en": "Gold thread", "es": "Hilo de oro", "pt": "Fio de ouro", "de": "Goldfaden", "fr": "Fil d'or", "id": "Benang emas", "ru": "Золотая нить"}, "skin_gokkusagi": {"tr": "Gökkuşağı", "en": "Rainbow", "es": "Arcoíris", "pt": "Arco-íris", "de": "Regenbogen", "fr": "Arc-en-ciel", "id": "Pelangi", "ru": "Радуга"}, "spools": {"tr": "{n} makara", "en": {"one": "{n} spool", "other": "{n} spools"}, "es": {"one": "{n} carrete", "other": "{n} carretes"}, "pt": {"one": "{n} carretel", "other": "{n} carretéis"}, "de": {"one": "{n} Spule", "other": "{n} Spulen"}, "fr": {"one": "{n} bobine", "other": "{n} bobines"}, "id": "{n} gulungan", "ru": {"one": "{n} катушка", "other": "{n} катушки", "few": "{n} катушки", "many": "{n} катушек"}}, "solved": {"tr": "Çözüldü", "en": "Solved", "es": "Resuelto", "pt": "Resolvido", "de": "Gelöst", "fr": "Résolu", "id": "Selesai", "ru": "Решено"}, "crossings": {"tr": "{n} kesişme", "en": {"one": "{n} crossing", "other": "{n} crossings"}, "es": {"one": "{n} cruce", "other": "{n} cruces"}, "pt": {"one": "{n} cruzamento", "other": "{n} cruzamentos"}, "de": {"one": "{n} Kreuzung", "other": "{n} Kreuzungen"}, "fr": {"one": "{n} croisement", "other": "{n} croisements"}, "id": "{n} persilangan", "ru": {"one": "{n} пересечение", "other": "{n} пересечения", "few": "{n} пересечения", "many": "{n} пересечений"}}, "restarted": {"tr": "Bölüm baştan başladı", "en": "Level restarted", "es": "Nivel reiniciado", "pt": "Fase reiniciada", "de": "Level neu gestartet", "fr": "Niveau recommencé", "id": "Level diulang", "ru": "Уровень начат заново"}, "in_progress": {"tr": "yarım kaldı", "en": "in progress", "es": "en curso", "pt": "em andamento", "de": "angefangen", "fr": "en cours", "id": "belum selesai", "ru": "не закончен"}, "streak_days": {"tr": "{n} günlük seri", "en": "{n}-day streak", "es": {"one": "Racha de {n} día", "other": "Racha de {n} días"}, "pt": {"one": "Sequência de {n} dia", "other": "Sequência de {n} dias"}, "de": {"one": "Serie: {n} Tag", "other": "Serie: {n} Tage"}, "fr": {"one": "Série de {n} jour", "other": "Série de {n} jours"}, "id": "Runtunan {n} hari", "ru": "Серия: {n} дн."}, "locked": {"tr": "kilitli", "en": "locked", "es": "bloqueado", "pt": "bloqueada", "de": "gesperrt", "fr": "verrouillé", "id": "terkunci", "ru": "закрыт"}, "stars_n": {"tr": "{n} yıldız", "en": {"one": "{n} star", "other": "{n} stars"}, "es": {"one": "{n} estrella", "other": "{n} estrellas"}, "pt": {"one": "{n} estrela", "other": "{n} estrelas"}, "de": {"one": "{n} Stern", "other": "{n} Sterne"}, "fr": {"one": "{n} étoile", "other": "{n} étoiles"}, "id": "{n} bintang", "ru": {"one": "{n} звезда", "other": "{n} звезды", "few": "{n} звезды", "many": "{n} звёзд"}}, "ad_tag": {"tr": "Reklam", "en": "Ad", "es": "Anuncio", "pt": "Anúncio", "de": "Werbung", "fr": "Pub", "id": "Iklan", "ru": "Реклама"}, "renews_tomorrow": {"tr": "yarın yenilenir", "en": "renews tomorrow", "es": "se renueva mañana", "pt": "renova amanhã", "de": "morgen wieder", "fr": "revient demain", "id": "diperbarui besok", "ru": "обновится завтра"}, "cap_reached": {"tr": "Bugünkü hakkın doldu, yarın yenilenir", "en": "You've used today's limit; it renews tomorrow", "es": "Usaste el límite de hoy; se renueva mañana", "pt": "Você usou o limite de hoje; renova amanhã", "de": "Für heute aufgebraucht, morgen geht's weiter", "fr": "Limite du jour atteinte, ça revient demain", "id": "Jatah hari ini habis, diperbarui besok", "ru": "Лимит на сегодня исчерпан, обновится завтра"}, "ad_dismissed": {"tr": "Reklam kapatıldı, ödül verilmedi", "en": "Ad closed, no reward given", "es": "Anuncio cerrado, sin recompensa", "pt": "Anúncio fechado, sem prêmio", "de": "Werbung geschlossen, keine Belohnung", "fr": "Pub fermée, pas de récompense", "id": "Iklan ditutup, tak ada hadiah", "ru": "Реклама закрыта, награды нет"}, "no_ad": {"tr": "Şu an gösterilecek reklam yok", "en": "No ad available right now", "es": "No hay anuncios disponibles ahora", "pt": "Nenhum anúncio disponível agora", "de": "Gerade keine Werbung verfügbar", "fr": "Aucune pub disponible pour l'instant", "id": "Belum ada iklan saat ini", "ru": "Сейчас нет доступной рекламы"}, "double_offer": {"tr": "Ödülü 2 katına çıkar (+{n})", "en": "Double the reward (+{n})", "es": "Duplica el premio (+{n})", "pt": "Dobre o prêmio (+{n})", "de": "Belohnung verdoppeln (+{n})", "fr": "Double la récompense (+{n})", "id": "Gandakan hadiah (+{n})", "ru": "Удвоить награду (+{n})"}, "doubled": {"tr": "Ödül 2 katına çıktı", "en": "Reward doubled", "es": "Premio duplicado", "pt": "Prêmio dobrado", "de": "Belohnung verdoppelt", "fr": "Récompense doublée", "id": "Hadiah digandakan", "ru": "Награда удвоена"}, "level_bonus": {"tr": "Bölüm bonusu", "en": "Level bonus", "es": "Bono de nivel", "pt": "Bônus da fase", "de": "Level-Bonus", "fr": "Bonus de niveau", "id": "Bonus level", "ru": "Бонус уровня"}, "use_hint": {"tr": "İpucu kullan ({n} kaldı)", "en": "Use a hint ({n} left)", "es": "Usar pista (quedan {n})", "pt": "Usar dica (restam {n})", "de": "Tipp nutzen (noch {n})", "fr": "Utiliser un indice (reste {n})", "id": "Pakai petunjuk (sisa {n})", "ru": "Взять подсказку (осталось {n})"}, "buy_hint": {"tr": "{p} ile ipucu al", "en": "Buy a hint for {p}", "es": "Compra una pista por {p}", "pt": "Compre uma dica por {p}", "de": "Tipp für {p} kaufen", "fr": "Acheter un indice pour {p}", "id": "Beli petunjuk seharga {p}", "ru": "Купить подсказку за {p}"}, "watch_hint": {"tr": "İzle, ipucunu hemen kullan", "en": "Watch and use a hint now", "es": "Mira y usa una pista ya", "pt": "Assista e use uma dica já", "de": "Ansehen & Tipp sofort nutzen", "fr": "Regarde et utilise un indice", "id": "Tonton, langsung pakai petunjuk", "ru": "Смотри и сразу бери подсказку"}, "level_skipped": {"tr": "Bölüm {n} atlandı", "en": "Level {n} skipped", "es": "Nivel {n} saltado", "pt": "Fase {n} pulada", "de": "Level {n} übersprungen", "fr": "Niveau {n} passé", "id": "Level {n} dilewati", "ru": "Уровень {n} пропущен"}, "in_use": {"tr": "Kullanılıyor", "en": "In use", "es": "En uso", "pt": "Em uso", "de": "Aktiv", "fr": "Utilisée", "id": "Dipakai", "ru": "Используется"}, "owned": {"tr": "Sende var", "en": "Owned", "es": "Tuya", "pt": "Sua", "de": "Gehört dir", "fr": "À toi", "id": "Dimiliki", "ru": "Твоя"}, "ads_only": {"tr": "Yalnızca reklamla açılır", "en": "Unlocks with ads only", "es": "Solo se desbloquea con anuncios", "pt": "Só desbloqueia com anúncios", "de": "Nur per Werbung freischaltbar", "fr": "Se débloque avec des pubs", "id": "Hanya terbuka lewat iklan", "ru": "Только за просмотр рекламы"}, "selected": {"tr": "Seçili", "en": "Selected", "es": "Elegida", "pt": "Escolhida", "de": "Gewählt", "fr": "Choisie", "id": "Dipilih", "ru": "Выбрана"}, "select": {"tr": "Seç", "en": "Select", "es": "Elegir", "pt": "Escolher", "de": "Wählen", "fr": "Choisir", "id": "Pilih", "ru": "Выбрать"}, "watch_prog": {"tr": "İzle ({a}/{b})", "en": "Watch ({a}/{b})", "es": "Ver ({a}/{b})", "pt": "Assistir ({a}/{b})", "de": "Ansehen ({a}/{b})", "fr": "Regarder ({a}/{b})", "id": "Tonton ({a}/{b})", "ru": "Смотреть ({a}/{b})"}, "rainbow_unlocked": {"tr": "Gökkuşağı ip açıldı!", "en": "Rainbow rope unlocked!", "es": "¡Cuerda arcoíris desbloqueada!", "pt": "Corda arco-íris desbloqueada!", "de": "Regenbogenseil freigeschaltet!", "fr": "Corde arc-en-ciel débloquée !", "id": "Tali pelangi terbuka!", "ru": "Радужная верёвка открыта!"}, "rope_yours": {"tr": "{name} ip senin", "en": "{name} rope is yours", "es": "La cuerda {name} es tuya", "pt": "A corda {name} é sua", "de": "Seil „{name}“ gehört dir", "fr": "La corde {name} est à toi", "id": "Tali {name} milikmu", "ru": "Верёвка «{name}» твоя"}, "watch_for": {"tr": "Reklam izle, {r}", "en": "Watch an ad, {r}", "es": "Mira un anuncio, {r}", "pt": "Assista a um anúncio, {r}", "de": "Werbung ansehen, {r}", "fr": "Regarde une pub, {r}", "id": "Tonton iklan, {r}", "ru": "Смотри рекламу: {r}"}, "coins_note": {"tr": "Bugün {n} hakkın kaldı. Bölüm bitirmek, yıldız toplamak ve günlük hediye de makara kazandırır.", "en": "{n} left today. Finishing levels, collecting stars and the daily gift also earn spools.", "es": "Te quedan {n} hoy. Terminar niveles, ganar estrellas y el regalo diario también dan carretes.", "pt": "Restam {n} hoje. Terminar fases, ganhar estrelas e o presente diário também dão carretéis.", "de": "Heute noch {n}. Levels schaffen, Sterne sammeln und das Tagesgeschenk bringen auch Spulen.", "fr": "Encore {n} aujourd'hui. Finir des niveaux, gagner des étoiles et le cadeau du jour rapportent aussi des bobines.", "id": "Sisa {n} hari ini. Menyelesaikan level, mengumpulkan bintang, dan hadiah harian juga memberi gulungan.", "ru": "Сегодня осталось: {n}. Катушки также дают за уровни, звёзды и ежедневный подарок."}, "day_n": {"tr": "{n}. gün", "en": "Day {n}", "es": "Día {n}", "pt": "Dia {n}", "de": "Tag {n}", "fr": "Jour {n}", "id": "Hari {n}", "ru": "День {n}"}, "open_free": {"tr": "Ücretsiz kutuyu aç", "en": "Open free box", "es": "Abrir caja gratis", "pt": "Abrir caixa grátis", "de": "Gratis-Box öffnen", "fr": "Ouvrir la boîte gratuite", "id": "Buka kotak gratis", "ru": "Открыть бесплатно"}, "streak_bonus": {"tr": "Seri bonusu: {r}", "en": "Streak bonus: {r}", "es": "Bono de racha: {r}", "pt": "Bônus de sequência: {r}", "de": "Serienbonus: {r}", "fr": "Bonus de série : {r}", "id": "Bonus runtunan: {r}", "ru": "Бонус серии: {r}"}, "watch_box": {"tr": "Reklam izle, bir kutu daha aç", "en": "Watch an ad, open another box", "es": "Mira un anuncio y abre otra caja", "pt": "Assista a um anúncio e abra outra caixa", "de": "Werbung ansehen, noch eine Box", "fr": "Regarde une pub, ouvre une autre boîte", "id": "Tonton iklan, buka kotak lagi", "ru": "Реклама — ещё одна коробка"}, "free_tomorrow": {"tr": "Ücretsiz kutu yarın yenilenir. Reklamla günde {n} kutu daha açabilirsin.", "en": "The free box renews tomorrow. With ads you can open {n} more boxes a day.", "es": "La caja gratis se renueva mañana. Con anuncios puedes abrir {n} cajas más al día.", "pt": "A caixa grátis renova amanhã. Com anúncios, você pode abrir mais {n} caixas por dia.", "de": "Die Gratis-Box gibt's morgen wieder. Mit Werbung kannst du täglich {n} weitere öffnen.", "fr": "La boîte gratuite revient demain. Avec des pubs, tu peux en ouvrir {n} de plus par jour.", "id": "Kotak gratis diperbarui besok. Lewat iklan kamu bisa buka {n} kotak lagi per hari.", "ru": "Бесплатная коробка обновится завтра. За рекламу можно открыть ещё {n} в день."}, "wiped": {"tr": "İlerleme sıfırlandı", "en": "Progress reset", "es": "Progreso borrado", "pt": "Progresso apagado", "de": "Fortschritt gelöscht", "fr": "Progression réinitialisée", "id": "Progres diatur ulang", "ru": "Прогресс сброшен"}, "gift_ready": {"tr": "Günlük hediyen hazır", "en": "Your daily gift is ready", "es": "Tu regalo diario está listo", "pt": "Seu presente diário está pronto", "de": "Dein Tagesgeschenk ist bereit", "fr": "Ton cadeau du jour est prêt", "id": "Hadiah harianmu siap", "ru": "Ежедневный подарок готов"}, "dev_title": {"tr": "Ödüllü reklam akışı (geliştirici görünümü)", "en": "Rewarded ad flow (developer view)", "es": "Flujo de anuncios con recompensa (vista de desarrollador)", "pt": "Fluxo de anúncios premiados (visão do desenvolvedor)", "de": "Belohnungswerbung (Entwickleransicht)", "fr": "Flux de pubs récompensées (vue développeur)", "id": "Alur iklan berhadiah (tampilan developer)", "ru": "Реклама с наградой (режим разработчика)"}, "th_place": {"tr": "Yerleşim", "en": "Placement", "es": "Ubicación", "pt": "Posição", "de": "Platzierung", "fr": "Emplacement", "id": "Penempatan", "ru": "Место"}, "th_offer": {"tr": "Teklif", "en": "Offer", "es": "Oferta", "pt": "Oferta", "de": "Angebot", "fr": "Offre", "id": "Tawaran", "ru": "Показ"}, "th_req": {"tr": "İstek", "en": "Request", "es": "Solicitud", "pt": "Pedido", "de": "Anfrage", "fr": "Requête", "id": "Permintaan", "ru": "Запрос"}, "th_done": {"tr": "Tamam", "en": "Done", "es": "Hecho", "pt": "Feito", "de": "Fertig", "fr": "OK", "id": "Selesai", "ru": "Готово"}, "th_quit": {"tr": "Vazgeçti", "en": "Quit", "es": "Abandonó", "pt": "Desistiu", "de": "Abbruch", "fr": "Abandon", "id": "Batal", "ru": "Отказ"}, "th_fail": {"tr": "Hata", "en": "Error", "es": "Error", "pt": "Erro", "de": "Fehler", "fr": "Erreur", "id": "Galat", "ru": "Ошибка"}, "th_left": {"tr": "Kalan", "en": "Left", "es": "Quedan", "pt": "Restam", "de": "Übrig", "fr": "Reste", "id": "Sisa", "ru": "Осталось"}, "dev_note": {"tr": "Bugün izlenen: {a} / {b}. Mobilde window.KnotAdsBridge tanımlanınca deneme ekranı yerine gerçek reklam açılır.", "en": "Watched today: {a} / {b}. On mobile, once window.KnotAdsBridge is defined, a real ad opens instead of the test screen.", "es": "Vistos hoy: {a} / {b}. En móvil, al definir window.KnotAdsBridge se abre un anuncio real en lugar de la pantalla de prueba.", "pt": "Assistidos hoje: {a} / {b}. No celular, ao definir window.KnotAdsBridge, abre um anúncio real em vez da tela de teste.", "de": "Heute angesehen: {a} / {b}. Mobil öffnet sich echte Werbung statt des Testbildschirms, sobald window.KnotAdsBridge definiert ist.", "fr": "Vues aujourd'hui : {a} / {b}. Sur mobile, dès que window.KnotAdsBridge est défini, une vraie pub s'ouvre à la place de l'écran de test.", "id": "Ditonton hari ini: {a} / {b}. Di seluler, setelah window.KnotAdsBridge didefinisikan, iklan asli dibuka menggantikan layar uji.", "ru": "Просмотрено сегодня: {a} / {b}. В мобильной версии при наличии window.KnotAdsBridge вместо тестового экрана откроется реальная реклама."}, "adk_test": {"tr": "Deneme reklamı", "en": "Test ad", "es": "Anuncio de prueba", "pt": "Anúncio de teste", "de": "Testwerbung", "fr": "Pub de test", "id": "Iklan uji", "ru": "Тестовая реклама"}, "adk_mock_rew": {"tr": "Uygulamada burada AdMob ödüllü reklamı oynar.", "en": "In the app, an AdMob rewarded ad plays here.", "es": "En la app, aquí se reproduce un anuncio con recompensa de AdMob.", "pt": "No app, aqui passa um anúncio premiado do AdMob.", "de": "In der App läuft hier eine AdMob-Belohnungswerbung.", "fr": "Dans l'appli, une pub récompensée AdMob passe ici.", "id": "Di aplikasi, iklan berhadiah AdMob diputar di sini.", "ru": "В приложении здесь будет реклама AdMob с наградой."}, "adk_mock_inter": {"tr": "Uygulamada burada AdMob ödüllü geçiş reklamı oynar.", "en": "In the app, an AdMob rewarded interstitial plays here.", "es": "En la app, aquí se reproduce un intersticial con recompensa de AdMob.", "pt": "No app, aqui passa um intersticial premiado do AdMob.", "de": "In der App läuft hier eine AdMob-Belohnungs-Interstitial.", "fr": "Dans l'appli, un interstitiel récompensé AdMob passe ici.", "id": "Di aplikasi, iklan interstisial berhadiah AdMob diputar di sini.", "ru": "В приложении здесь будет межстраничная реклама AdMob с наградой."}, "adk_close_noreward": {"tr": "Kapat (ödül yok)", "en": "Close (no reward)", "es": "Cerrar (sin premio)", "pt": "Fechar (sem prêmio)", "de": "Schließen (keine Belohnung)", "fr": "Fermer (sans récompense)", "id": "Tutup (tanpa hadiah)", "ru": "Закрыть (без награды)"}, "adk_cap": {"tr": "Bugünkü reklam hakkın doldu, yarın yenilenir", "en": "You've reached today's ad limit; it renews tomorrow", "es": "Llegaste al límite de anuncios de hoy; se renueva mañana", "pt": "Você atingiu o limite de anúncios de hoje; renova amanhã", "de": "Werbelimit für heute erreicht, morgen geht's weiter", "fr": "Limite de pubs du jour atteinte, ça revient demain", "id": "Jatah iklan hari ini habis, diperbarui besok", "ru": "Лимит рекламы на сегодня исчерпан, обновится завтра"}, "adk_dismissed": {"tr": "Reklam bitmeden kapatıldı, ödül verilmedi", "en": "Ad closed early, no reward given", "es": "Anuncio cerrado antes de tiempo, sin recompensa", "pt": "Anúncio fechado antes do fim, sem prêmio", "de": "Werbung vorzeitig geschlossen, keine Belohnung", "fr": "Pub fermée trop tôt, pas de récompense", "id": "Iklan ditutup sebelum selesai, tak ada hadiah", "ru": "Реклама закрыта раньше времени, награды нет"}, "adk_failed": {"tr": "Şu an gösterilecek reklam yok, biraz sonra tekrar dene", "en": "No ad available right now, try again soon", "es": "No hay anuncios ahora, inténtalo en un rato", "pt": "Nenhum anúncio agora, tente de novo daqui a pouco", "de": "Gerade keine Werbung, versuch es gleich nochmal", "fr": "Aucune pub pour l'instant, réessaie un peu plus tard", "id": "Belum ada iklan, coba lagi sebentar lagi", "ru": "Сейчас нет рекламы, попробуй чуть позже"}, "adk_intro_pre": {"tr": "Kısa bir reklam", "en": "A short ad starts in", "es": "Un anuncio corto empieza en", "pt": "Um anúncio curto começa em", "de": "Eine kurze Werbung startet in", "fr": "Une courte pub démarre dans", "id": "Iklan singkat dimulai dalam", "ru": "Короткая реклама начнётся через"}, "adk_intro_post": {"tr": "saniye içinde başlıyor. İzlersen ödül senin.", "en": "seconds. Watch it and the reward is yours.", "es": "segundos. Míralo y el premio es tuyo.", "pt": "segundos. Assista e o prêmio é seu.", "de": "Sekunden. Schau sie an und die Belohnung gehört dir.", "fr": "secondes. Regarde-la et la récompense est à toi.", "id": "detik. Tonton dan hadiahnya milikmu.", "ru": "сек. Посмотри — и награда твоя."}, "adk_watch_now": {"tr": "Hemen izle", "en": "Watch now", "es": "Ver ahora", "pt": "Assistir agora", "de": "Jetzt ansehen", "fr": "Regarder", "id": "Tonton sekarang", "ru": "Смотреть"}, "adk_skip": {"tr": "Atla", "en": "Skip", "es": "Saltar", "pt": "Pular", "de": "Überspringen", "fr": "Passer", "id": "Lewati", "ru": "Пропустить"}};
+  function pick() {
+    try { var s = localStorage.getItem('sg_lang'); if (s && LANGS.indexOf(s) >= 0) return s; } catch (e) {}
+    var list = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || ''];
+    for (var i = 0; i < list.length; i++) {
+      var p = String(list[i] || '').toLowerCase().split(/[-_]/)[0];
+      if (p === 'in') p = 'id';
+      if (LANGS.indexOf(p) >= 0) return p;
+    }
+    return 'en';
+  }
+  var LANG = pick();
+  var PR = null; try { PR = new Intl.PluralRules(LANG); } catch (e) {}
+  function t(key, params) {
+    var e = DICT[key], v;
+    if (e) v = e[LANG] != null ? e[LANG] : e.en != null ? e.en : e.tr;
+    if (v == null) v = key;
+    params = params || {};
+    if (typeof v === 'object') { var c = 'other'; try { if (PR && params.n != null) c = PR.select(Number(params.n)); } catch (e2) {} v = v[c] || v.other; }
+    return String(v).replace(/\{(\w+)\}/g, function (m, k) { return params[k] != null ? String(params[k]) : m; });
+  }
+  window.SG_LANG = LANG; window.t = t; window.SG_LANG_NAMES = NAMES;
+  document.documentElement.lang = LANG;
+  document.title = t('title');
+
+  function apply(root) {
+    (root || document).querySelectorAll('[data-i18n]').forEach(function (el) {
+      var p = null; try { p = el.dataset.i18nP ? JSON.parse(el.dataset.i18nP) : null; } catch (e) {}
+      el.textContent = t(el.dataset.i18n, p);
+    });
+    (root || document).querySelectorAll('[data-i18n-aria]').forEach(function (el) { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+    var h1 = document.querySelector('.logo h1');
+    if (h1 && h1.firstChild && h1.firstChild.nodeType === 3) { h1.firstChild.nodeValue = t('logo1'); var sp = h1.querySelector('span'); if (sp) sp.textContent = t('logo2'); }
+    document.querySelectorAll('[data-lang-name]').forEach(function (el) { el.textContent = NAMES[LANG]; });
+  }
+  apply();
+
+  /* language picker */
+  var list = document.getElementById('langList'), sheet = document.getElementById('sheetLang');
+  if (list) LANGS.forEach(function (code) {
+    var b = document.createElement('button');
+    b.className = 'btn' + (code === LANG ? ' primary' : ''); b.lang = code; b.textContent = NAMES[code];
+    b.onclick = function () {
+      if (code === LANG) { sheet.hidden = true; return; }
+      try { localStorage.setItem('sg_lang', code); } catch (e) {}
+      location.reload();
+    };
+    list.appendChild(b);
+  });
+  document.querySelectorAll('[data-lang-open]').forEach(function (b) { b.addEventListener('click', function () { if (sheet) sheet.hidden = false; }); });
+
+  /* translate the shared AdKit overlays (adkit.js itself stays untouched) */
+  if (LANG !== 'tr' && window.MutationObserver) {
+    var MAP = {};
+    ['adk_test', 'adk_mock_rew', 'adk_mock_inter', 'adk_close_noreward', 'adk_cap', 'adk_dismissed', 'adk_failed',
+     'adk_intro_pre', 'adk_intro_post', 'adk_watch_now', 'adk_skip', 'claim'].forEach(function (k) { MAP[DICT[k].tr] = t(k); });
+    MAP['Reklam'] = t('ad_tag');
+    var SEL = '.adk-layer,.adk-mock,.adk-toast';
+    var fixText = function (n) {
+      var raw = n.nodeValue, k = raw.trim();
+      if (k && MAP[k] != null) n.nodeValue = raw.replace(k, MAP[k]);
+    };
+    var walk = function (el) {
+      if (el.nodeType === 3) { var p = el.parentElement; if (p && p.closest(SEL)) fixText(el); return; }
+      if (el.nodeType !== 1) return;
+      var inside = el.closest(SEL) || (el.querySelector && el.querySelector(SEL));
+      if (!inside) return;
+      if (el.getAttribute('aria-label') && MAP[el.getAttribute('aria-label')]) el.setAttribute('aria-label', MAP[el.getAttribute('aria-label')]);
+      var tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n;
+      while ((n = tw.nextNode())) { if (n.parentElement && n.parentElement.closest(SEL)) fixText(n); }
+    };
+    new MutationObserver(function (ms) {
+      ms.forEach(function (m) { m.addedNodes.forEach(walk); });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+})();
+</script>
+<script>
+(() => {
+'use strict';
+const T = window.t;
+/* ---------- Ayar noktaları ---------- */
+const AD_SECONDS = 5;          // deneme reklam süresi
+const AD_NOFILL = 0.08;        // deneme ekranında "reklam yok" olasılığı
+const AD_RULES = { daily: 25, caps: { hint: 8, skip: 3, double: 10, coins: 5, chest: 3, skin: 3 } };
+const AD_LABEL = { hint: T('hint'), skip: T('skip_level'), double: T('double_reward'), coins: '+' + T('spools', { n: 30 }), chest: T('gift_box'), skin: T('rainbow_rope') };
+const HINT_PRICE = 25, HINT_PACK = 60;
+const SKINS = [
+  { id: 'klasik', name: T('skin_klasik'), price: 0, cols: ['#e9c46a', '#f4a261', '#8ecae6', '#cdb4db', '#a8dadc', '#ffb4a2'] },
+  { id: 'mercan', name: T('skin_mercan'), price: 80, cols: ['#ff8fa3', '#ffb3a7', '#ff6f91', '#ffc6d0'] },
+  { id: 'okyanus', name: T('skin_okyanus'), price: 150, cols: ['#4cc9f0', '#4895ef', '#56cfe1', '#72efdd'] },
+  { id: 'altin', name: T('skin_altin'), price: 250, cols: ['#ffd166', '#f6bd60', '#ffe8a3', '#e9b44c'] },
+  { id: 'gokkusagi', name: T('skin_gokkusagi'), price: -1, ads: 3, cols: [] }
+];
+const SPOOL = '<svg class="ico" viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="3.5" rx="1.7" fill="#f0b95a"/><rect x="4" y="18" width="16" height="3.5" rx="1.7" fill="#f0b95a"/><rect x="7" y="6" width="10" height="12" fill="#ff6a5c"/><path d="M7 9h10M7 12h10M7 15h10" stroke="#00000033" stroke-width="1.2"/></svg>';
+const STAR = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>';
+
+/* ---------- Kayıt ---------- */
+const KEY = 'dugum-ustasi-v1';
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const fresh = () => ({ unlocked: 1, stars: {}, coins: 40, hints: 2, skin: 'klasik', owned: ['klasik'], rainbow: 0, sound: true, vib: true,
+  daily: { date: '', free: false, ads: 0, streak: 0, last: '' }, adDay: { date: '', counts: {}, total: 0 }, stats: {}, wip: null });
+let S;
+function load() { try { const r = localStorage.getItem(KEY); if (r) return Object.assign(fresh(), JSON.parse(r)); } catch (e) {} return fresh(); }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+/* ---------- Yardımcılar ---------- */
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function segX(a, b, c, d) {
+  const den = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x);
+  if (Math.abs(den) < 1e-12) return null;
+  const t = ((c.x - a.x) * (d.y - c.y) - (c.y - a.y) * (d.x - c.x)) / den;
+  const u = ((c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x)) / den;
+  if (t > 1e-6 && t < 1 - 1e-6 && u > 1e-6 && u < 1 - 1e-6) return { x: a.x + t * (b.x - a.x), y: a.y + t * (b.y - a.y) };
+  return null;
+}
+function distPS(p, a, b) { const dx = b.x - a.x, dy = b.y - a.y, l = dx * dx + dy * dy; let t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / l; t = clamp(t, 0, 1); return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy); }
+function crossings(pos, edges, collect) {
+  let n = 0; const pts = collect ? [] : null, bad = collect ? new Set() : null;
+  for (let i = 0; i < edges.length; i++) { const [a, b] = edges[i];
+    for (let j = i + 1; j < edges.length; j++) { const [c, d] = edges[j];
+      if (a === c || a === d || b === c || b === d) continue;
+      const x = segX(pos[a], pos[b], pos[c], pos[d]);
+      if (x) { n++; if (collect) { pts.push(x); bad.add(i); bad.add(j); } } } }
+  return collect ? { n, pts, bad } : n;
+}
+
+/* ---------- Bölüm üretici: önce düzlemsel çizge, sonra pimler çembere karıştırılır ---------- */
+function genLevel(L) {
+  const r = rng(L * 7919 + 13);
+  const n = Math.min(6 + Math.floor((L - 1) * 0.75), 26);
+  const pts = []; let tries = 0;
+  while (pts.length < n && tries++ < 6000) { const p = { x: .08 + r() * .84, y: .08 + r() * .84 }; if (pts.every(q => Math.hypot(q.x - p.x, q.y - p.y) > 0.5 / Math.sqrt(n))) pts.push(p); }
+  const cand = [];
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) cand.push([i, j, Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y)]);
+  cand.sort((a, b) => a[2] - b[2]);
+  const edges = [], deg = pts.map(() => 0), maxDeg = L < 4 ? 3 : 4;
+  const target = Math.round(pts.length * (L < 3 ? 1.3 : L < 10 ? 1.5 : 1.7));
+  for (const [i, j] of cand) {
+    if (edges.length >= target) break;
+    if (deg[i] >= maxDeg || deg[j] >= maxDeg) continue;
+    if (edges.some(([a, b]) => a !== i && a !== j && b !== i && b !== j && segX(pts[a], pts[b], pts[i], pts[j]))) continue;
+    if (pts.some((p, k) => k !== i && k !== j && distPS(p, pts[i], pts[j]) < 0.04)) continue;
+    edges.push([i, j]); deg[i]++; deg[j]++;
+  }
+  let best = null, bestC = -1; const need = Math.max(2, Math.floor(pts.length / 2));
+  for (let k = 0; k < 80; k++) {
+    const order = pts.map((_, i) => i); for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    const pos = []; order.forEach((idx, slot) => { const a = slot / order.length * Math.PI * 2 - Math.PI / 2; pos[idx] = { x: .5 + Math.cos(a) * .4, y: .5 + Math.sin(a) * .4 }; });
+    const c = crossings(pos, edges);
+    if (c > bestC) { best = pos; bestC = c; }
+    if (c >= need) break;
+  }
+  return { sol: pts, start: best, edges, n: pts.length };
+}
+
+/* ---------- Ses ve titreşim ---------- */
+let AC = null;
+function audio() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') AC.resume(); }
+function tone(f, d = .18, type = 'triangle', v = .12, delay = 0) {
+  if (!S.sound || !AC || muted) return;
+  const t = AC.currentTime + delay, o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t); g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+  o.connect(g).connect(AC.destination); o.start(t); o.stop(t + d + .02);
+}
+let muted = false;
+function buzz(ms) { if (S.vib && navigator.vibrate) try { navigator.vibrate(ms); } catch (e) {} }
+const SCALE = [392, 440, 494, 587, 659, 784, 880];
+
+/* ---------- Tuval ---------- */
+const cv = $('cv'), ctx = cv.getContext('2d');
+let DPR = 1, CW = 0, CH = 0, board = { x: 0, y: 0, w: 1, h: 1 }, bgCanvas = null;
+const motes = Array.from({ length: 34 }, () => ({ x: Math.random(), y: Math.random(), r: .6 + Math.random() * 1.8, s: .004 + Math.random() * .012, p: Math.random() * 6 }));
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const rc = cv.getBoundingClientRect(); CW = rc.width; CH = rc.height;
+  cv.width = Math.round(CW * DPR); cv.height = Math.round(CH * DPR);
+  const top = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0);
+  const hudB = $('prog').hidden ? 80 : $('prog').getBoundingClientRect().bottom - rc.top + 14;
+  const toolsT = $('tools').hidden ? CH - 90 : $('tools').getBoundingClientRect().top - rc.top - 12;
+  const m = 26; board = { x: m, y: Math.max(hudB, 70 + top), w: CW - m * 2, h: Math.max(120, toolsT - Math.max(hudB, 70)) };
+  bgCanvas = document.createElement('canvas'); bgCanvas.width = cv.width; bgCanvas.height = cv.height;
+  const b = bgCanvas.getContext('2d'); b.scale(DPR, DPR);
+  const g = b.createRadialGradient(CW / 2, CH * .42, 10, CW / 2, CH * .5, Math.max(CW, CH) * .8);
+  g.addColorStop(0, '#22305f'); g.addColorStop(.55, '#151f40'); g.addColorStop(1, '#0b1228');
+  b.fillStyle = g; b.fillRect(0, 0, CW, CH);
+  b.strokeStyle = 'rgba(246,239,226,.035)'; b.lineWidth = 1;
+  for (let i = -CH; i < CW; i += 7) { b.beginPath(); b.moveTo(i, 0); b.lineTo(i + CH, CH); b.stroke(); }
+  for (let i = 0; i < CW + CH; i += 7) { b.beginPath(); b.moveTo(i, 0); b.lineTo(i - CH, CH); b.stroke(); }
+  const v = b.createRadialGradient(CW / 2, CH / 2, Math.min(CW, CH) * .3, CW / 2, CH / 2, Math.max(CW, CH) * .75);
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.45)'); b.fillStyle = v; b.fillRect(0, 0, CW, CH);
+}
+const px = p => ({ x: board.x + p.x * board.w, y: board.y + p.y * board.h });
+const toN = (x, y) => ({ x: clamp((x - board.x) / board.w, .02, .98), y: clamp((y - board.y) / board.h, .02, .98) });
+
+/* ---------- Parçacıklar ---------- */
+const parts = []; let shock = [];
+function burst(x, y, n, cols, sp = 4, life = 900, size = 3, grav = .06) {
+  for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = sp * (.3 + Math.random());
+    parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - (grav ? 1.5 : 0), life, max: life, c: cols[i % cols.length], s: size * (.5 + Math.random()), g: grav, rot: Math.random() * 6, conf: grav > .1 }); }
+}
+function confetti() { const cols = ['#f0b95a', '#ff6a5c', '#5fe3b2', '#58b7ff', '#f6efe2', '#b57bff'];
+  for (let i = 0; i < 110; i++) parts.push({ x: CW * Math.random(), y: -20 - Math.random() * CH * .4, vx: (Math.random() - .5) * 2, vy: 2 + Math.random() * 3, life: 2600, max: 2600, c: cols[i % 6], s: 4 + Math.random() * 5, g: .03, rot: Math.random() * 6, conf: true }); }
+
+/* ---------- Oyun durumu ---------- */
+let mode = 'menu', G = null, demo = genLevel(5);
+function skinColor(i, t, s = S.skin) {
+  if (s === 'gokkusagi') return `hsl(${(i * 47 + t * .06) % 360},88%,66%)`;
+  const sk = SKINS.find(k => k.id === s) || SKINS[0]; return sk.cols[i % sk.cols.length];
+}
+function startLevel(L, fromWip = true) {
+  const lv = genLevel(L);
+  let pos = lv.start.map(p => ({ ...p })), moves = 0, time = 0;
+  if (fromWip && S.wip && S.wip.level === L && S.wip.pos.length === lv.n) { pos = S.wip.pos.map(p => ({ ...p })); moves = S.wip.moves; time = S.wip.time || 0; }
+  const init = crossings(lv.start, lv.edges);
+  G = { level: L, lv, pos, moves, undo: [], drag: null, solved: false, solveT: 0, init, t0: performance.now() - time * 1000, cross: null, anim: null, hintUsed: 0 };
+  recompute(true);
+  mode = 'play'; show(null);
+  $('hud').hidden = $('tools').hidden = $('prog').hidden = false;
+  $('hLvl').textContent = T('lvl', { n: L });
+  resize(); refresh();
+  // girişte pimler ortadan açılır
+  G.intro = performance.now();
+  tone(523, .12); tone(784, .2, 'triangle', .1, .08);
+  if (G.cross.n === 0) solve();
+}
+function recompute(silent) {
+  const prev = G.cross ? G.cross.n : null;
+  G.cross = crossings(G.pos, G.lv.edges, true);
+  const c = G.cross.n;
+  $('hCross').textContent = c === 0 ? T('solved') : T('crossings', { n: c });
+  $('crossPill').classList.toggle('ok', c === 0);
+  $('progBar').style.width = (G.init ? Math.round((1 - Math.min(c, G.init) / G.init) * 100) : 100) + '%';
+  if (!silent && prev !== null && c < prev && G.drag) { const p = px(G.pos[G.drag.i]); burst(p.x, p.y, 10, ['#5fe3b2', '#f6efe2'], 3, 600, 2.5, 0); tone(SCALE[clamp(6 - c, 0, 6)], .1, 'sine', .07); }
+}
+function saveWip() { if (!G || G.solved) return; S.wip = { level: G.level, pos: G.pos.map(p => ({ x: +p.x.toFixed(4), y: +p.y.toFixed(4) })), moves: G.moves, time: Math.round((performance.now() - G.t0) / 1000) }; save(); }
+
+function solve() {
+  G.solved = true; G.solveT = performance.now(); G.drag = null;
+  const secs = Math.round((G.solveT - G.t0) / 1000), par = G.lv.n;
+  const stars = G.moves <= par ? 3 : G.moves <= Math.ceil(par * 1.7) ? 2 : 1;
+  const first = !S.stars[G.level];
+  const prevStars = S.stars[G.level] || 0;
+  const gain = 10 + stars * 5 + (first ? 15 : 0) + Math.max(0, stars - prevStars) * 5;
+  S.stars[G.level] = Math.max(prevStars, stars);
+  S.unlocked = Math.max(S.unlocked, G.level + 1);
+  S.coins += gain; S.wip = null; save();
+  G.result = { stars, gain, secs, doubled: false };
+  shock.push({ x: board.x + board.w / 2, y: board.y + board.h / 2, t: performance.now() });
+  G.pos.forEach((p, i) => { const q = px(p); setTimeout(() => burst(q.x, q.y, 8, ['#f0b95a', '#ffe8a3'], 3, 700, 2.4, 0), i * 25); });
+  [0, 4, 2, 5, 6].forEach((k, i) => tone(SCALE[k] * 1.0, .35, 'triangle', .1, i * .09));
+  buzz([20, 40, 30]);
+  setTimeout(() => { confetti(); showWin(); }, 1100);
+}
+
+/* ---------- Dokunma ---------- */
+let lastTrail = 0;
+cv.addEventListener('pointerdown', e => {
+  audio();
+  if (mode !== 'play' || !G || G.solved || G.anim) return;
+  const rc = cv.getBoundingClientRect(), x = e.clientX - rc.left, y = e.clientY - rc.top;
+  let best = -1, bd = 34;
+  G.pos.forEach((p, i) => { const q = px(p), d = Math.hypot(q.x - x, q.y - y); if (d < bd) { bd = d; best = i; } });
+  if (best < 0) return;
+  G.drag = { i: best, ox: G.pos[best].x, oy: G.pos[best].y, before: G.cross.n, moved: false };
+  try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+  tone(330, .06, 'sine', .06); buzz(8);
+});
+cv.addEventListener('pointermove', e => {
+  if (!G || !G.drag) return;
+  const rc = cv.getBoundingClientRect(), n = toN(e.clientX - rc.left, e.clientY - rc.top);
+  G.pos[G.drag.i] = n; G.drag.moved = true; recompute();
+  const now = performance.now(); if (now - lastTrail > 30) { lastTrail = now; const q = px(n); parts.push({ x: q.x, y: q.y, vx: (Math.random() - .5), vy: (Math.random() - .5), life: 450, max: 450, c: '#f0b95a', s: 2.2, g: 0 }); }
+});
+function endDrag() {
+  if (!G || !G.drag) return;
+  const d = G.drag; G.drag = null;
+  if (d.moved && Math.hypot(G.pos[d.i].x - d.ox, G.pos[d.i].y - d.oy) > .004) {
+    G.undo.push({ i: d.i, x: d.ox, y: d.oy }); if (G.undo.length > 60) G.undo.shift();
+    G.moves++; tone(SCALE[G.moves % 7] / 2, .14, 'triangle', .08);
+    const q = px(G.pos[d.i]); shock.push({ x: q.x, y: q.y, t: performance.now(), small: true });
+    saveWip();
+    if (G.cross.n === 0) solve();
+  }
+  refresh();
+}
+cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+
+function animateNode(i, to, ms, done) {
+  const from = { ...G.pos[i] }, t0 = performance.now();
+  G.anim = () => { const k = clamp((performance.now() - t0) / ms, 0, 1), e = 1 - Math.pow(1 - k, 3);
+    G.pos[i] = { x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e }; recompute(true);
+    if (k >= 1) { G.anim = null; done && done(); } };
+}
+$('bUndo').onclick = () => { if (!G || G.solved || G.anim || !G.undo.length) return; const u = G.undo.pop(); animateNode(u.i, { x: u.x, y: u.y }, 220, () => { G.moves++; saveWip(); refresh(); if (G.cross.n === 0) solve(); }); tone(294, .1); };
+$('bReset').onclick = () => { if (!G || G.solved || G.anim) return; S.wip = null; save(); startLevel(G.level, false); toast(T('restarted')); };
+$('bBack').onclick = () => { saveWip(); goMenu(); };
+
+function useHint() {
+  if (!G || G.solved || G.anim) return false;
+  const sol = G.lv.sol; let best = -1, bc = Infinity;
+  const involved = new Set(); G.cross.bad.forEach(ei => { involved.add(G.lv.edges[ei][0]); involved.add(G.lv.edges[ei][1]); });
+  const cands = involved.size ? [...involved] : G.pos.map((_, i) => i);
+  for (const i of cands) { const test = G.pos.slice(); test[i] = sol[i]; const c = crossings(test, G.lv.edges); if (c < bc) { bc = c; best = i; } }
+  if (bc >= G.cross.n) { // tek pim yetmiyorsa: bu pimle komşularını birlikte yerine taşı
+    const i = best, nb = new Set([i]); G.lv.edges.forEach(([a, b]) => { if (a === i) nb.add(b); if (b === i) nb.add(a); });
+    nb.forEach(k => { G.pos[k] = { ...sol[k] }; });
+    recompute(true); const q = px(G.pos[i]); burst(q.x, q.y, 24, ['#f0b95a', '#5fe3b2', '#fff'], 4, 900, 3, 0);
+  } else {
+    const q0 = px(G.pos[best]); burst(q0.x, q0.y, 14, ['#f0b95a'], 3, 600, 2.5, 0);
+    animateNode(best, sol[best], 650, () => { const q = px(G.pos[best]); burst(q.x, q.y, 24, ['#f0b95a', '#5fe3b2', '#fff'], 4, 900, 3, 0); saveWip(); if (G.cross.n === 0) solve(); });
+  }
+  G.hintGlow = { i: best, t: performance.now() };
+  G.moves++; G.hintUsed++; tone(659, .2, 'sine', .1); tone(988, .3, 'sine', .08, .12);
+  saveWip(); if (!G.anim && G.cross.n === 0) solve();
+  return true;
+}
+
+/* ---------- Çizim ---------- */
+function draw(now) {
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  if (bgCanvas) ctx.drawImage(bgCanvas, 0, 0, CW, CH);
+  // yüzen tozlar
+  for (const m of motes) { m.y -= m.s * .016; if (m.y < -.02) m.y = 1.02; const a = .15 + .15 * Math.sin(now * .001 + m.p);
+    ctx.fillStyle = `rgba(240,185,90,${a})`; ctx.beginPath(); ctx.arc(m.x * CW + Math.sin(now * .0004 + m.p) * 8, m.y * CH, m.r, 0, 7); ctx.fill(); }
+
+  if (mode === 'menu') drawDemo(now);
+  else if (G) drawGame(now);
+
+  // şok halkaları
+  shock = shock.filter(s => { const k = Math.max(0, (now - s.t) / (s.small ? 380 : 900)); if (k >= 1) return false;
+    ctx.strokeStyle = s.small ? `rgba(246,239,226,${.4 * (1 - k)})` : `rgba(240,185,90,${.7 * (1 - k)})`; ctx.lineWidth = s.small ? 2 : 6 * (1 - k) + 1;
+    ctx.beginPath(); ctx.arc(s.x, s.y, (s.small ? 30 : Math.max(CW, CH) * .7) * k + 6, 0, 7); ctx.stroke(); return true; });
+
+  // parçacıklar
+  for (let i = parts.length - 1; i >= 0; i--) { const p = parts[i]; p.life -= 16; if (p.life <= 0) { parts.splice(i, 1); continue; }
+    p.vy += p.g; p.x += p.vx; p.y += p.vy; p.vx *= .985; const a = Math.min(1, p.life / p.max * 1.4);
+    ctx.globalAlpha = a; ctx.fillStyle = p.c;
+    if (p.conf) { p.rot += .12; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore(); }
+    else { ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, 7); ctx.fill(); } }
+  ctx.globalAlpha = 1;
+}
+function rope(a, b, col, w, now, glow, alpha = 1) {
+  ctx.globalAlpha = alpha; ctx.lineCap = 'round';
+  ctx.strokeStyle = 'rgba(4,7,20,.45)'; ctx.lineWidth = w + 3; ctx.beginPath(); ctx.moveTo(a.x, a.y + 3); ctx.lineTo(b.x, b.y + 3); ctx.stroke();
+  if (glow) { ctx.shadowColor = glow; ctx.shadowBlur = 16; }
+  ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+  ctx.shadowBlur = 0;
+  // örgü dokusu: kayan kısa çizgiler
+  ctx.setLineDash([2.5, 5.5]); ctx.lineDashOffset = -now * .012; ctx.strokeStyle = 'rgba(255,255,255,.38)'; ctx.lineWidth = Math.max(1.5, w * .38);
+  ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+}
+function peg(q, r, state, now) {
+  const { drag, hot, glow } = state; const R = r * (drag ? 1.35 : 1);
+  if (drag || glow) { const g = ctx.createRadialGradient(q.x, q.y, R * .5, q.x, q.y, R * 3); g.addColorStop(0, glow ? 'rgba(95,227,178,.5)' : 'rgba(240,185,90,.45)'); g.addColorStop(1, 'rgba(240,185,90,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(q.x, q.y, R * 3, 0, 7); ctx.fill(); }
+  ctx.fillStyle = 'rgba(4,7,20,.5)'; ctx.beginPath(); ctx.arc(q.x, q.y + 3, R, 0, 7); ctx.fill();
+  const g = ctx.createRadialGradient(q.x - R * .35, q.y - R * .4, R * .1, q.x, q.y, R);
+  g.addColorStop(0, '#fff2c9'); g.addColorStop(.45, hot ? '#ffb08f' : '#f0b95a'); g.addColorStop(1, hot ? '#b9473b' : '#9a6420');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(q.x, q.y, R, 0, 7); ctx.fill();
+  ctx.strokeStyle = 'rgba(42,26,5,.55)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(q.x, q.y, R * .55, 0, 7); ctx.stroke();
+}
+function drawGame(now) {
+  if (G.anim) G.anim();
+  const n = G.lv.n, r = clamp(Math.min(board.w, board.h) / (Math.sqrt(n) * 7.5), 11, 18), w = clamp(r * .5, 5, 8);
+  const introK = G.intro ? clamp((now - G.intro) / 600, 0, 1) : 1, ie = 1 - Math.pow(1 - introK, 3);
+  const P = G.pos.map(p => { const q = px(p); if (ie < 1) { const c = { x: board.x + board.w / 2, y: board.y + board.h / 2 }; return { x: c.x + (q.x - c.x) * ie, y: c.y + (q.y - c.y) * ie }; } return q; });
+  const sk = G.solved ? clamp((now - G.solveT) / 700, 0, 1) : 0;
+  const pulse = .5 + .5 * Math.sin(now * .008);
+  const hotNodes = new Set(); G.cross.bad.forEach(ei => { hotNodes.add(G.lv.edges[ei][0]); hotNodes.add(G.lv.edges[ei][1]); });
+  const dragI = G.drag ? G.drag.i : -1;
+  // önce temiz ipler, sonra kesişenler üstte
+  const order = G.lv.edges.map((e, i) => i).sort((a, b) => (G.cross.bad.has(a) ? 1 : 0) - (G.cross.bad.has(b) ? 1 : 0));
+  for (const i of order) { const [a, b] = G.lv.edges[i]; const bad = G.cross.bad.has(i), touch = a === dragI || b === dragI;
+    let col = bad ? '#ff6a5c' : skinColor(i, now), glow = bad ? `rgba(255,106,92,${.5 + .5 * pulse})` : null;
+    if (G.solved) { const cx = board.x + board.w / 2, cy = board.y + board.h / 2, d = Math.hypot((P[a].x + P[b].x) / 2 - cx, (P[a].y + P[b].y) / 2 - cy) / Math.max(board.w, board.h);
+      if (sk > d) { col = '#ffd56b'; glow = `rgba(255,213,107,${.6 + .4 * pulse})`; } }
+    rope(P[a], P[b], col, touch ? w + 1.5 : w, now, glow, dragI >= 0 && !touch && !bad ? .75 : 1); }
+  // kesişme noktaları
+  if (!G.solved) for (const x of G.cross.pts) { const q = px(x); ctx.fillStyle = `rgba(255,106,92,${.25 + .25 * pulse})`; ctx.beginPath(); ctx.arc(q.x, q.y, 9 + pulse * 3, 0, 7); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(q.x, q.y, 2.6, 0, 7); ctx.fill(); }
+  const hg = G.hintGlow && now - G.hintGlow.t < 1400 ? G.hintGlow.i : -1;
+  P.forEach((q, i) => peg(q, r, { drag: i === dragI, hot: hotNodes.has(i) && !G.solved, glow: i === hg || G.solved }, now));
+}
+function drawDemo(now) {
+  const d = demo, cx = CW / 2, cy = CH * .5, s = Math.min(CW, CH) * .9;
+  const P = d.sol.map((p, i) => ({ x: cx + (p.x - .5) * s + Math.sin(now * .0007 + i) * 6, y: cy + (p.y - .5) * s + Math.cos(now * .0006 + i * 1.3) * 6 }));
+  d.edges.forEach(([a, b], i) => rope(P[a], P[b], skinColor(i, now), 6, now, null, .28));
+  P.forEach(q => { ctx.globalAlpha = .35; peg(q, 10, {}, now); ctx.globalAlpha = 1; });
+}
+function loop(now) { draw(now); requestAnimationFrame(loop); }
+
+/* ---------- Ekranlar ---------- */
+const SCREENS = ['home', 'levels', 'shop', 'daily', 'settings'];
+function show(id) { SCREENS.forEach(s => $(s).hidden = s !== id); refresh(); }
+function goMenu() { mode = 'menu'; G = null; $('hud').hidden = $('tools').hidden = $('prog').hidden = true; $('sheetWin').hidden = $('sheetHint').hidden = true; resize(); show('home'); }
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => { show('home'); tone(294, .08); });
+document.querySelectorAll('[data-sheetclose]').forEach(b => b.onclick = () => { b.closest('.sheet').hidden = true; });
+$('bPlay').onclick = () => { audio(); startLevel(S.wip ? S.wip.level : Math.min(S.unlocked, S.unlocked)); };
+$('bLevels').onclick = () => { audio(); renderLevels(); show('levels'); };
+$('bShop').onclick = () => { audio(); show('shop'); };
+$('bDaily').onclick = () => { audio(); $('prize').textContent = ''; show('daily'); };
+$('bSettings').onclick = () => { audio(); show('settings'); };
+
+let toastT;
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
+function addCoins(n) { S.coins += n; save(); refresh(); document.querySelectorAll('.coins').forEach(c => { c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump'); }); tone(880, .1, 'square', .04); tone(1175, .14, 'square', .04, .07); }
+
+function refresh() {
+  const cHtml = SPOOL + '<span>' + S.coins + '</span>';
+  document.querySelectorAll('#hCoins,#mCoins,[data-coins]').forEach(e => e.innerHTML = cHtml);
+  $('hintBadge').textContent = S.hints;
+  $('bUndo').disabled = !G || !G.undo.length;
+  const L = S.wip ? S.wip.level : S.unlocked;
+  $('playSub').textContent = T('lvl', { n: L }) + (S.wip ? ' · ' + T('in_progress') : '');
+  $('streak').innerHTML = '<svg class="ico" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c1 4 6 6 6 12a6 6 0 01-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4-1-6 1-9z"/></svg>' + T('streak_days', { n: S.daily.streak });
+  $('dailyDot').hidden = S.daily.free;
+  renderShop(); renderDaily(); renderDev();
+  $('swSound').setAttribute('aria-checked', S.sound); $('swVib').setAttribute('aria-checked', S.vib);
+}
+function renderLevels() {
+  const max = Math.max(30, Math.ceil((S.unlocked + 6) / 5) * 5), g = $('lvGrid'); g.innerHTML = '';
+  for (let i = 1; i <= max; i++) { const b = document.createElement('button'), st = S.stars[i] || 0, lock = i > S.unlocked;
+    b.className = 'lv' + (i === S.unlocked ? ' cur' : '') + (lock ? ' lock' : '');
+    b.innerHTML = lock ? '<svg viewBox="0 0 24 24" width="20" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>' : i + '<span class="st">' + '★'.repeat(st) + '<b>' + '★'.repeat(3 - st) + '</b></span>';
+    b.disabled = lock; b.setAttribute('aria-label', T('lvl', { n: i }) + ', ' + (lock ? T('locked') : T('stars_n', { n: st })));
+    b.onclick = () => startLevel(i); g.appendChild(b); }
+}
+
+/* ---------- Reklam katmanı ---------- */
+function adDay() { if (S.adDay.date !== today()) S.adDay = { date: today(), counts: {}, total: 0 }; return S.adDay; }
+function adLeft(p) { const d = adDay(); return Math.max(0, Math.min(AD_RULES.caps[p] - (d.counts[p] || 0), AD_RULES.daily - d.total)); }
+function track(ev, p) { S.stats[p] = S.stats[p] || { offer: 0, req: 0, done: 0, dismiss: 0, fail: 0 };
+  const m = { offer_shown: 'offer', ad_requested: 'req', ad_rewarded: 'done', ad_dismissed: 'dismiss', ad_failed: 'fail' }[ev]; if (m) S.stats[p][m]++;
+  try { window.KnotAnalytics && window.KnotAnalytics.track(ev, { placement: p }); } catch (e) {} }
+const offered = new Set();
+function offer(btn, p, label) { // düğmeyi hazırla, teklif gösterimini bir kez say
+  const left = adLeft(p);
+  btn.innerHTML = '<span class="tag">' + T('ad_tag') + '</span>' + label + (left ? '' : ' · ' + T('renews_tomorrow'));
+  btn.disabled = !left; btn.dataset.p = p;
+  if (!btn.hidden && btn.offsetParent && !offered.has(btn.id + mode + (G ? G.level : ''))) { offered.add(btn.id + mode + (G ? G.level : '')); track('offer_shown', p); }
+}
+function mockShow(p) {
+  return new Promise(res => {
+    if (Math.random() < AD_NOFILL) { setTimeout(() => res('failed'), 500); return; }
+    const el = $('ad'); el.hidden = false; $('adWarn').hidden = true; $('adClaim').hidden = true; $('adWhat').textContent = T('reward_is', { r: AD_LABEL[p] }) + ' ' + T('ad_what');
+    muted = true; let left = AD_SECONDS, paused = false, finished = false;
+    const ring = $('adRing'), sec = $('adSec');
+    const tick = () => { sec.textContent = left; ring.style.strokeDashoffset = 176 * (left / AD_SECONDS); };
+    tick(); ring.style.transition = 'stroke-dashoffset 1s linear';
+    const iv = setInterval(() => { if (paused) return; left--; tick(); if (left <= 0) { clearInterval(iv); finished = true; sec.textContent = '✓'; $('adClaim').hidden = false; } }, 1000);
+    const end = r => { clearInterval(iv); el.hidden = true; muted = false; ring.style.transition = 'none'; res(r); };
+    $('adClaim').onclick = () => end('rewarded');
+    $('adClose').onclick = () => { if (finished) return end('rewarded'); paused = true; $('adWarn').hidden = false; };
+    $('adKeep').onclick = () => { paused = false; $('adWarn').hidden = true; };
+    $('adQuit').onclick = () => end('dismissed');
+  });
+}
+async function runAd(p, onReward) {
+  audio();
+  if (!adLeft(p)) { track('ad_capped', p); toast(T('cap_reached')); return; }
+  track('ad_requested', p);
+  let r = 'failed';
+  try { r = window.KnotAdsBridge ? await window.KnotAdsBridge.show(p) : await mockShow(p); } catch (e) { r = 'failed'; }
+  if (r === 'rewarded') { const d = adDay(); d.counts[p] = (d.counts[p] || 0) + 1; d.total++; track('ad_rewarded', p); onReward(); track('reward_granted', p); }
+  else if (r === 'dismissed') { track('ad_dismissed', p); toast(T('ad_dismissed')); }
+  else { track('ad_failed', p); toast(T('no_ad')); }
+  save(); refresh();
+}
+
+/* ---------- Kazanma ekranı ---------- */
+function showWin() {
+  const r = G.result; $('sheetWin').hidden = false;
+  $('winTitle').textContent = [T('win0'), T('win1'), T('win2'), T('win3')][r.stars];
+  $('winStars').innerHTML = [1, 2, 3].map(i => STAR.replace('<svg', `<svg class="${i <= r.stars ? 'on' : ''}" style="animation-delay:${i * .18}s"`)).join('');
+  [1, 2, 3].forEach(i => { if (i <= r.stars) setTimeout(() => tone(SCALE[i + 2], .2, 'triangle', .1), i * 180); });
+  $('wMoves').textContent = G.moves; $('wTime').textContent = Math.floor(r.secs / 60) + ':' + String(r.secs % 60).padStart(2, '0'); $('wNodes').textContent = G.lv.n;
+  $('wGain').innerHTML = '+' + r.gain + ' ' + SPOOL;
+  const db = $('bDouble'); db.hidden = false; offer(db, 'double', T('double_offer', { n: r.gain }));
+  db.onclick = () => runAd('double', () => { r.doubled = true; addCoins(r.gain); $('wGain').innerHTML = '+' + r.gain * 2 + ' ' + SPOOL; db.innerHTML = T('doubled'); db.disabled = true; confetti(); });
+}
+$('bNext').onclick = () => { $('sheetWin').hidden = true; const nx = G.level + 1;
+  const go = () => startLevel(nx);
+  if (window.AdKit) AdKit.levelDone({ reward: '+' + T('spools', { n: 20 }), title: T('level_bonus') }).then(ok => { if (ok) addCoins(20); go(); }); else go(); };
+$('bReplay').onclick = () => { $('sheetWin').hidden = true; startLevel(G.level, false); };
+
+/* ---------- İpucu ---------- */
+$('bHint').onclick = () => {
+  if (!G || G.solved || G.anim) return;
+  if (S.hints > 0) { S.hints--; save(); useHint(); refresh(); return; }
+  openHintSheet();
+};
+function openHintSheet() {
+  $('sheetHint').hidden = false;
+  const u = $('hUse'); u.hidden = S.hints <= 0; u.textContent = T('use_hint', { n: S.hints });
+  u.onclick = () => { if (S.hints > 0) { S.hints--; save(); $('sheetHint').hidden = true; useHint(); refresh(); } };
+  const b = $('hBuy'); b.innerHTML = T('buy_hint', { p: HINT_PRICE + ' ' + SPOOL }); b.disabled = S.coins < HINT_PRICE;
+  b.onclick = () => { if (S.coins < HINT_PRICE) return; S.coins -= HINT_PRICE; save(); $('sheetHint').hidden = true; useHint(); refresh(); };
+  offer($('hAd'), 'hint', T('watch_hint'));
+  $('hAd').onclick = () => runAd('hint', () => { $('sheetHint').hidden = true; useHint(); });
+  offer($('hSkip'), 'skip', T('skip_level_btn'));
+  $('hSkip').onclick = () => runAd('skip', () => { $('sheetHint').hidden = true; S.unlocked = Math.max(S.unlocked, G.level + 1); S.wip = null; save(); toast(T('level_skipped', { n: G.level })); startLevel(G.level + 1); });
+}
+
+/* ---------- Dükkân ---------- */
+function renderShop() {
+  const list = $('skinList'); list.innerHTML = '';
+  SKINS.forEach(sk => {
+    const row = document.createElement('div'); row.className = 'skin';
+    const grad = sk.id === 'gokkusagi' ? 'linear-gradient(90deg,#ff6a5c,#f0b95a,#5fe3b2,#58b7ff,#b57bff)' : `linear-gradient(90deg,${sk.cols.join(',')})`;
+    const own = S.owned.includes(sk.id), on = S.skin === sk.id;
+    let sub = own ? (on ? T('in_use') : T('owned')) : sk.ads ? T('ads_only') : T('spools', { n: sk.price });
+    let extra = '';
+    if (sk.ads && !own) extra = `<div class="meter"><i style="width:${S.rainbow / sk.ads * 100}%"></i></div>`;
+    row.innerHTML = `<div class="swatch" style="background:${grad}"></div><div><b>${sk.name}</b><span>${sub}</span>${extra}</div>`;
+    const b = document.createElement('button'); b.className = 'btn' + (own ? '' : ' primary'); b.id = 'sk-' + sk.id;
+    if (own) { b.textContent = on ? T('selected') : T('select'); b.disabled = on; b.onclick = () => { S.skin = sk.id; save(); refresh(); tone(660, .1); }; }
+    else if (sk.ads) { b.className = 'btn ad'; row.appendChild(b); offer(b, 'skin', T('watch_prog', { a: S.rainbow, b: sk.ads }));
+      b.onclick = () => runAd('skin', () => { S.rainbow++; if (S.rainbow >= sk.ads) { S.owned.push(sk.id); S.skin = sk.id; confetti(); toast(T('rainbow_unlocked')); } save(); }); list.appendChild(row); return; }
+    else { b.innerHTML = sk.price + ' ' + SPOOL; b.disabled = S.coins < sk.price; b.onclick = () => { if (S.coins < sk.price) return; S.coins -= sk.price; S.owned.push(sk.id); S.skin = sk.id; save(); refresh(); confetti(); toast(T('rope_yours', { name: sk.name })); }; }
+    row.appendChild(b); list.appendChild(row);
+  });
+  $('shopHints').textContent = S.hints;
+  const bh = $('buyHints'); bh.innerHTML = HINT_PACK + ' ' + SPOOL; bh.disabled = S.coins < HINT_PACK;
+  bh.onclick = () => { if (S.coins < HINT_PACK) return; S.coins -= HINT_PACK; S.hints += 3; save(); refresh(); toast('+' + T('hints_n', { n: 3 })); };
+  offer($('adCoins'), 'coins', T('watch_for', { r: '+' + T('spools', { n: 30 }) }));
+  $('adCoins').onclick = () => runAd('coins', () => addCoins(30));
+  $('adCoinsNote').textContent = T('coins_note', { n: adLeft('coins') });
+}
+
+/* ---------- Günlük hediye ve seri ---------- */
+function dayDiff(a, b) { return Math.round((new Date(b) - new Date(a)) / 864e5); }
+function checkDay() {
+  const t = today(), d = S.daily;
+  if (d.date !== t) { const gap = d.last ? dayDiff(d.last, t) : 99; d.streak = gap === 1 ? d.streak + 1 : 1; d.last = t; d.date = t; d.free = false; d.ads = 0; save(); }
+}
+function renderDaily() {
+  const d = S.daily, wk = $('week'); wk.innerHTML = '';
+  for (let i = 1; i <= 7; i++) { const e = document.createElement('div'); e.className = i <= Math.min(d.streak, 7) ? 'on' : ''; e.textContent = T('day_n', { n: i }); wk.appendChild(e); }
+  const b = $('openGift');
+  if (!d.free) { b.className = 'btn primary'; b.disabled = false; b.textContent = T('open_free'); b.onclick = () => openGift(true); $('giftNote').textContent = T('streak_bonus', { r: '+' + T('spools', { n: Math.min(d.streak, 7) * 5 }) }); }
+  else { b.className = 'btn ad'; b.id = 'openGift'; offer(b, 'chest', T('watch_box')); b.onclick = () => runAd('chest', () => openGift(false)); $('giftNote').textContent = T('free_tomorrow', { n: AD_RULES.caps.chest }); }
+}
+function openGift(free) {
+  const j = $('jar'); j.classList.remove('shake'); void j.getBoundingClientRect(); j.classList.add('shake');
+  tone(392, .1); tone(523, .1, 'triangle', .1, .2);
+  setTimeout(() => {
+    const r = Math.random(); let msg;
+    if (r < .65) { const n = 20 + Math.floor(Math.random() * 41) + (free ? Math.min(S.daily.streak, 7) * 5 : 0); addCoins(n); msg = '+' + T('spools', { n }); }
+    else { const n = r < .9 ? 1 : 2; S.hints += n; msg = '+' + T('hints_n', { n }); }
+    if (free) S.daily.free = true;
+    save(); refresh(); $('prize').textContent = msg;
+    const rc = j.getBoundingClientRect(); burst(rc.left + rc.width / 2, rc.top + rc.height / 2, 40, ['#f0b95a', '#ff6a5c', '#5fe3b2', '#fff'], 5, 1200, 3.5, .12);
+    tone(784, .25, 'triangle', .1); tone(1047, .35, 'triangle', .08, .1); buzz(30);
+  }, 1000);
+}
+
+/* ---------- Ayarlar ---------- */
+$('swSound').onclick = () => { S.sound = !S.sound; save(); refresh(); audio(); tone(660, .1); };
+$('swVib').onclick = () => { S.vib = !S.vib; save(); refresh(); buzz(20); };
+$('bWipe').onclick = () => { $('bWipe').hidden = true; $('wipeConfirm').hidden = false; };
+$('wipeNo').onclick = () => { $('bWipe').hidden = false; $('wipeConfirm').hidden = true; };
+$('wipeYes').onclick = () => { S = fresh(); checkDay(); save(); $('bWipe').hidden = false; $('wipeConfirm').hidden = true; refresh(); toast(T('wiped')); };
+function renderDev() {
+  $('devBody').innerHTML = Object.keys(AD_RULES.caps).map(p => { const s = S.stats[p] || { offer: 0, req: 0, done: 0, dismiss: 0, fail: 0 };
+    return `<tr><td>${AD_LABEL[p]}</td><td>${s.offer}</td><td>${s.req}</td><td>${s.done}</td><td>${s.dismiss}</td><td>${s.fail}</td><td>${adLeft(p)}/${AD_RULES.caps[p]}</td></tr>`; }).join('');
+  $('devNote').textContent = T('dev_note', { a: adDay().total, b: AD_RULES.daily });
+}
+
+/* ---------- Başlat ---------- */
+function start(data) {
+  S = load();
+  if (data && data.S) S = data.S;
+  checkDay();
+  resize(); addEventListener('resize', () => resize());
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveWip(); });
+  addEventListener('pagehide', saveWip);
+  goMenu();
+  if (data && data.level) startLevel(data.level);
+  if (!S.daily.free) setTimeout(() => toast(T('gift_ready')), 900);
+  requestAnimationFrame(loop);
+}
+try { window.claude?.hot?.snapshot(() => { saveWip(); return { S, level: mode === 'play' && G && !G.solved ? G.level : 0 }; }); } catch (e) {}
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+})();
+</script>
+
+</body></html>
