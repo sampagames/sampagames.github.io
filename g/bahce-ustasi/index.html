@@ -1,0 +1,840 @@
+<!doctype html><html><head>
+<script>window.ADKIT_CONFIG={};</script>
+<script src="../../adkit-web.js" data-pkg="com.sampagames.bahceustasi"></script>
+<script>
+/* ===== i18n (Sampa Games) ===== */
+(function(){
+var SUP=['tr','en','es','pt','de','fr','id','ru'];
+var NAMES={tr:'Türkçe',en:'English',es:'Español',pt:'Português',de:'Deutsch',fr:'Français',id:'Bahasa Indonesia',ru:'Русский'};
+var LOC={tr:'tr-TR',en:'en-US',es:'es-419',pt:'pt-BR',de:'de-DE',fr:'fr-FR',id:'id-ID',ru:'ru-RU'};
+function pick(){var s=null;try{s=localStorage.getItem('sg_lang');}catch(e){}
+ if(s&&SUP.indexOf(s)>=0)return s;
+ var ls=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||''];
+ for(var i=0;i<ls.length;i++){var p=String(ls[i]||'').toLowerCase().split(/[-_]/)[0];if(p==='in')p='id';if(SUP.indexOf(p)>=0)return p;}
+ return 'en';}
+var lang=pick();
+document.documentElement.lang=lang;
+var DICT={"title":{"tr":"Bahçe Ustası","en":"Garden Master","es":"Garden Master","pt":"Garden Master","de":"Garden Master","fr":"Garden Master","id":"Garden Master","ru":"Garden Master"},"canvas_aria":{"tr":"3B bahçe alanı","en":"3D garden area","es":"Área de jardín 3D","pt":"Área do jardim 3D","de":"3D-Gartenfläche","fr":"Jardin en 3D","id":"Area taman 3D","ru":"3D-участок сада"},"menu":{"tr":"Menü","en":"Menu","es":"Menú","pt":"Menu","de":"Menü","fr":"Menu","id":"Menu","ru":"Меню"},"budget_left":{"tr":"Kalan bütçe","en":"Budget left","es":"Presupuesto","pt":"Orçamento","de":"Restbudget","fr":"Budget restant","id":"Sisa anggaran","ru":"Остаток"},"happy":{"tr":"Memnun","en":"Happy","es":"Agrado","pt":"Agrado","de":"Laune","fr":"Humeur","id":"Puas","ru":"Оценка"},"wishes_aria":{"tr":"Müşteri istekleri","en":"Client requests","es":"Pedidos del cliente","pt":"Pedidos do cliente","de":"Kundenwünsche","fr":"Demandes du client","id":"Permintaan klien","ru":"Пожелания клиента"},"undo":{"tr":"Geri al","en":"Undo","es":"Deshacer","pt":"Desfazer","de":"Rückgängig","fr":"Annuler","id":"Urungkan","ru":"Отменить"},"night_view":{"tr":"Gece görünümü","en":"Night view","es":"Vista nocturna","pt":"Vista noturna","de":"Nachtansicht","fr":"Vue de nuit","id":"Tampilan malam","ru":"Ночной вид"},"day_view":{"tr":"Gündüz görünümü","en":"Day view","es":"Vista diurna","pt":"Vista diurna","de":"Tagansicht","fr":"Vue de jour","id":"Tampilan siang","ru":"Дневной вид"},"present":{"tr":"Müşteriye Sun","en":"Present to Client","es":"Presentar al cliente","pt":"Mostrar ao cliente","de":"Dem Kunden zeigen","fr":"Montrer au client","id":"Tunjukkan ke klien","ru":"Показать клиенту"},"pct":{"tr":"%{n}","en":"{n}%","es":"{n}%","pt":"{n}%","de":"{n} %","fr":"{n} %","id":"{n}%","ru":"{n}%"},"m2":{"tr":"m²","en":"m²","es":"m²","pt":"m²","de":"m²","fr":"m²","id":"m²","ru":"м²"},"m":{"tr":"m","en":"m","es":"m","pt":"m","de":"m","fr":"m","id":"m","ru":"м"},"language":{"tr":"Dil","en":"Language","es":"Idioma","pt":"Idioma","de":"Sprache","fr":"Langue","id":"Bahasa","ru":"Язык"},"s_soil":{"tr":"Toprak","en":"Soil","es":"Tierra","pt":"Terra","de":"Erde","fr":"Terre","id":"Tanah","ru":"Земля"},"s_grass":{"tr":"Çim","en":"Grass","es":"Césped","pt":"Grama","de":"Rasen","fr":"Gazon","id":"Rumput","ru":"Газон"},"s_path":{"tr":"Taş Yol","en":"Stone Path","es":"Camino de piedra","pt":"Caminho de pedra","de":"Steinweg","fr":"Allée en pierre","id":"Jalan batu","ru":"Каменная дорожка"},"s_gravel":{"tr":"Çakıl","en":"Gravel","es":"Grava","pt":"Cascalho","de":"Kies","fr":"Gravier","id":"Kerikil","ru":"Гравий"},"s_deck":{"tr":"Ahşap Deck","en":"Wood Deck","es":"Deck de madera","pt":"Deck de madeira","de":"Holzdeck","fr":"Terrasse bois","id":"Dek kayu","ru":"Деревянный настил"},"it_rose":{"tr":"Gül Tarhı","en":"Rose Bed","es":"Cantero de rosas","pt":"Canteiro de rosas","de":"Rosenbeet","fr":"Massif de roses","id":"Bedeng mawar","ru":"Клумба роз"},"it_marigold":{"tr":"Kadife Çiçeği","en":"Marigolds","es":"Cempasúchil","pt":"Tagetes","de":"Tagetes","fr":"Œillets d'Inde","id":"Bunga kenikir","ru":"Бархатцы"},"it_lavender":{"tr":"Lavanta","en":"Lavender","es":"Lavanda","pt":"Lavanda","de":"Lavendel","fr":"Lavande","id":"Lavender","ru":"Лаванда"},"it_tulip":{"tr":"Lale Tarhı","en":"Tulip Bed","es":"Cantero de tulipanes","pt":"Canteiro de tulipas","de":"Tulpenbeet","fr":"Massif de tulipes","id":"Bedeng tulip","ru":"Клумба тюльпанов"},"it_hedge":{"tr":"Çit Bitkisi","en":"Hedge","es":"Seto vivo","pt":"Cerca viva","de":"Hecke","fr":"Haie","id":"Pagar tanaman","ru":"Живая изгородь"},"it_bush":{"tr":"Çalı","en":"Shrub","es":"Arbusto","pt":"Arbusto","de":"Strauch","fr":"Arbuste","id":"Semak","ru":"Куст"},"it_boxwood":{"tr":"Şimşir Top","en":"Boxwood Ball","es":"Boj en bola","pt":"Bola de buxo","de":"Buchskugel","fr":"Boule de buis","id":"Bola buksus","ru":"Шар из самшита"},"it_sapling":{"tr":"Erik Fidanı","en":"Plum Sapling","es":"Ciruelo joven","pt":"Muda de ameixeira","de":"Pflaumenbäumchen","fr":"Jeune prunier","id":"Bibit plum","ru":"Саженец сливы"},"it_cypress":{"tr":"Servi","en":"Cypress","es":"Ciprés","pt":"Cipreste","de":"Zypresse","fr":"Cyprès","id":"Cemara","ru":"Кипарис"},"it_oak":{"tr":"Çınar","en":"Plane Tree","es":"Plátano de sombra","pt":"Plátano","de":"Platane","fr":"Platane","id":"Pohon platanus","ru":"Платан"},"it_olive":{"tr":"Zeytin Ağacı","en":"Olive Tree","es":"Olivo","pt":"Oliveira","de":"Olivenbaum","fr":"Olivier","id":"Pohon zaitun","ru":"Олива"},"it_palm":{"tr":"Palmiye","en":"Palm Tree","es":"Palmera","pt":"Palmeira","de":"Palme","fr":"Palmier","id":"Pohon palem","ru":"Пальма"},"it_maple":{"tr":"Japon Akçaağacı","en":"Japanese Maple","es":"Arce japonés","pt":"Bordo japonês","de":"Fächerahorn","fr":"Érable du Japon","id":"Maple Jepang","ru":"Японский клён"},"it_bench":{"tr":"Bank","en":"Bench","es":"Banca","pt":"Banco","de":"Bank","fr":"Banc","id":"Bangku","ru":"Скамейка"},"it_table":{"tr":"Şemsiyeli Masa","en":"Umbrella Table","es":"Mesa con sombrilla","pt":"Mesa com guarda-sol","de":"Schirmtisch","fr":"Table parasol","id":"Meja payung","ru":"Стол с зонтом"},"it_lounger":{"tr":"Şezlong","en":"Sun Lounger","es":"Camastro","pt":"Espreguiçadeira","de":"Liege","fr":"Transat","id":"Kursi santai","ru":"Шезлонг"},"it_lamp":{"tr":"Bahçe Lambası","en":"Garden Lamp","es":"Farol de jardín","pt":"Luminária de jardim","de":"Gartenlampe","fr":"Lampadaire","id":"Lampu taman","ru":"Садовый фонарь"},"it_pot":{"tr":"Saksı","en":"Flower Pot","es":"Maceta","pt":"Vaso","de":"Blumentopf","fr":"Pot de fleurs","id":"Pot bunga","ru":"Горшок"},"it_birdhouse":{"tr":"Kuş Evi","en":"Birdhouse","es":"Casita de pájaros","pt":"Casinha de pássaro","de":"Vogelhaus","fr":"Nichoir","id":"Rumah burung","ru":"Скворечник"},"it_statue":{"tr":"Heykel","en":"Statue","es":"Estatua","pt":"Estátua","de":"Statue","fr":"Statue","id":"Patung","ru":"Статуя"},"it_pond":{"tr":"Süs Havuzu","en":"Garden Pond","es":"Estanque","pt":"Laguinho","de":"Gartenteich","fr":"Bassin","id":"Kolam hias","ru":"Пруд"},"it_pergola":{"tr":"Çardak","en":"Pergola","es":"Pérgola","pt":"Pérgola","de":"Pergola","fr":"Pergola","id":"Pergola","ru":"Пергола"},"it_pool":{"tr":"Yüzme Havuzu","en":"Swimming Pool","es":"Piscina","pt":"Piscina","de":"Pool","fr":"Piscine","id":"Kolam renang","ru":"Бассейн"},"it_firepit":{"tr":"Ateş Çukuru","en":"Fire Pit","es":"Fogata","pt":"Fogueira","de":"Feuerstelle","fr":"Brasero","id":"Perapian","ru":"Очаг"},"it_fountain":{"tr":"Fıskiye","en":"Fountain","es":"Fuente","pt":"Chafariz","de":"Springbrunnen","fr":"Fontaine","id":"Air mancur","ru":"Фонтан"},"it_kosk":{"tr":"Köşk","en":"Gazebo","es":"Glorieta","pt":"Gazebo","de":"Pavillon","fr":"Kiosque","id":"Gazebo","ru":"Беседка"},"tab_ground":{"tr":"Zemin","en":"Ground","es":"Suelo","pt":"Piso","de":"Boden","fr":"Sol","id":"Permukaan","ru":"Покрытие"},"tab_flower":{"tr":"Çiçek","en":"Flowers","es":"Flores","pt":"Flores","de":"Blumen","fr":"Fleurs","id":"Bunga","ru":"Цветы"},"tab_shrub":{"tr":"Çalı","en":"Shrubs","es":"Arbustos","pt":"Arbustos","de":"Sträucher","fr":"Arbustes","id":"Semak","ru":"Кусты"},"tab_tree":{"tr":"Ağaç","en":"Trees","es":"Árboles","pt":"Árvores","de":"Bäume","fr":"Arbres","id":"Pohon","ru":"Деревья"},"tab_seat":{"tr":"Oturma","en":"Seating","es":"Asientos","pt":"Assentos","de":"Sitzplätze","fr":"Assises","id":"Tempat duduk","ru":"Мебель"},"tab_decor":{"tr":"Işık & Dekor","en":"Light & Decor","es":"Luz y deco","pt":"Luz e decoração","de":"Licht & Deko","fr":"Lumière & déco","id":"Lampu & dekor","ru":"Свет и декор"},"tab_build":{"tr":"Su & Yapı","en":"Water & Build","es":"Agua y obras","pt":"Água e estruturas","de":"Wasser & Bau","fr":"Eau & structures","id":"Air & bangunan","ru":"Вода и постройки"},"l1_name":{"tr":"Küçük Kır Evi","en":"Little Cottage","es":"Casita de campo","pt":"Casinha de campo","de":"Kleines Landhaus","fr":"Petite maison de campagne","id":"Rumah desa kecil","ru":"Сельский домик"},"l1_client":{"tr":"Ayşe Teyze","en":"Aunt Ayşe","es":"Tía Ayşe","pt":"Tia Ayşe","de":"Tante Ayşe","fr":"Tante Ayşe","id":"Bibi Ayşe","ru":"Тётя Айше"},"l1_role":{"tr":"Emekli öğretmen","en":"Retired teacher","es":"Maestra jubilada","pt":"Professora aposentada","de":"Lehrerin im Ruhestand","fr":"Institutrice retraitée","id":"Pensiunan guru","ru":"Учительница на пенсии"},"l1_place":{"tr":"Şile, Ağva yolu","en":"Şile, Ağva road","es":"Şile, camino a Ağva","pt":"Şile, estrada de Ağva","de":"Şile, Straße nach Ağva","fr":"Şile, route d'Ağva","id":"Şile, jalan Ağva","ru":"Шиле, дорога на Агву"},"l1_quote":{"tr":"Bütün ömrüm sınıfta geçti, şimdi bahçemde çay içip güllerime bakmak istiyorum. Param kısıtlı ama kapıya kadar düzgün bir yol olsun, ayağım takılmasın.","en":"I spent my whole life in a classroom. Now I want to sip tea in my garden and look at my roses. Money's tight, but I need a proper path to the door so I don't trip.","es":"Pasé toda mi vida en un salón de clases. Ahora quiero tomar té en mi jardín y mirar mis rosas. Tengo poco dinero, pero quiero un buen camino hasta la puerta para no tropezar.","pt":"Passei a vida inteira em sala de aula. Agora quero tomar chá no meu jardim e olhar minhas rosas. O dinheiro é curto, mas quero um caminho decente até a porta para não tropeçar.","de":"Mein ganzes Leben habe ich im Klassenzimmer verbracht. Jetzt möchte ich im Garten Tee trinken und meine Rosen anschauen. Das Geld ist knapp, aber ein ordentlicher Weg bis zur Tür muss sein, damit ich nicht stolpere.","fr":"J'ai passé toute ma vie en classe. Maintenant, je veux boire mon thé au jardin en regardant mes roses. Mon budget est serré, mais il me faut une belle allée jusqu'à la porte pour ne pas trébucher.","id":"Seumur hidup saya habiskan di kelas. Sekarang saya ingin minum teh di taman sambil memandangi mawar saya. Uang saya terbatas, tapi buatkan jalan yang rapi sampai ke pintu supaya saya tidak tersandung.","ru":"Всю жизнь я провела в классе, а теперь хочу пить чай в саду и любоваться розами. Денег немного, но нужна ровная дорожка до двери, чтобы я не споткнулась."},"r_door_gate":{"tr":"Kapıdan bahçe kapısına yol","en":"Path from door to garden gate","es":"Camino de la puerta a la reja","pt":"Caminho da porta ao portão","de":"Weg von der Tür zum Gartentor","fr":"Allée de la porte au portail","id":"Jalan dari pintu ke gerbang taman","ru":"Дорожка от двери до калитки"},"r1_grass":{"tr":"Bahçenin %40’ı çim","en":"Grass on 40% of the garden","es":"Césped en el 40% del jardín","pt":"Grama em 40% do jardim","de":"Rasen auf 40 % des Gartens","fr":"Gazon sur 40 % du jardin","id":"Rumput di 40% taman","ru":"Газон на 40% сада"},"r1_flowers":{"tr":"4 çiçek tarhı","en":"4 flower beds","es":"4 canteros de flores","pt":"4 canteiros de flores","de":"4 Blumenbeete","fr":"4 massifs de fleurs","id":"4 bedeng bunga","ru":"4 клумбы"},"r1_tree":{"tr":"Gölge için 1 ağaç","en":"1 tree for shade","es":"1 árbol para dar sombra","pt":"1 árvore para sombra","de":"1 Baum für Schatten","fr":"1 arbre pour l'ombre","id":"1 pohon untuk keteduhan","ru":"1 дерево для тени"},"l1_say1":{"tr":"Fena değil evladım, eline sağlık.","en":"Not bad, dear. Thank you kindly.","es":"Nada mal, mijo. ¡Gracias!","pt":"Nada mal, querido. Obrigada!","de":"Nicht schlecht, mein Kind. Danke dir.","fr":"Pas mal, mon petit. Merci bien.","id":"Lumayan, Nak. Terima kasih.","ru":"Неплохо, милок. Спасибо тебе."},"l1_say2":{"tr":"Çok güzel olmuş, komşulara seni anlatacağım!","en":"It's lovely! I'll tell all the neighbors about you!","es":"¡Quedó precioso! ¡Les hablaré de ti a los vecinos!","pt":"Ficou lindo! Vou falar de você para os vizinhos!","de":"Wunderschön! Ich erzähle allen Nachbarn von dir!","fr":"C'est superbe ! Je vais parler de toi aux voisins !","id":"Cantik sekali! Saya akan cerita ke tetangga soal kamu!","ru":"Как красиво! Расскажу о тебе всем соседям!"},"l1_say3":{"tr":"Gözlerim doldu. Tam hayal ettiğim gibi!","en":"I'm in tears. It's just as I dreamed!","es":"Se me llenaron los ojos de lágrimas. ¡Justo como lo soñé!","pt":"Estou emocionada. Exatamente como sonhei!","de":"Mir kommen die Tränen. Genau wie erträumt!","fr":"J'en ai les larmes aux yeux. Exactement comme je le rêvais !","id":"Saya sampai terharu. Persis seperti impian saya!","ru":"У меня слёзы на глазах. Точно как я мечтала!"},"l2_name":{"tr":"Bahçeli Dubleks","en":"Duplex with Garden","es":"Dúplex con jardín","pt":"Duplex com jardim","de":"Doppelhaus mit Garten","fr":"Duplex avec jardin","id":"Dupleks bertaman","ru":"Дуплекс с садом"},"l2_client":{"tr":"Mert & Elif","en":"Mert & Elif","es":"Mert y Elif","pt":"Mert e Elif","de":"Mert & Elif","fr":"Mert & Elif","id":"Mert & Elif","ru":"Мерт и Элиф"},"l2_role":{"tr":"Genç çift, iki çocuk","en":"Young couple, two kids","es":"Pareja joven, dos hijos","pt":"Casal jovem, dois filhos","de":"Junges Paar, zwei Kinder","fr":"Jeune couple, deux enfants","id":"Pasangan muda, dua anak","ru":"Молодая пара, двое детей"},"l2_place":{"tr":"Bahçeşehir, İstanbul","en":"Bahçeşehir, Istanbul","es":"Bahçeşehir, Estambul","pt":"Bahçeşehir, Istambul","de":"Bahçeşehir, Istanbul","fr":"Bahçeşehir, Istanbul","id":"Bahçeşehir, Istanbul","ru":"Бахчешехир, Стамбул"},"l2_quote":{"tr":"Hafta sonları arkadaşlarımızı ağırlamak istiyoruz. Akşamları bahçe aydınlık olsun, çocuklar çimde koşsun. Lale de Elif’in favorisi.","en":"We want to host friends on weekends. The garden should be well lit in the evenings, and the kids need grass to run on. Oh, and tulips are Elif's favorite.","es":"Queremos recibir a nuestros amigos los fines de semana. Que el jardín esté iluminado por la noche y que los niños corran en el césped. Ah, y los tulipanes son los favoritos de Elif.","pt":"Queremos receber os amigos nos fins de semana. O jardim precisa ser iluminado à noite e as crianças querem correr na grama. Ah, e tulipa é a favorita da Elif.","de":"Am Wochenende wollen wir Freunde einladen. Abends soll der Garten beleuchtet sein und die Kinder sollen auf dem Rasen toben. Und Tulpen sind Elifs Lieblingsblumen.","fr":"Le week-end, on veut recevoir nos amis. Le jardin doit être éclairé le soir et les enfants doivent pouvoir courir sur la pelouse. Et Elif adore les tulipes.","id":"Kami ingin menjamu teman-teman di akhir pekan. Taman harus terang di malam hari dan anak-anak bisa berlarian di rumput. Oh ya, tulip itu bunga favorit Elif.","ru":"По выходным мы хотим принимать друзей. Вечером в саду должно быть светло, а дети должны бегать по газону. И да, тюльпаны — любимые цветы Элиф."},"r2_connect":{"tr":"Kapıdan sokağa yürüyüş yolu","en":"Walkway from door to street","es":"Camino de la puerta a la calle","pt":"Caminho da porta até a rua","de":"Gehweg von der Tür zur Straße","fr":"Allée de la porte à la rue","id":"Jalan setapak dari pintu ke jalan","ru":"Дорожка от двери к улице"},"r2_grass":{"tr":"%50 çim, çocuklar için","en":"50% grass, for the kids","es":"50% de césped, para los niños","pt":"50% de grama, para as crianças","de":"50 % Rasen für die Kinder","fr":"50 % de gazon pour les enfants","id":"50% rumput, untuk anak-anak","ru":"50% газона для детей"},"r2_trees":{"tr":"2 ağaç","en":"2 trees","es":"2 árboles","pt":"2 árvores","de":"2 Bäume","fr":"2 arbres","id":"2 pohon","ru":"2 дерева"},"r2_seat":{"tr":"1 oturma alanı","en":"1 seating area","es":"1 zona para sentarse","pt":"1 área de estar","de":"1 Sitzbereich","fr":"1 coin pour s'asseoir","id":"1 area duduk","ru":"1 место для отдыха"},"r2_lamps":{"tr":"2 bahçe lambası","en":"2 garden lamps","es":"2 faroles de jardín","pt":"2 luminárias de jardim","de":"2 Gartenlampen","fr":"2 lampadaires","id":"2 lampu taman","ru":"2 садовых фонаря"},"r2_flowers":{"tr":"5 çiçek tarhı","en":"5 flower beds","es":"5 canteros de flores","pt":"5 canteiros de flores","de":"5 Blumenbeete","fr":"5 massifs de fleurs","id":"5 bedeng bunga","ru":"5 клумб"},"l2_say1":{"tr":"İdare eder, misafirler beğenir herhalde.","en":"It'll do. The guests will probably like it.","es":"Pasable. A los invitados seguro les gustará.","pt":"Dá pro gasto. Os convidados devem gostar.","de":"Geht so. Den Gästen wird's wohl gefallen.","fr":"Ça ira, les invités devraient aimer.","id":"Lumayan, tamu-tamu mungkin suka.","ru":"Сойдёт, гостям, наверное, понравится."},"l2_say2":{"tr":"Harika! Mangal partisi bizden.","en":"Awesome! The barbecue's on us.","es":"¡Genial! La carne asada corre por nuestra cuenta.","pt":"Incrível! O churrasco é por nossa conta.","de":"Super! Die Grillparty geht auf uns.","fr":"Génial ! Le barbecue, c'est pour nous.","id":"Keren! Pesta barbekyu kami yang traktir.","ru":"Отлично! Шашлыки с нас."},"l2_say3":{"tr":"Çocuklar içeri girmek istemiyor, mükemmel!","en":"The kids won't come inside. Perfect!","es":"¡Los niños ya no quieren entrar a la casa! ¡Perfecto!","pt":"As crianças não querem mais entrar. Perfeito!","de":"Die Kinder wollen gar nicht mehr rein. Perfekt!","fr":"Les enfants ne veulent plus rentrer. Parfait !","id":"Anak-anak tidak mau masuk rumah, sempurna!","ru":"Дети не хотят домой. Идеально!"},"l3_name":{"tr":"Sahil Villası","en":"Seaside Villa","es":"Villa en la costa","pt":"Vila à beira-mar","de":"Strandvilla","fr":"Villa en bord de mer","id":"Vila tepi pantai","ru":"Вилла у моря"},"l3_client":{"tr":"Deniz Bey","en":"Mr. Deniz","es":"Sr. Deniz","pt":"Sr. Deniz","de":"Herr Deniz","fr":"M. Deniz","id":"Pak Deniz","ru":"Дениз-бей"},"l3_role":{"tr":"Romancı","en":"Novelist","es":"Novelista","pt":"Romancista","de":"Romanautor","fr":"Romancier","id":"Novelis","ru":"Писатель"},"l3_place":{"tr":"Yalıkavak, Bodrum","en":"Yalıkavak, Bodrum","es":"Yalıkavak, Bodrum","pt":"Yalıkavak, Bodrum","de":"Yalıkavak, Bodrum","fr":"Yalıkavak, Bodrum","id":"Yalıkavak, Bodrum","ru":"Ялыкавак, Бодрум"},"l3_quote":{"tr":"Yazlarımı burada yazarak geçireceğim. Havuz kenarında şezlong, zeytin gölgesi, ahşap deck… Ege’yi hissetmek istiyorum.","en":"I'll spend my summers here, writing. A lounger by the pool, the shade of an olive tree, a wooden deck… I want to feel the Aegean.","es":"Pasaré mis veranos aquí escribiendo. Un camastro junto a la piscina, la sombra de un olivo, un deck de madera… Quiero sentir el Egeo.","pt":"Vou passar meus verões aqui escrevendo. Espreguiçadeira na beira da piscina, sombra de oliveira, deck de madeira… Quero sentir o Egeu.","de":"Meine Sommer werde ich hier mit Schreiben verbringen. Eine Liege am Pool, Schatten unterm Olivenbaum, ein Holzdeck … Ich will die Ägäis spüren.","fr":"Je passerai mes étés ici à écrire. Un transat au bord de la piscine, l'ombre d'un olivier, une terrasse en bois… Je veux sentir la mer Égée.","id":"Saya akan menghabiskan musim panas di sini sambil menulis. Kursi santai di tepi kolam, teduhnya pohon zaitun, dek kayu… Saya ingin merasakan Laut Aegea.","ru":"Лето я буду проводить здесь за работой над книгами. Шезлонг у бассейна, тень оливы, деревянный настил… Хочу почувствовать Эгейское море."},"r3_pool":{"tr":"Havuz ya da süs havuzu","en":"Pool or garden pond","es":"Piscina o estanque","pt":"Piscina ou laguinho","de":"Pool oder Gartenteich","fr":"Piscine ou bassin","id":"Kolam renang atau kolam hias","ru":"Бассейн или пруд"},"r3_deck":{"tr":"8 m² ahşap deck","en":"8 m² wood deck","es":"8 m² de deck de madera","pt":"8 m² de deck de madeira","de":"8 m² Holzdeck","fr":"8 m² de terrasse bois","id":"8 m² dek kayu","ru":"8 м² деревянного настила"},"r3_palms":{"tr":"3 palmiye ya da zeytin","en":"3 palms or olive trees","es":"3 palmeras u olivos","pt":"3 palmeiras ou oliveiras","de":"3 Palmen oder Olivenbäume","fr":"3 palmiers ou oliviers","id":"3 palem atau zaitun","ru":"3 пальмы или оливы"},"r3_seats":{"tr":"2 oturma yeri","en":"2 places to sit","es":"2 asientos","pt":"2 assentos","de":"2 Sitzplätze","fr":"2 assises","id":"2 tempat duduk","ru":"2 места для отдыха"},"r3_lights":{"tr":"3 aydınlatma","en":"3 lights","es":"3 luces","pt":"3 luminárias","de":"3 Leuchten","fr":"3 éclairages","id":"3 lampu","ru":"3 светильника"},"l3_say1":{"tr":"Güzel, ama ilham perisi biraz nazlı.","en":"Nice, but my muse is playing hard to get.","es":"Bonito, pero mi musa anda un poco tímida.","pt":"Bonito, mas minha musa está meio tímida.","de":"Schön, aber die Muse ziert sich noch.","fr":"Joli, mais ma muse se fait un peu prier.","id":"Bagus, tapi inspirasi saya masih malu-malu.","ru":"Неплохо, но муза пока капризничает."},"l3_say2":{"tr":"Yeni romanım bu bahçede geçecek.","en":"My next novel will be set in this garden.","es":"Mi próxima novela ocurrirá en este jardín.","pt":"Meu próximo romance vai se passar neste jardim.","de":"Mein nächster Roman spielt in diesem Garten.","fr":"Mon prochain roman se passera dans ce jardin.","id":"Novel baru saya akan berlatar di taman ini.","ru":"Действие моего нового романа будет в этом саду."},"l3_say3":{"tr":"Bu bahçe başlı başına bir roman!","en":"This garden is a novel in itself!","es":"¡Este jardín es una novela en sí mismo!","pt":"Este jardim é um romance por si só!","de":"Dieser Garten ist selbst ein Roman!","fr":"Ce jardin est un roman à lui seul !","id":"Taman ini sendiri sudah seperti novel!","ru":"Этот сад сам по себе роман!"},"l4_name":{"tr":"Taş Konak","en":"Stone Manor","es":"Casona de piedra","pt":"Casarão de pedra","de":"Steinvilla","fr":"Manoir de pierre","id":"Rumah Batu","ru":"Каменный особняк"},"l4_client":{"tr":"Kaya Ailesi","en":"The Kaya Family","es":"Familia Kaya","pt":"Família Kaya","de":"Familie Kaya","fr":"Famille Kaya","id":"Keluarga Kaya","ru":"Семья Кая"},"l4_role":{"tr":"Üç kuşak, kalabalık aile","en":"Big family, three generations","es":"Familia numerosa, tres generaciones","pt":"Família grande, três gerações","de":"Großfamilie, drei Generationen","fr":"Grande famille, trois générations","id":"Keluarga besar, tiga generasi","ru":"Большая семья, три поколения"},"l4_place":{"tr":"Abant, Bolu","en":"Abant, Bolu","es":"Abant, Bolu","pt":"Abant, Bolu","de":"Abant, Bolu","fr":"Abant, Bolu","id":"Abant, Bolu","ru":"Абант, Болу"},"l4_quote":{"tr":"Kışın ateş başında toplanıyoruz, yazın ağaç altında. Bol ağaç, akşam için ışık ve herkesin oturabileceği bir köşe istiyoruz. Babam akçaağaca bayılır.","en":"In winter we gather around the fire, in summer under the trees. We want lots of trees, lights for the evenings and a spot where everyone can sit. Dad adores maples.","es":"En invierno nos reunimos junto al fuego y en verano bajo los árboles. Queremos muchos árboles, luz para las noches y un rincón donde todos puedan sentarse. A papá le encantan los arces.","pt":"No inverno nos reunimos em volta do fogo, no verão debaixo das árvores. Queremos muitas árvores, luz para a noite e um cantinho onde todos possam sentar. Meu pai adora bordos.","de":"Im Winter sitzen wir am Feuer, im Sommer unter den Bäumen. Wir wünschen uns viele Bäume, Licht für den Abend und eine Ecke, in der alle Platz finden. Papa liebt Ahorn.","fr":"L'hiver, on se réunit autour du feu, l'été sous les arbres. On veut beaucoup d'arbres, de la lumière pour le soir et un coin où tout le monde peut s'asseoir. Papa adore les érables.","id":"Saat musim dingin kami berkumpul di dekat api, saat musim panas di bawah pohon. Kami ingin banyak pohon, lampu untuk malam hari, dan sudut tempat semua orang bisa duduk. Ayah sangat suka pohon maple.","ru":"Зимой мы собираемся у огня, летом — под деревьями. Хотим много деревьев, свет по вечерам и уголок, где поместятся все. Папа обожает клёны."},"r4_connect":{"tr":"Kapıdan avlu kapısına yol","en":"Path from door to yard gate","es":"Camino de la puerta al portón","pt":"Caminho da porta ao portão do quintal","de":"Weg von der Tür zum Hoftor","fr":"Allée de la porte au portail de la cour","id":"Jalan dari pintu ke gerbang halaman","ru":"Дорожка от двери до ворот"},"r4_grass":{"tr":"%45 çim","en":"45% grass","es":"45% de césped","pt":"45% de grama","de":"45 % Rasen","fr":"45 % de gazon","id":"45% rumput","ru":"45% газона"},"r4_trees":{"tr":"6 ağaç","en":"6 trees","es":"6 árboles","pt":"6 árvores","de":"6 Bäume","fr":"6 arbres","id":"6 pohon","ru":"6 деревьев"},"r4_life":{"tr":"Ateş çukuru ya da çardak","en":"Fire pit or pergola","es":"Fogata o pérgola","pt":"Fogueira ou pérgola","de":"Feuerstelle oder Pergola","fr":"Brasero ou pergola","id":"Perapian atau pergola","ru":"Очаг или пергола"},"r4_water":{"tr":"Bir su öğesi","en":"A water feature","es":"Un elemento de agua","pt":"Um elemento de água","de":"Ein Wasserelement","fr":"Un point d'eau","id":"Satu elemen air","ru":"Водный объект"},"r4_lights":{"tr":"5 aydınlatma","en":"5 lights","es":"5 luces","pt":"5 luminárias","de":"5 Leuchten","fr":"5 éclairages","id":"5 lampu","ru":"5 светильников"},"r4_variety":{"tr":"12 farklı öğe","en":"12 different items","es":"12 elementos distintos","pt":"12 itens diferentes","de":"12 verschiedene Elemente","fr":"12 éléments différents","id":"12 item berbeda","ru":"12 разных объектов"},"l4_say1":{"tr":"Fena değil, babam da “olur” dedi.","en":"Not bad. Even Dad said \"it'll do.\"","es":"Nada mal, hasta papá dijo \"pasa\".","pt":"Nada mal, até meu pai disse \"serve\".","de":"Nicht schlecht, sogar Papa sagt „passt“.","fr":"Pas mal, même papa a dit « ça ira ».","id":"Lumayan, Ayah pun bilang \"boleh juga\".","ru":"Неплохо, даже папа сказал «сойдёт»."},"l4_say2":{"tr":"Bayram bu bahçede yapılacak!","en":"The holidays will be celebrated in this garden!","es":"¡Las fiestas se celebrarán en este jardín!","pt":"As festas de família vão ser neste jardim!","de":"Die Feiertage feiern wir in diesem Garten!","fr":"Les fêtes se feront dans ce jardin !","id":"Lebaran akan dirayakan di taman ini!","ru":"Праздники будем отмечать в этом саду!"},"l4_say3":{"tr":"Üç kuşak aynı fikirde: kusursuz!","en":"Three generations agree: flawless!","es":"Tres generaciones coinciden: ¡impecable!","pt":"Três gerações concordam: impecável!","de":"Drei Generationen sind sich einig: makellos!","fr":"Trois générations sont d'accord : impeccable !","id":"Tiga generasi sepakat: sempurna!","ru":"Три поколения единодушны: безупречно!"},"l5_name":{"tr":"Boğaz Yalısı","en":"Bosphorus Mansion","es":"Mansión del Bósforo","pt":"Mansão no Bósforo","de":"Bosporus-Villa","fr":"Demeure du Bosphore","id":"Rumah tepi Bosporus","ru":"Особняк на Босфоре"},"l5_client":{"tr":"Selin Hanım","en":"Ms. Selin","es":"Sra. Selin","pt":"Sra. Selin","de":"Frau Selin","fr":"Mme Selin","id":"Bu Selin","ru":"Селин-ханым"},"l5_role":{"tr":"Koleksiyoncu, sanat hamisi","en":"Collector, patron of the arts","es":"Coleccionista y mecenas","pt":"Colecionadora e mecenas","de":"Sammlerin und Mäzenin","fr":"Collectionneuse, mécène","id":"Kolektor, pelindung seni","ru":"Коллекционер, меценат"},"l5_place":{"tr":"Kandilli, Boğaz kıyısı","en":"Kandilli, on the Bosphorus","es":"Kandilli, orilla del Bósforo","pt":"Kandilli, margem do Bósforo","de":"Kandilli, am Bosporus","fr":"Kandilli, rive du Bosphore","id":"Kandilli, tepi Bosporus","ru":"Кандилли, берег Босфора"},"l5_quote":{"tr":"Bahçem bir sergi alanı gibi olmalı: simetrik, ölçülü, görkemli. Fıskiye, heykeller, bir köşk ve havuz. Servilerle çerçeveleyin.","en":"My garden should feel like a gallery: symmetrical, measured, magnificent. A fountain, statues, a gazebo and a pool. Frame it all with cypresses.","es":"Mi jardín debe ser como una galería: simétrico, mesurado, majestuoso. Una fuente, estatuas, una glorieta y una piscina. Enmárquenlo con cipreses.","pt":"Meu jardim deve ser como uma galeria: simétrico, comedido, grandioso. Chafariz, estátuas, um gazebo e uma piscina. Emoldurem tudo com ciprestes.","de":"Mein Garten soll wie eine Ausstellung wirken: symmetrisch, maßvoll, prachtvoll. Ein Springbrunnen, Statuen, ein Pavillon und ein Pool. Rahmen Sie alles mit Zypressen ein.","fr":"Mon jardin doit ressembler à une galerie : symétrique, mesuré, grandiose. Une fontaine, des statues, un kiosque et une piscine. Encadrez le tout de cyprès.","id":"Taman saya harus seperti ruang pameran: simetris, tertata, megah. Air mancur, patung, gazebo, dan kolam renang. Bingkai semuanya dengan pohon cemara.","ru":"Мой сад должен быть как выставочный зал: симметричный, сдержанный, величественный. Фонтан, статуи, беседка и бассейн. Обрамите всё кипарисами."},"r5_connect":{"tr":"Kapıdan rıhtım kapısına yol","en":"Path from door to quay gate","es":"Camino de la puerta al muelle","pt":"Caminho da porta ao cais","de":"Weg von der Tür zum Kai-Tor","fr":"Allée de la porte au quai","id":"Jalan dari pintu ke gerbang dermaga","ru":"Дорожка от двери к причалу"},"r5_statues":{"tr":"2 heykel","en":"2 statues","es":"2 estatuas","pt":"2 estátuas","de":"2 Statuen","fr":"2 statues","id":"2 patung","ru":"2 статуи"},"r5_pool":{"tr":"Yüzme havuzu","en":"Swimming pool","es":"Piscina","pt":"Piscina","de":"Pool","fr":"Piscine","id":"Kolam renang","ru":"Бассейн"},"r5_trees":{"tr":"10 ağaç","en":"10 trees","es":"10 árboles","pt":"10 árvores","de":"10 Bäume","fr":"10 arbres","id":"10 pohon","ru":"10 деревьев"},"r5_lights":{"tr":"8 aydınlatma","en":"8 lights","es":"8 luces","pt":"8 luminárias","de":"8 Leuchten","fr":"8 éclairages","id":"8 lampu","ru":"8 светильников"},"r5_sym":{"tr":"%60 simetrik yerleşim","en":"60% symmetrical layout","es":"Diseño 60% simétrico","pt":"Layout 60% simétrico","de":"60 % symmetrische Anordnung","fr":"Agencement symétrique à 60 %","id":"Tata letak 60% simetris","ru":"Симметрия расстановки 60%"},"l5_say1":{"tr":"Kabul edilebilir. Ama daha fazlasını beklerdim.","en":"Acceptable. But I expected more.","es":"Aceptable. Pero esperaba más.","pt":"Aceitável. Mas eu esperava mais.","de":"Akzeptabel. Aber ich hatte mehr erwartet.","fr":"Acceptable. Mais j'attendais davantage.","id":"Bisa diterima. Tapi saya berharap lebih.","ru":"Приемлемо. Но я ожидала большего."},"l5_say2":{"tr":"Davetlilerim bayılacak. Teşekkürler.","en":"My guests will adore it. Thank you.","es":"A mis invitados les encantará. Gracias.","pt":"Meus convidados vão adorar. Obrigada.","de":"Meine Gäste werden begeistert sein. Danke.","fr":"Mes invités vont adorer. Merci.","id":"Tamu-tamu saya pasti terpukau. Terima kasih.","ru":"Мои гости будут в восторге. Спасибо."},"l5_say3":{"tr":"Bu bir başyapıt. Adınızı salonuma yazdıracağım.","en":"A masterpiece. I'll have your name engraved in my salon.","es":"Es una obra maestra. Haré grabar su nombre en mi salón.","pt":"É uma obra-prima. Vou mandar gravar seu nome no meu salão.","de":"Ein Meisterwerk. Ihr Name kommt an die Wand meines Salons.","fr":"Un chef-d'œuvre. Je ferai graver votre nom dans mon salon.","id":"Ini mahakarya. Nama Anda akan saya ukir di ruang tamu saya.","ru":"Это шедевр. Велю написать ваше имя в моём салоне."},"ad_title":{"tr":"Bütçe yetmedi","en":"Out of budget","es":"Sin presupuesto","pt":"Orçamento esgotado","de":"Budget reicht nicht","fr":"Budget épuisé","id":"Anggaran habis","ru":"Не хватает бюджета"},"ad_text":{"tr":"Kısa bir reklam izle, bu bahçe için ek bütçe kazan.","en":"Watch a short ad to get extra budget for this garden.","es":"Mira un anuncio corto y gana presupuesto extra para este jardín.","pt":"Assista a um anúncio curto e ganhe orçamento extra para este jardim.","de":"Sieh dir eine kurze Werbung an und erhalte Extrabudget für diesen Garten.","fr":"Regarde une courte pub pour gagner du budget en plus pour ce jardin.","id":"Tonton iklan singkat, dapatkan anggaran tambahan untuk taman ini.","ru":"Посмотри короткую рекламу и получи дополнительный бюджет для этого сада."},"ad_reward":{"tr":"+{x} ek bütçe","en":"+{x} extra budget","es":"+{x} de presupuesto extra","pt":"+{x} de orçamento extra","de":"+{x} Extrabudget","fr":"+{x} de budget en plus","id":"+{x} anggaran tambahan","ru":"+{x} к бюджету"},"ad_button":{"tr":"Reklam izle","en":"Watch ad","es":"Ver anuncio","pt":"Ver anúncio","de":"Werbung ansehen","fr":"Voir la pub","id":"Tonton iklan","ru":"Смотреть рекламу"},"ad_decline":{"tr":"Hayır, teşekkürler","en":"No, thanks","es":"No, gracias","pt":"Não, obrigado","de":"Nein, danke","fr":"Non merci","id":"Tidak, terima kasih","ru":"Нет, спасибо"},"toast_bonus_added":{"tr":"Ek bütçe eklendi: +{x}","en":"Extra budget added: +{x}","es":"Presupuesto extra añadido: +{x}","pt":"Orçamento extra adicionado: +{x}","de":"Extrabudget erhalten: +{x}","fr":"Budget en plus ajouté : +{x}","id":"Anggaran tambahan: +{x}","ru":"Бюджет пополнен: +{x}"},"err_out":{"tr":"Bahçe sınırının dışında","en":"Outside the garden","es":"Fuera del jardín","pt":"Fora do jardim","de":"Außerhalb des Gartens","fr":"Hors du jardin","id":"Di luar batas taman","ru":"За пределами сада"},"err_full":{"tr":"Bu alan dolu","en":"This spot is taken","es":"Este lugar está ocupado","pt":"Este espaço está ocupado","de":"Dieser Platz ist belegt","fr":"Cet espace est occupé","id":"Area ini sudah terisi","ru":"Здесь уже занято"},"err_plant":{"tr":"Bitkiler yalnızca toprağa ya da çime dikilir","en":"Plants only go on soil or grass","es":"Las plantas solo van en tierra o césped","pt":"Plantas só vão na terra ou na grama","de":"Pflanzen nur auf Erde oder Rasen","fr":"Les plantes vont seulement sur terre ou gazon","id":"Tanaman hanya bisa di tanah atau rumput","ru":"Растения сажают только в землю или на газон"},"toast_undone":{"tr":"Geri alındı","en":"Undone","es":"Deshecho","pt":"Desfeito","de":"Rückgängig gemacht","fr":"Annulé","id":"Diurungkan","ru":"Отменено"},"toast_need":{"tr":"Bütçe yetmiyor: {need} gerekli, {left} kaldı","en":"Not enough budget: need {need}, {left} left","es":"Presupuesto insuficiente: necesitas {need}, quedan {left}","pt":"Orçamento insuficiente: precisa de {need}, restam {left}","de":"Budget reicht nicht: {need} nötig, {left} übrig","fr":"Budget insuffisant : il faut {need}, il reste {left}","id":"Anggaran kurang: butuh {need}, sisa {left}","ru":"Не хватает бюджета: нужно {need}, осталось {left}"},"toast_removed":{"tr":"{name} kaldırıldı · +{x} iade","en":"{name} removed · +{x} refunded","es":"Retirado: {name} · +{x} reembolsado","pt":"Removido: {name} · +{x} reembolsado","de":"{name} entfernt · +{x} erstattet","fr":"Retiré : {name} · +{x} remboursé","id":"{name} dihapus · +{x} kembali","ru":"Убрано: {name} · возврат +{x}"},"toast_no_rot":{"tr":"Döndürmek için yer yok","en":"No room to rotate","es":"No hay espacio para girar","pt":"Sem espaço para girar","de":"Kein Platz zum Drehen","fr":"Pas de place pour pivoter","id":"Tidak ada ruang untuk memutar","ru":"Нет места для поворота"},"toast_remove_first":{"tr":"Önce üstündeki öğeyi kaldır","en":"Remove the item on top first","es":"Primero quita el objeto de encima","pt":"Primeiro remova o item de cima","de":"Erst das Element darauf entfernen","fr":"Retire d'abord l'objet dessus","id":"Singkirkan dulu benda di atasnya","ru":"Сначала убери предмет сверху"},"toast_budget_over":{"tr":"Bütçe bitti","en":"Out of budget","es":"Se acabó el presupuesto","pt":"Acabou o orçamento","de":"Budget aufgebraucht","fr":"Budget épuisé","id":"Anggaran habis","ru":"Бюджет исчерпан"},"toast_budget_short":{"tr":"Bütçe yetmiyor","en":"Not enough budget","es":"Presupuesto insuficiente","pt":"Orçamento insuficiente","de":"Budget reicht nicht","fr":"Budget insuffisant","id":"Anggaran tidak cukup","ru":"Не хватает бюджета"},"toast_item_budget":{"tr":"Bu öğe için bütçe yetmiyor","en":"Not enough budget for this item","es":"No alcanza el presupuesto para esto","pt":"Orçamento insuficiente para este item","de":"Budget reicht für dieses Element nicht","fr":"Budget insuffisant pour cet objet","id":"Anggaran tidak cukup untuk item ini","ru":"Не хватает бюджета на этот объект"},"toast_no_soil":{"tr":"Boş toprak kalmadı","en":"No bare soil left","es":"No queda tierra libre","pt":"Não sobrou terra livre","de":"Keine freie Erde mehr","fr":"Plus de terre nue","id":"Tidak ada tanah kosong lagi","ru":"Свободной земли не осталось"},"toast_grass_laid":{"tr":"{n} m² çim serildi · {x}","en":"{n} m² of grass laid · {x}","es":"{n} m² de césped colocados · {x}","pt":"{n} m² de grama colocados · {x}","de":"{n} m² Rasen verlegt · {x}","fr":"{n} m² de gazon posés · {x}","id":"{n} m² rumput dipasang · {x}","ru":"Уложено {n} м² газона · {x}"},"grass_partial":{"tr":" (bütçe yetti kadar)","en":" (as far as the budget allowed)","es":" (hasta donde alcanzó)","pt":" (até onde deu o orçamento)","de":" (soweit das Budget reichte)","fr":" (dans la limite du budget)","id":" (sebatas anggaran)","ru":" (насколько хватило бюджета)"},"toast_cant_move":{"tr":"Buraya taşınamaz","en":"Can't move it here","es":"No se puede mover aquí","pt":"Não dá para mover para cá","de":"Hierhin geht es nicht","fr":"Impossible de déplacer ici","id":"Tidak bisa dipindah ke sini","ru":"Сюда нельзя"},"ok":{"tr":"Tamam","en":"Done","es":"Listo","pt":"Feito","de":"Erledigt","fr":"Fait","id":"Beres","ru":"Готово"},"missing":{"tr":"Yok","en":"Missing","es":"Falta","pt":"Falta","de":"Fehlt","fr":"Manquant","id":"Belum","ru":"Нет"},"fill_grass":{"tr":"Boş Toprağı Çimle","en":"Grass Bare Soil","es":"Sembrar césped","pt":"Plantar grama","de":"Rest berasen","fr":"Gazonner le reste","id":"Rumputi tanah kosong","ru":"Засеять газоном"},"shovel_card":{"tr":"Kürek (Temizle)","en":"Shovel (Clear)","es":"Pala (limpiar)","pt":"Pá (limpar)","de":"Schaufel (leeren)","fr":"Pelle (effacer)","id":"Sekop (bersihkan)","ru":"Лопата (очистить)"},"badge_loved":{"tr":"Sever","en":"Loved","es":"Favorito","pt":"Favorito","de":"Liebling","fr":"Adoré","id":"Disukai","ru":"Любит"},"badge_new":{"tr":"Yeni","en":"New","es":"Nuevo","pt":"Novo","de":"Neu","fr":"Nouveau","id":"Baru","ru":"Новое"},"wish_est":{"tr":"Tahmini memnuniyet","en":"Est. satisfaction","es":"Satisfacción estimada","pt":"Satisfação estimada","de":"Geschätzte Zufriedenheit","fr":"Satisfaction estimée","id":"Perkiraan kepuasan","ru":"Ожидаемая оценка"},"aesthetic_score":{"tr":"Estetik puanı","en":"Beauty score","es":"Puntos de belleza","pt":"Pontos de beleza","de":"Schönheitspunkte","fr":"Score esthétique","id":"Skor estetika","ru":"Очки красоты"},"loves_label":{"tr":"Sevdikleri <b>×1,5 puan</b>: ","en":"Favorites <b>×1.5 points</b>: ","es":"Sus favoritos <b>×1,5 puntos</b>: ","pt":"Favoritos <b>×1,5 pontos</b>: ","de":"Lieblinge <b>×1,5 Punkte</b>: ","fr":"Coups de cœur <b>×1,5 point</b> : ","id":"Favorit <b>×1,5 poin</b>: ","ru":"Любимое <b>×1,5 очка</b>: "},"ctx_obj":{"tr":"<b>{name}</b> seçili · bahçeye dokun ya da kartı yukarı sürükle","en":"<b>{name}</b> selected · tap the garden or drag the card up","es":"<b>{name}</b> seleccionado · toca el jardín o arrastra la tarjeta hacia arriba","pt":"<b>{name}</b> selecionado · toque no jardim ou arraste o card para cima","de":"<b>{name}</b> gewählt · tippe in den Garten oder ziehe die Karte nach oben","fr":"<b>{name}</b> choisi · touche le jardin ou glisse la carte vers le haut","id":"<b>{name}</b> dipilih · ketuk taman atau seret kartu ke atas","ru":"Выбрано: <b>{name}</b> · коснись сада или перетащи карточку вверх"},"rotate":{"tr":"Döndür","en":"Rotate","es":"Girar","pt":"Girar","de":"Drehen","fr":"Pivoter","id":"Putar","ru":"Повернуть"},"drop":{"tr":"Bırak","en":"Put down","es":"Soltar","pt":"Soltar","de":"Ablegen","fr":"Lâcher","id":"Lepas","ru":"Отпустить"},"ctx_shovel":{"tr":"<b>Kürek</b> · dokunduğun yeri temizler, ücreti iade edilir","en":"<b>Shovel</b> · clears what you tap and refunds the cost","es":"<b>Pala</b> · limpia donde tocas y te devuelve el costo","pt":"<b>Pá</b> · limpa onde você toca e devolve o custo","de":"<b>Schaufel</b> · räumt angetippte Felder, Kosten werden erstattet","fr":"<b>Pelle</b> · efface ce que tu touches et rembourse le coût","id":"<b>Sekop</b> · membersihkan yang kamu ketuk, biaya dikembalikan","ru":"<b>Лопата</b> · очищает клетку, стоимость возвращается"},"ctx_brush":{"tr":"<b>{name}</b> fırçası · parmağını sürükleyerek döşe ({cost}/m²). Kamera için iki parmak.","en":"Brush: <b>{name}</b> · drag your finger to lay it ({cost}/m²). Two fingers move the camera.","es":"Pincel: <b>{name}</b> · arrastra el dedo para colocarlo ({cost}/m²). Dos dedos para la cámara.","pt":"Pincel: <b>{name}</b> · arraste o dedo para aplicar ({cost}/m²). Dois dedos movem a câmera.","de":"Pinsel: <b>{name}</b> · mit dem Finger ziehen zum Verlegen ({cost}/m²). Zwei Finger für die Kamera.","fr":"Pinceau : <b>{name}</b> · glisse le doigt pour poser ({cost}/m²). Deux doigts pour la caméra.","id":"Kuas <b>{name}</b> · seret jari untuk memasang ({cost}/m²). Dua jari untuk kamera.","ru":"Кисть: <b>{name}</b> · веди пальцем, чтобы укладывать ({cost}/м²). Камера — двумя пальцами."},"ctx_sel":{"tr":"<b>{name}</b> · sürükleyerek taşı","en":"<b>{name}</b> · drag to move","es":"<b>{name}</b> · arrastra para mover","pt":"<b>{name}</b> · arraste para mover","de":"<b>{name}</b> · zum Verschieben ziehen","fr":"<b>{name}</b> · glisse pour déplacer","id":"<b>{name}</b> · seret untuk memindahkan","ru":"<b>{name}</b> · перетащи, чтобы переместить"},"remove_btn":{"tr":"Kaldır +{x}","en":"Remove +{x}","es":"Quitar +{x}","pt":"Remover +{x}","de":"Entfernen +{x}","fr":"Retirer +{x}","id":"Hapus +{x}","ru":"Убрать +{x}"},"ctx_idle":{"tr":"Bir kart seç, sonra bahçeye dokun. Ya da kartı yukarı sürükleyip bırak. Boş alanı sürükleyince kamera döner.","en":"Pick a card, then tap the garden. Or drag the card up and drop it. Drag empty space to turn the camera.","es":"Elige una tarjeta y toca el jardín. O arrastra la tarjeta hacia arriba y suéltala. Arrastra un espacio vacío para girar la cámara.","pt":"Escolha um card e toque no jardim. Ou arraste o card para cima e solte. Arraste um espaço vazio para girar a câmera.","de":"Wähle eine Karte und tippe in den Garten. Oder ziehe die Karte nach oben und lass los. Ziehen auf freier Fläche dreht die Kamera.","fr":"Choisis une carte, puis touche le jardin. Ou glisse la carte vers le haut et lâche-la. Glisse sur un espace vide pour tourner la caméra.","id":"Pilih kartu, lalu ketuk taman. Atau seret kartu ke atas lalu lepas. Seret area kosong untuk memutar kamera.","ru":"Выбери карточку и коснись сада. Или перетащи карточку вверх и отпусти. Тяни по пустому месту, чтобы вращать камеру."},"toast_dir":{"tr":"Yön değişti","en":"Direction changed","es":"Dirección cambiada","pt":"Direção alterada","de":"Richtung geändert","fr":"Orientation changée","id":"Arah diubah","ru":"Направление изменено"},"eyebrow_sim":{"tr":"Peyzaj firması simülasyonu","en":"Landscaping company sim","es":"Simulador de paisajismo","pt":"Simulador de paisagismo","de":"Landschaftsbau-Simulation","fr":"Simulation de paysagiste","id":"Simulasi usaha lanskap","ru":"Симулятор ландшафтной фирмы"},"title_blurb":{"tr":"Küçük bir kır evinden Boğaz’daki bir yalıya uzanan kariyer. Kısıtlı bütçeyle bahçe tasarla, müşteriyi memnun et, kalan bütçe kâr olarak kasana girsin.","en":"A career from a little country cottage to a mansion on the Bosphorus. Design gardens on a tight budget, please your clients and keep what's left of the budget as profit.","es":"Una carrera que va de una casita de campo a una mansión en el Bósforo. Diseña jardines con poco presupuesto, deja feliz al cliente y quédate con lo que sobre como ganancia.","pt":"Uma carreira que vai de uma casinha de campo a uma mansão no Bósforo. Projete jardins com orçamento apertado, agrade o cliente e fique com o que sobrar como lucro.","de":"Eine Karriere vom kleinen Landhaus bis zur Villa am Bosporus. Gestalte Gärten mit knappem Budget, mach deine Kunden glücklich und behalte den Rest als Gewinn.","fr":"Une carrière qui va d'une petite maison de campagne à une demeure sur le Bosphore. Conçois des jardins avec un budget serré, satisfais tes clients et garde le reste en bénéfice.","id":"Karier dari rumah desa kecil sampai rumah mewah di tepi Bosporus. Rancang taman dengan anggaran terbatas, puaskan klien, dan sisa anggaran jadi keuntunganmu.","ru":"Карьера от сельского домика до особняка на Босфоре. Создавай сады при скромном бюджете, радуй клиентов, а остаток бюджета забирай как прибыль."},"company_cash":{"tr":"Firma kasası","en":"Company funds","es":"Caja de la empresa","pt":"Caixa da empresa","de":"Firmenkasse","fr":"Caisse de l'entreprise","id":"Kas perusahaan","ru":"Касса фирмы"},"total_stars":{"tr":"Toplam yıldız","en":"Total stars","es":"Estrellas totales","pt":"Total de estrelas","de":"Sterne gesamt","fr":"Étoiles au total","id":"Total bintang","ru":"Всего звёзд"},"budget":{"tr":"Bütçe","en":"Budget","es":"Presupuesto","pt":"Orçamento","de":"Budget","fr":"Budget","id":"Anggaran","ru":"Бюджет"},"locked":{"tr":"Kilitli","en":"Locked","es":"Bloqueado","pt":"Bloqueado","de":"Gesperrt","fr":"Verrouillé","id":"Terkunci","ru":"Закрыто"},"help1":{"tr":"Kartı seç ve bahçeye dokun, ya da kartı yukarı sürükleyip bırak.","en":"Pick a card and tap the garden, or drag the card up and drop it.","es":"Elige una tarjeta y toca el jardín, o arrástrala hacia arriba y suéltala.","pt":"Escolha um card e toque no jardim, ou arraste-o para cima e solte.","de":"Wähle eine Karte und tippe in den Garten oder ziehe sie nach oben und lass los.","fr":"Choisis une carte et touche le jardin, ou glisse-la vers le haut et lâche-la.","id":"Pilih kartu lalu ketuk taman, atau seret kartu ke atas lalu lepas.","ru":"Выбери карточку и коснись сада или перетащи её вверх и отпусти."},"help2":{"tr":"Çim ve yol fırçalarını parmağınla sürükleyerek döşe. Yerleştirdiğin öğeyi sürükleyerek taşı.","en":"Drag your finger to lay grass and paths. Drag placed items to move them.","es":"Arrastra el dedo para colocar césped y caminos. Arrastra los objetos colocados para moverlos.","pt":"Arraste o dedo para aplicar grama e caminhos. Arraste os itens colocados para movê-los.","de":"Ziehe mit dem Finger, um Rasen und Wege zu verlegen. Ziehe platzierte Elemente, um sie zu verschieben.","fr":"Glisse le doigt pour poser gazon et allées. Glisse un objet posé pour le déplacer.","id":"Seret jari untuk memasang rumput dan jalan. Seret benda yang sudah dipasang untuk memindahkannya.","ru":"Веди пальцем, чтобы укладывать газон и дорожки. Перетаскивай поставленные объекты, чтобы двигать их."},"help3":{"tr":"Memnuniyet %70’i geçerse müşteri onaylar, bir sonraki ev açılır.","en":"At 70% satisfaction or more, the client approves and the next house unlocks.","es":"Con 70% de satisfacción o más, el cliente aprueba y se desbloquea la siguiente casa.","pt":"Com 70% de satisfação ou mais, o cliente aprova e a próxima casa é liberada.","de":"Ab 70 % Zufriedenheit stimmt der Kunde zu und das nächste Haus wird frei.","fr":"Dès 70 % de satisfaction, le client valide et la maison suivante se débloque.","id":"Jika kepuasan mencapai 70%, klien setuju dan rumah berikutnya terbuka.","ru":"При оценке от 70% клиент принимает работу и открывается следующий дом."},"back_design":{"tr":"Tasarıma dön","en":"Back to design","es":"Volver al diseño","pt":"Voltar ao projeto","de":"Zurück zum Entwurf","fr":"Retour au projet","id":"Kembali ke desain","ru":"К проекту"},"sound":{"tr":"Ses: {v}","en":"Sound: {v}","es":"Sonido: {v}","pt":"Som: {v}","de":"Ton: {v}","fr":"Son : {v}","id":"Suara: {v}","ru":"Звук: {v}"},"on":{"tr":"Açık","en":"On","es":"Sí","pt":"Ligado","de":"An","fr":"Activé","id":"Nyala","ru":"Вкл."},"off":{"tr":"Kapalı","en":"Off","es":"No","pt":"Desligado","de":"Aus","fr":"Désactivé","id":"Mati","ru":"Выкл."},"brief_new":{"tr":"Bu evde açılan yeni öğeler","en":"New items unlocked at this house","es":"Nuevos objetos en esta casa","pt":"Novos itens nesta casa","de":"Neu in diesem Haus","fr":"Nouveaux objets débloqués ici","id":"Item baru di rumah ini","ru":"Новое в этом доме"},"house_n":{"tr":"Ev {n} / {total}","en":"House {n} / {total}","es":"Casa {n} / {total}","pt":"Casa {n} / {total}","de":"Haus {n} / {total}","fr":"Maison {n} / {total}","id":"Rumah {n} / {total}","ru":"Дом {n} / {total}"},"fee":{"tr":"Hizmet bedeli","en":"Service fee","es":"Honorarios","pt":"Honorários","de":"Honorar","fr":"Honoraires","id":"Biaya jasa","ru":"Гонорар"},"garden":{"tr":"Bahçe","en":"Garden","es":"Jardín","pt":"Jardim","de":"Garten","fr":"Jardin","id":"Taman","ru":"Сад"},"requests":{"tr":"İstekler","en":"Requests","es":"Pedidos","pt":"Pedidos","de":"Wünsche","fr":"Demandes","id":"Permintaan","ru":"Пожелания"},"brief_loves":{"tr":"Sevdiği öğeler 1,5 kat estetik puanı verir: {list}. Harcamadığın bütçe kâr olarak sende kalır.","en":"Favorite items give 1.5× beauty points: {list}. Any budget you don't spend is yours to keep as profit.","es":"Sus objetos favoritos dan 1,5× puntos de belleza: {list}. El presupuesto que no gastes te lo quedas como ganancia.","pt":"Itens favoritos dão 1,5× pontos de beleza: {list}. O orçamento que você não gastar fica com você como lucro.","de":"Lieblingselemente geben 1,5-fache Schönheitspunkte: {list}. Nicht ausgegebenes Budget behältst du als Gewinn.","fr":"Ses objets préférés rapportent 1,5× plus de points d'esthétique : {list}. Le budget non dépensé te revient en bénéfice.","id":"Item favorit memberi poin estetika 1,5×: {list}. Anggaran yang tidak terpakai jadi keuntunganmu.","ru":"Любимые объекты дают в 1,5 раза больше очков красоты: {list}. Неистраченный бюджет остаётся тебе как прибыль."},"start_design":{"tr":"Tasarıma başla","en":"Start designing","es":"Empezar a diseñar","pt":"Começar projeto","de":"Entwurf starten","fr":"Commencer","id":"Mulai mendesain","ru":"Начать проект"},"houses":{"tr":"Evler","en":"Houses","es":"Casas","pt":"Casas","de":"Häuser","fr":"Maisons","id":"Rumah","ru":"Дома"},"toast_edit_first":{"tr":"Önce bahçeyi düzenle","en":"Design the garden first","es":"Primero diseña el jardín","pt":"Primeiro monte o jardim","de":"Gestalte zuerst den Garten","fr":"Aménage d'abord le jardin","id":"Tata dulu tamannya","ru":"Сначала оформи сад"},"touring":{"tr":"{name} bahçeyi geziyor…","en":"Garden tour: {name}…","es":"Recorrido del jardín: {name}…","pt":"Visita ao jardim: {name}…","de":"Rundgang: {name} …","fr":"Visite du jardin : {name}…","id":"{name} sedang berkeliling taman…","ru":"Осмотр сада: {name}…"},"fail_missing":{"tr":"Olmamış. En çok şu eksik: {x}.","en":"Not quite. The biggest gap: {x}.","es":"No me convence. Lo que más falta: {x}.","pt":"Não ficou bom. O que mais falta: {x}.","de":"Noch nicht. Am meisten fehlt: {x}.","fr":"Ce n'est pas ça. Il manque surtout : {x}.","id":"Belum pas. Yang paling kurang: {x}.","ru":"Не то. Больше всего не хватает: {x}."},"fail_lifeless":{"tr":"İstediklerim var ama bahçe cansız duruyor. Daha çok bitki ve renk lazım.","en":"Everything I asked for is here, but the garden feels lifeless. It needs more plants and color.","es":"Está todo lo que pedí, pero el jardín se ve sin vida. Faltan más plantas y color.","pt":"Tem tudo o que pedi, mas o jardim parece sem vida. Precisa de mais plantas e cor.","de":"Alles Gewünschte ist da, aber der Garten wirkt leblos. Es braucht mehr Pflanzen und Farbe.","fr":"Tout ce que j'ai demandé est là, mais le jardin manque de vie. Il faut plus de plantes et de couleurs.","id":"Semua permintaan saya ada, tapi tamannya terasa mati. Perlu lebih banyak tanaman dan warna.","ru":"Всё заказанное есть, но сад выглядит безжизненно. Нужно больше растений и красок."},"fail_variety":{"tr":"Hep aynı şeyler var, biraz çeşit isterdim.","en":"It's all the same stuff. I'd like some variety.","es":"Todo es lo mismo, me gustaría más variedad.","pt":"É tudo igual, eu queria mais variedade.","de":"Immer dasselbe, ich hätte gern mehr Abwechslung.","fr":"C'est toujours la même chose, j'aimerais plus de variété.","id":"Isinya itu-itu saja, saya mau lebih beragam.","ru":"Всё одно и то же, хочется разнообразия."},"client_review":{"tr":"Müşteri değerlendirmesi","en":"Client review","es":"Opinión del cliente","pt":"Avaliação do cliente","de":"Kundenurteil","fr":"Avis du client","id":"Penilaian klien","ru":"Отзыв клиента"},"aesthetic":{"tr":"Estetik","en":"Beauty","es":"Belleza","pt":"Beleza","de":"Ästhetik","fr":"Esthétique","id":"Estetika","ru":"Красота"},"variety":{"tr":"Çeşitlilik","en":"Variety","es":"Variedad","pt":"Variedade","de":"Vielfalt","fr":"Variété","id":"Ragam","ru":"Разнообразие"},"spent":{"tr":"Harcanan","en":"Spent","es":"Gastado","pt":"Gasto","de":"Ausgegeben","fr":"Dépensé","id":"Terpakai","ru":"Потрачено"},"rem_profit":{"tr":"Kalan bütçe (kâr)","en":"Budget left (profit)","es":"Presupuesto sobrante (ganancia)","pt":"Orçamento restante (lucro)","de":"Restbudget (Gewinn)","fr":"Budget restant (bénéfice)","id":"Sisa anggaran (untung)","ru":"Остаток бюджета (прибыль)"},"fee_x":{"tr":"Hizmet bedeli × {m}","en":"Service fee × {m}","es":"Honorarios × {m}","pt":"Honorários × {m}","de":"Honorar × {m}","fr":"Honoraires × {m}","id":"Biaya jasa × {m}","ru":"Гонорар × {m}"},"earn":{"tr":"Kazanç","en":"Earnings","es":"Ganancia","pt":"Ganho","de":"Verdienst","fr":"Gains","id":"Pendapatan","ru":"Заработок"},"need70":{"tr":"Onay için en az %70 memnuniyet gerekiyor. Tasarıma dönüp eksikleri tamamla.","en":"You need at least 70% satisfaction for approval. Go back to the design and fill the gaps.","es":"Necesitas al menos 70% de satisfacción para la aprobación. Vuelve al diseño y completa lo que falta.","pt":"É preciso pelo menos 70% de satisfação para aprovar. Volte ao projeto e complete o que falta.","de":"Für die Abnahme brauchst du mindestens 70 % Zufriedenheit. Geh zurück zum Entwurf und ergänze, was fehlt.","fr":"Il faut au moins 70 % de satisfaction pour valider. Retourne au projet et complète ce qui manque.","id":"Perlu kepuasan minimal 70% untuk disetujui. Kembali ke desain dan lengkapi kekurangannya.","ru":"Для приёмки нужно минимум 70% оценки. Вернись к проекту и доделай недостающее."},"all_done":{"tr":"Tüm evleri tamamladın. Firma kasası: <b>{x}</b>. Daha fazla yıldız için evlere geri dönebilirsin.","en":"You've finished every house. Company funds: <b>{x}</b>. Revisit houses to earn more stars.","es":"Completaste todas las casas. Caja de la empresa: <b>{x}</b>. Puedes volver a las casas para ganar más estrellas.","pt":"Você concluiu todas as casas. Caixa da empresa: <b>{x}</b>. Volte às casas para ganhar mais estrelas.","de":"Du hast alle Häuser geschafft. Firmenkasse: <b>{x}</b>. Für mehr Sterne kannst du die Häuser erneut gestalten.","fr":"Tu as terminé toutes les maisons. Caisse de l'entreprise : <b>{x}</b>. Reviens dans les maisons pour gagner plus d'étoiles.","id":"Kamu sudah menyelesaikan semua rumah. Kas perusahaan: <b>{x}</b>. Kembali ke rumah-rumah untuk mendapat lebih banyak bintang.","ru":"Все дома готовы! Касса фирмы: <b>{x}</b>. Возвращайся к домам за новыми звёздами."},"next_house":{"tr":"Sonraki eve geç","en":"Next house","es":"Siguiente casa","pt":"Próxima casa","de":"Nächstes Haus","fr":"Maison suivante","id":"Rumah berikutnya","ru":"Следующий дом"},"reset_garden":{"tr":"Bahçeyi sıfırla","en":"Reset garden","es":"Reiniciar jardín","pt":"Reiniciar jardim","de":"Garten zurücksetzen","fr":"Réinitialiser","id":"Atur ulang taman","ru":"Сбросить сад"},"newclient_title":{"tr":"Yeni müşteri bonusu","en":"New client bonus","es":"Bono de cliente nuevo","pt":"Bônus de novo cliente","de":"Neukunden-Bonus","fr":"Bonus nouveau client","id":"Bonus klien baru","ru":"Бонус за нового клиента"},"newclient_reward":{"tr":"+%10 başlangıç bütçesi","en":"+10% starting budget","es":"+10% de presupuesto inicial","pt":"+10% de orçamento inicial","de":"+10 % Startbudget","fr":"+10 % de budget de départ","id":"+10% anggaran awal","ru":"+10% к стартовому бюджету"},"toast_bonus":{"tr":"Bonus bütçe: +{x}","en":"Bonus budget: +{x}","es":"Presupuesto extra: +{x}","pt":"Orçamento bônus: +{x}","de":"Bonusbudget: +{x}","fr":"Budget bonus : +{x}","id":"Anggaran bonus: +{x}","ru":"Бонус к бюджету: +{x}"},"toast_reset":{"tr":"Bahçe sıfırlandı · Geri al ile dönebilirsin","en":"Garden reset · Use Undo to go back","es":"Jardín reiniciado · Usa Deshacer para volver","pt":"Jardim reiniciado · Use Desfazer para voltar","de":"Garten zurückgesetzt · Mit Rückgängig zurückholen","fr":"Jardin réinitialisé · Annuler pour revenir","id":"Taman diatur ulang · Pakai Urungkan untuk kembali","ru":"Сад сброшен · Можно вернуть кнопкой «Отменить»"},"back":{"tr":"Geri","en":"Back","es":"Volver","pt":"Voltar","de":"Zurück","fr":"Retour","id":"Kembali","ru":"Назад"}};
+window.SG_LANG=lang;window.SG_LANGS=SUP;window.SG_LANG_NAMES=NAMES;window.SG_LOCALE=LOC[lang];
+window.t=function(k,p){var e=DICT[k],s=e?(e[lang]!=null?e[lang]:e.en!=null?e.en:e.tr!=null?e.tr:k):k;
+ if(p)s=String(s).replace(/\{(\w+)\}/g,function(m,n){return p[n]!=null?p[n]:m;});return s;};
+window.SG_setLang=function(c){if(SUP.indexOf(c)<0)return;try{localStorage.setItem('sg_lang',c);}catch(e){}location.reload();};
+window.SG_applyStatic=function(){document.title=t('title');
+ var a=document.querySelectorAll('[data-i18n]');for(var i=0;i<a.length;i++)a[i].textContent=t(a[i].getAttribute('data-i18n'));
+ var b=document.querySelectorAll('[data-i18n-aria]');for(var j=0;j<b.length;j++)b[j].setAttribute('aria-label',t(b[j].getAttribute('data-i18n-aria')));};
+})();
+</script>
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Garden Master: 3D Design – Play Free Online | Sampa Games</title>
+<meta name="description" content="Manage your budget and design dream gardens in 3D for your clients. Play free in your browser, then get it on Google Play.">
+<link rel="canonical" href="https://sampagames.github.io/g/bahce-ustasi/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Outfit:wght@400;500;600&display=swap">
+<style>
+/* Layout: full-bleed 3D yard; HUD strip on top, tool tray pinned to the bottom, client wish card on the left */
+:root{
+  --moss:#15281e; --moss2:#21392c; --panel:rgba(17,33,25,.88); --line:rgba(214,232,196,.14);
+  --paper:#f1eee3; --mute:#a7b5a0; --leaf:#a8d37f; --sun:#f3b23a; --clay:#e3694b;
+  --f-disp:'Young Serif',Georgia,'Times New Roman',serif;
+  --f-body:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%;overflow:hidden}
+body{margin:0;background:var(--moss);color:var(--paper);font-family:var(--f-body);font-size:14px;-webkit-tap-highlight-color:transparent}
+#app{position:fixed;inset:0}
+#c{display:block;width:100%;height:100%;touch-action:none;outline:none}
+button{font:inherit;color:inherit}
+button:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+.pn{background:var(--panel);border:1px solid var(--line);border-radius:14px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+
+#hud{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;right:12px;display:flex;gap:8px;align-items:stretch;pointer-events:none}
+#hud>*{pointer-events:auto}
+.hb{padding:7px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.lvl b{font-family:var(--f-disp);font-weight:400;font-size:17px;line-height:1.2;white-space:nowrap}
+.lvl span{font-size:12px;color:var(--mute);white-space:nowrap}
+.budget{flex:1 1 auto;max-width:330px}
+.bt{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.bt b{font-size:17px;letter-spacing:0;text-transform:none;color:var(--paper);font-variant-numeric:tabular-nums;font-weight:600}
+.bar{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.1);margin-top:5px;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--leaf);border-radius:3px;transition:width .25s,background .25s}
+.bar i.low{background:var(--clay)}
+.sat{width:118px}
+.sat .bar{overflow:visible}
+.sat .bar::after{content:"";position:absolute;left:70%;top:-3px;bottom:-3px;width:2px;background:var(--paper);opacity:.55}
+.sat .bar i.ok{background:var(--sun)}
+.sp{flex:1}
+.ib{width:44px;min-height:44px;display:grid;place-items:center;cursor:pointer;padding:0}
+.ib svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ib:disabled{opacity:.35;cursor:default}
+#bWish{display:none;width:auto;padding:0 12px;gap:6px;grid-auto-flow:column;font-size:13px;font-variant-numeric:tabular-nums}
+
+#wish{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 74px);width:282px;max-height:calc(100% - 340px);overflow:auto;padding:14px 16px}
+#wish h3{margin:0;font-family:var(--f-disp);font-weight:400;font-size:17px}
+#wish .who{font-size:12px;color:var(--mute);margin:2px 0 10px}
+.rq{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:start;font-size:13.5px;line-height:1.35;padding:7px 0;border-top:1px solid var(--line)}
+.ck{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--mute);margin-top:1px;display:grid;place-items:center}
+.ck svg{width:10px;height:10px;stroke:var(--moss);stroke-width:3;fill:none;opacity:0}
+.rq.ok .ck{background:var(--leaf);border-color:var(--leaf)}
+.rq.ok .ck svg{opacity:1}
+.rq.ok .t{color:var(--mute)}
+.rq .v{color:var(--mute);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.loves{font-size:12px;color:var(--mute);margin-top:10px;padding-top:9px;border-top:1px solid var(--line);line-height:1.45}
+.loves b{color:var(--sun);font-weight:500}
+
+#dock{position:absolute;left:0;right:0;bottom:0;padding:0 12px calc(env(safe-area-inset-bottom,0px) + 10px);display:flex;flex-direction:column;gap:8px;pointer-events:none}
+#dock>*{pointer-events:auto}
+#ctxrow{display:flex;gap:8px;align-items:stretch}
+#ctx{flex:1;min-width:0;padding:6px 8px 6px 12px;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:46px;line-height:1.35}
+#ctx .tx{flex:1 1 180px;min-width:0;color:var(--mute)}
+#ctx .tx b{color:var(--paper);font-weight:600}
+.cb{background:var(--moss2);border:1px solid var(--line);border-radius:9px;padding:6px 11px;min-height:34px;font-size:13px;cursor:pointer;white-space:nowrap}
+.cb.warn{color:#ffb3a1;border-color:rgba(227,105,75,.45)}
+#present{background:var(--sun);color:#2a1c04;font-weight:600;border:0;border-radius:14px;padding:0 18px;min-height:46px;font-size:15px;cursor:pointer;white-space:nowrap;box-shadow:0 6px 18px rgba(243,178,58,.25)}
+#tray{padding:6px 8px 8px}
+#tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:0;color:var(--mute);padding:6px 11px;border-radius:8px;font-size:13px;white-space:nowrap;cursor:pointer}
+.tab.on{background:var(--moss2);color:var(--paper)}
+#pal{display:flex;gap:8px;overflow-x:auto;padding-top:6px;touch-action:pan-x;scrollbar-width:thin;scrollbar-color:var(--moss2) transparent}
+.pc{flex:0 0 86px;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:12px;padding:5px 5px 7px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:grab;touch-action:pan-x;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;position:relative}
+.pc img,.pc .ico{width:58px;height:58px;pointer-events:none;-webkit-user-drag:none;border-radius:8px}
+.pc .ico{display:grid;place-items:center;background:var(--moss2)}
+.pc .ico svg{width:28px;height:28px;stroke:var(--paper);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.pc .n{font-size:12px;line-height:1.15;text-align:center;min-height:2.3em;display:flex;align-items:center}
+.pc .p{font-size:12px;color:var(--sun);font-variant-numeric:tabular-nums;font-weight:500}
+.pc.on{border-color:var(--sun);background:rgba(243,178,58,.13)}
+.pc.poor{opacity:.42}
+.pc .bd{position:absolute;top:4px;left:4px;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border-radius:5px;background:var(--leaf);color:var(--moss);font-weight:600}
+.pc .bd.lv{background:var(--sun)}
+
+#toast{position:absolute;top:calc(env(safe-area-inset-top,0px) + 72px);left:50%;transform:translateX(-50%);padding:9px 14px;font-size:13.5px;max-width:calc(100% - 32px);text-align:center;opacity:0;transition:opacity .2s;pointer-events:none;z-index:15}
+#toast.on{opacity:1}
+#toast.bad{border-color:rgba(227,105,75,.5)}
+#cine{position:absolute;top:calc(env(safe-area-inset-top,0px) + 22px);left:50%;transform:translateX(-50%);padding:10px 18px;font-family:var(--f-disp);font-size:18px;white-space:nowrap}
+body.presenting #hud,body.presenting #dock,body.presenting #wish{display:none}
+
+#modal{position:absolute;inset:0;background:rgba(8,16,12,.58);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;justify-content:center;align-items:flex-start;padding:max(24px,env(safe-area-inset-top,0px)) 16px 24px;overflow:auto;z-index:20}
+.card{width:100%;max-width:580px;margin:auto 0;background:var(--moss);border:1px solid var(--line);border-radius:18px;padding:26px 24px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--leaf);font-weight:500}
+.card h1{font-family:var(--f-disp);font-weight:400;font-size:clamp(36px,9vw,52px);line-height:1;margin:8px 0 10px;text-wrap:balance}
+.card h2{font-family:var(--f-disp);font-weight:400;font-size:26px;line-height:1.15;margin:6px 0 4px;text-wrap:balance}
+.card p{line-height:1.55;margin:0 0 12px;max-width:62ch}
+.mut{color:var(--mute)}
+.quote{font-family:var(--f-disp);font-size:16.5px;line-height:1.5;border-left:2px solid var(--sun);padding:2px 0 2px 14px;margin:14px 0}
+.lv{display:grid;gap:8px;margin:18px 0}
+.lrow{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:center;text-align:left;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer}
+.lrow:disabled{cursor:default;opacity:.45}
+.lrow .no{font-family:var(--f-disp);font-size:22px;color:var(--sun)}
+.lrow .nm{font-weight:600}
+.lrow .sub{font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+.stars{display:flex;gap:2px}
+.st{width:16px;height:16px;fill:none;stroke:var(--sun);stroke-width:1.6}
+.st.on{fill:var(--sun)}
+.big .st{width:34px;height:34px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.btn{border:1px solid var(--line);background:var(--moss2);border-radius:12px;padding:12px 18px;cursor:pointer;font-weight:500;min-height:46px}
+.btn.pri{background:var(--sun);color:#2a1c04;border-color:var(--sun);font-weight:600}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:16px 0}
+.fact{border-top:1px solid var(--line);padding-top:8px}
+.fact span{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.fact b{font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.ul{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.ul li{display:flex;gap:10px;line-height:1.4}
+.ul li::before{content:"";flex:0 0 6px;height:6px;border-radius:50%;background:var(--leaf);margin-top:7px}
+.newi{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.newi div{display:flex;flex-direction:column;align-items:center;width:74px;font-size:11.5px;text-align:center;gap:2px}
+.newi img{width:56px;height:56px;border-radius:8px;background:var(--moss2)}
+.score{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:8px 0 6px}
+.score .pct{font-family:var(--f-disp);font-size:68px;line-height:.9}
+.brk{display:grid;gap:9px;margin:14px 0}
+.brk div{display:grid;grid-template-columns:96px 1fr 70px;gap:10px;align-items:center;font-size:13px}
+.brk em{font-style:normal;text-align:right;color:var(--mute);font-variant-numeric:tabular-nums}
+.ledger{border-top:1px solid var(--line);margin-top:6px}
+.ledger div{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.ledger div.tot{font-weight:600;color:var(--sun);border-bottom:0}
+.small{font-size:12.5px}
+.conf{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:25}
+.conf i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+@media (max-width:760px){
+  .lvl{display:none}
+  #bWish{display:grid}
+  #wish{display:none;left:12px;right:12px;width:auto;max-height:calc(100% - 320px)}
+  #wish.open{display:block}
+  .sat{width:96px}
+  .hb{padding:6px 10px}
+  .bt b{font-size:15px}
+  #present{padding:0 14px;font-size:14px}
+}
+@media (max-width:440px){
+  .sat{display:none}
+  #hud{gap:6px}
+  .ib{width:42px}
+}
+@media (prefers-reduced-motion:reduce){.conf{display:none}}
+</style>
+
+<div id="app">
+  <canvas id="c" tabindex="0" aria-label="3B bahçe alanı" data-i18n-aria="canvas_aria"></canvas>
+
+  <div id="hud">
+    <button class="pn ib" id="bMenu" aria-label="Menü" data-i18n-aria="menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <div class="pn hb lvl"><b id="hLvl"></b><span id="hCli"></span></div>
+    <div class="pn hb budget"><div class="bt"><span data-i18n="budget_left">Kalan bütçe</span><b id="hBud">₺0</b></div><div class="bar"><i id="hBar"></i></div></div>
+    <div class="pn hb sat"><div class="bt"><span data-i18n="happy">Memnun</span><b id="hSat">%0</b></div><div class="bar"><i id="hSatBar"></i></div></div>
+    <div class="sp"></div>
+    <button class="pn ib" id="bWish" aria-label="Müşteri istekleri" data-i18n-aria="wishes_aria"><svg viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M9 6h11M9 12h11M9 18h11M4 6l.01 0M4 12l.01 0M4 18l.01 0"/></svg><span id="wCount">0/0</span></button>
+    <button class="pn ib" id="bUndo" aria-label="Geri al" data-i18n-aria="undo" disabled><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+    <button class="pn ib" id="bNight" aria-label="Gece görünümü" data-i18n-aria="night_view"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
+  </div>
+
+  <aside class="pn" id="wish" aria-label="Müşteri istekleri" data-i18n-aria="wishes_aria"></aside>
+
+  <div id="dock">
+    <div id="ctxrow">
+      <div class="pn" id="ctx"></div>
+      <button id="present" data-i18n="present">Müşteriye Sun</button>
+    </div>
+    <div class="pn" id="tray">
+      <div id="tabs" role="tablist"></div>
+      <div id="pal"></div>
+    </div>
+  </div>
+
+  <div class="pn" id="toast" role="status"></div>
+  <div class="pn" id="cine" hidden></div>
+  <div id="modal" hidden><div class="card" id="card"></div></div>
+</div>
+
+<script src="lib/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+const T=window.t;SG_applyStatic();
+const $=s=>document.querySelector(s);
+const fmt=n=>'₺'+Math.round(n).toLocaleString(SG_LOCALE);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* ================= DATA ================= */
+const SURF=[
+  {key:'soil',name:T('s_soil'),cost:0,beauty:0,walk:false,h:0},
+  {key:'grass',name:T('s_grass'),cost:15,beauty:.5,walk:false,unlock:1,h:.05},
+  {key:'path',name:T('s_path'),cost:35,beauty:1,walk:true,unlock:1,h:.07},
+  {key:'gravel',name:T('s_gravel'),cost:20,beauty:.6,walk:true,unlock:2,h:.05},
+  {key:'deck',name:T('s_deck'),cost:80,beauty:1.6,walk:true,unlock:3,h:.1}
+];
+const ITEMS=[
+  {id:'rose',name:T('it_rose'),cost:50,beauty:3,cat:'cicek',tab:'cicek',unlock:1,build:r=>b_flowers(r,['#c7253e','#e0475b','#a3132c'])},
+  {id:'marigold',name:T('it_marigold'),cost:40,beauty:2.5,cat:'cicek',tab:'cicek',unlock:1,build:r=>b_flowers(r,['#f2a516','#f7c548','#e5801b'])},
+  {id:'lavender',name:T('it_lavender'),cost:70,beauty:4,cat:'cicek',tab:'cicek',unlock:1,build:b_lavender},
+  {id:'tulip',name:T('it_tulip'),cost:90,beauty:5,cat:'cicek',tab:'cicek',unlock:2,build:b_tulips},
+  {id:'hedge',name:T('it_hedge'),cost:60,beauty:2,cat:'cali',tab:'cali',unlock:1,build:b_hedge},
+  {id:'bush',name:T('it_bush'),cost:80,beauty:3,cat:'cali',tab:'cali',unlock:1,build:b_bush},
+  {id:'boxwood',name:T('it_boxwood'),cost:160,beauty:6,cat:'cali',tab:'cali',unlock:2,build:b_boxwood},
+  {id:'sapling',name:T('it_sapling'),cost:220,beauty:8,cat:'agac',tab:'agac',unlock:1,build:b_sapling,anim:'sway'},
+  {id:'cypress',name:T('it_cypress'),cost:380,beauty:11,cat:'agac',tab:'agac',unlock:2,build:b_cypress,anim:'sway'},
+  {id:'oak',name:T('it_oak'),cost:650,beauty:16,cat:'agac',tab:'agac',unlock:2,build:b_oak,anim:'sway'},
+  {id:'olive',name:T('it_olive'),cost:900,beauty:20,cat:'agac',tab:'agac',unlock:3,build:b_olive,anim:'sway'},
+  {id:'palm',name:T('it_palm'),cost:1100,beauty:22,cat:'agac',tab:'agac',unlock:3,build:b_palm,anim:'sway'},
+  {id:'maple',name:T('it_maple'),cost:1800,beauty:30,cat:'agac',tab:'agac',unlock:4,build:b_maple,anim:'sway'},
+  {id:'bench',name:T('it_bench'),cost:350,beauty:7,cat:'oturma',tab:'mob',w:2,d:1,unlock:1,build:b_bench},
+  {id:'table',name:T('it_table'),cost:900,beauty:14,cat:'oturma',tab:'mob',w:2,d:2,unlock:2,build:b_table},
+  {id:'lounger',name:T('it_lounger'),cost:450,beauty:9,cat:'oturma',tab:'mob',w:1,d:2,unlock:3,build:b_lounger},
+  {id:'lamp',name:T('it_lamp'),cost:140,beauty:4,cat:'isik',tab:'dekor',unlock:1,build:b_lamp,glow:{y:1.45,s:1.9,k:'warm'}},
+  {id:'pot',name:T('it_pot'),cost:60,beauty:2,cat:'dekor',tab:'dekor',unlock:1,build:b_pot},
+  {id:'birdhouse',name:T('it_birdhouse'),cost:110,beauty:3,cat:'dekor',tab:'dekor',unlock:1,build:b_birdhouse},
+  {id:'statue',name:T('it_statue'),cost:3200,beauty:42,cat:'dekor',tab:'dekor',unlock:5,build:b_statue},
+  {id:'pond',name:T('it_pond'),cost:1400,beauty:26,cat:'su',tab:'yapi',w:2,d:2,unlock:2,build:b_pond},
+  {id:'pergola',name:T('it_pergola'),cost:2600,beauty:40,cat:'yasam',tab:'yapi',w:2,d:2,unlock:3,build:b_pergola},
+  {id:'pool',name:T('it_pool'),cost:7500,beauty:70,cat:'su',tab:'yapi',w:4,d:3,unlock:3,build:b_pool},
+  {id:'firepit',name:T('it_firepit'),cost:1900,beauty:30,cat:'yasam',tab:'yapi',w:2,d:2,unlock:4,build:b_firepit,anim:'fire',glow:{y:.5,s:2.6,k:'fire'}},
+  {id:'fountain',name:T('it_fountain'),cost:4800,beauty:55,cat:'su',tab:'yapi',w:2,d:2,unlock:4,build:b_fountain,anim:'fountain'},
+  {id:'kosk',name:T('it_kosk'),cost:9000,beauty:85,cat:'yasam',tab:'yapi',w:3,d:3,unlock:5,build:b_kosk}
+];
+ITEMS.forEach(i=>{i.w=i.w||1;i.d=i.d||1;});
+const ITEM={};ITEMS.forEach(i=>ITEM[i.id]=i);
+const PLANT={cicek:1,cali:1,agac:1};
+const TABS=[['zemin',T('tab_ground')],['cicek',T('tab_flower')],['cali',T('tab_shrub')],['agac',T('tab_tree')],['mob',T('tab_seat')],['dekor',T('tab_decor')],['yapi',T('tab_build')]];
+
+const LEVELS=[
+ {n:1,name:T('l1_name'),client:T('l1_client'),role:T('l1_role'),place:T('l1_place'),
+  quote:T('l1_quote'),
+  budget:3000,fee:1500,W:10,D:8,door:4,gate:7,beautyTarget:70,variety:5,loves:['rose','sapling'],
+  house:{w:5,d:4,floors:1,wall:'#efe3cf',roof:'#b4532f',roofType:'gable',roofH:1.7,chimney:true,door:'#4f6a3a'},
+  theme:{sky:'#bcdcef',ground:'#86a35a',fence:'picket',fenceColor:'#c79a63',trees:'round'},
+  reqs:[{t:'connect',label:T('r_door_gate')},{t:'surf',s:1,pct:.4,label:T('r1_grass')},{t:'cat',cat:'cicek',n:4,label:T('r1_flowers')},{t:'cat',cat:'agac',n:1,label:T('r1_tree')}],
+  say:['',T('l1_say1'),T('l1_say2'),T('l1_say3')]},
+ {n:2,name:T('l2_name'),client:T('l2_client'),role:T('l2_role'),place:T('l2_place'),
+  quote:T('l2_quote'),
+  budget:7000,fee:3000,W:12,D:10,door:3,gate:9,beautyTarget:160,variety:8,loves:['table','tulip','lamp'],
+  house:{w:7,d:5,floors:2,wall:'#d9e2e4',roof:'#47515c',roofType:'gable',roofH:1.9,door:'#2f4b63'},
+  theme:{sky:'#b6d6ee',ground:'#7f9e57',fence:'picket',fenceColor:'#f2f0ea',trees:'round'},
+  reqs:[{t:'connect',label:T('r2_connect')},{t:'surf',s:1,pct:.5,label:T('r2_grass')},{t:'cat',cat:'agac',n:2,label:T('r2_trees')},{t:'cat',cat:'oturma',n:1,label:T('r2_seat')},{t:'cat',cat:'isik',n:2,label:T('r2_lamps')},{t:'cat',cat:'cicek',n:5,label:T('r2_flowers')}],
+  say:['',T('l2_say1'),T('l2_say2'),T('l2_say3')]},
+ {n:3,name:T('l3_name'),client:T('l3_client'),role:T('l3_role'),place:T('l3_place'),
+  quote:T('l3_quote'),
+  budget:18000,fee:6000,W:14,D:11,door:7,gate:2,beautyTarget:330,variety:10,loves:['pool','palm','lounger'],
+  house:{w:9,d:6,floors:2,wall:'#f5f3ee',roof:'#e9e5dc',roofType:'flat',modern:true,bigWin:true,door:'#6b5137'},
+  theme:{sky:'#9fd3f0',ground:'#dccb9f',fence:'wall',fenceColor:'#f1ede4',trees:'round',sea:true},
+  reqs:[{t:'connect',label:T('r_door_gate')},{t:'item',ids:['pool','pond'],n:1,label:T('r3_pool')},{t:'surfN',s:4,n:8,label:T('r3_deck')},{t:'item',ids:['palm','olive'],n:3,label:T('r3_palms')},{t:'cat',cat:'oturma',n:2,label:T('r3_seats')},{t:'cat',cat:'isik',n:3,label:T('r3_lights')}],
+  say:['',T('l3_say1'),T('l3_say2'),T('l3_say3')]},
+ {n:4,name:T('l4_name'),client:T('l4_client'),role:T('l4_role'),place:T('l4_place'),
+  quote:T('l4_quote'),
+  budget:36000,fee:11000,W:16,D:12,door:8,gate:12,beautyTarget:620,variety:12,loves:['firepit','maple','oak'],
+  house:{w:10,d:6,floors:2,wall:'#b8a48a',roof:'#7a3b2a',roofType:'hip',roofH:2.4,chimney:true,door:'#4a2f1f'},
+  theme:{sky:'#c6d9e6',ground:'#7b9455',fence:'wall',fenceColor:'#9d8f7a',trees:'pine',mountains:true},
+  reqs:[{t:'connect',label:T('r4_connect')},{t:'surf',s:1,pct:.45,label:T('r4_grass')},{t:'cat',cat:'agac',n:6,label:T('r4_trees')},{t:'cat',cat:'yasam',n:1,label:T('r4_life')},{t:'cat',cat:'su',n:1,label:T('r4_water')},{t:'cat',cat:'isik',n:5,label:T('r4_lights')},{t:'variety',n:12,label:T('r4_variety')}],
+  say:['',T('l4_say1'),T('l4_say2'),T('l4_say3')]},
+ {n:5,name:T('l5_name'),client:T('l5_client'),role:T('l5_role'),place:T('l5_place'),
+  quote:T('l5_quote'),
+  budget:85000,fee:25000,W:17,D:14,door:8,gate:8,beautyTarget:1100,variety:15,loves:['fountain','cypress','statue','boxwood'],
+  house:{w:13,d:7,floors:3,wall:'#ece6da',roof:'#3c4a5c',roofType:'hip',roofH:2.6,columns:true,door:'#2a3140',trim:'#fbf8f1'},
+  theme:{sky:'#bcd7ee',ground:'#6f9150',fence:'iron',fenceColor:'#1f2321',trees:'round',sea:true},
+  reqs:[{t:'connect',label:T('r5_connect')},{t:'item',ids:['fountain'],n:1,label:T('it_fountain')},{t:'item',ids:['statue'],n:2,label:T('r5_statues')},{t:'item',ids:['pool'],n:1,label:T('r5_pool')},{t:'item',ids:['kosk'],n:1,label:T('it_kosk')},{t:'cat',cat:'agac',n:10,label:T('r5_trees')},{t:'cat',cat:'isik',n:8,label:T('r5_lights')},{t:'sym',pct:.6,label:T('r5_sym')}],
+  say:['',T('l5_say1'),T('l5_say2'),T('l5_say3')]}
+];
+
+/* ================= THREE SETUP ================= */
+const canvas=$('#c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.75));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color('#bcdcef');
+scene.fog=new THREE.Fog('#bcdcef',38,120);
+const camera=new THREE.PerspectiveCamera(45,1,.1,400);
+const hemi=new THREE.HemisphereLight('#ffffff','#4a5a3a',.85);scene.add(hemi);
+const sun=new THREE.DirectionalLight('#fff3dd',1);sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);sun.shadow.bias=-.0004;sun.shadow.normalBias=.03;
+scene.add(sun);scene.add(sun.target);
+const dayC=new THREE.Color('#fff3dd'),moonC=new THREE.Color('#7f9cd6'),nightSky=new THREE.Color('#0e1a2b');
+let skyC=new THREE.Color('#bcdcef');
+
+const matCache={};
+function M(c,o){const k=c+(o?JSON.stringify(o):'');if(!matCache[k])matCache[k]=new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85,flatShading:true},o||{}));return matCache[k];}
+const bulbMat=new THREE.MeshStandardMaterial({color:'#fff4d6',emissive:'#ffcf7a',emissiveIntensity:.25});
+const flameMat=new THREE.MeshStandardMaterial({color:'#ffb347',emissive:'#ff7a1a',emissiveIntensity:1.4,flatShading:true});
+const waterMat=new THREE.MeshStandardMaterial({color:'#3aa6c8',roughness:.12,metalness:.1,transparent:true,opacity:.86,emissive:'#1b6f8f',emissiveIntensity:.05});
+const dropMat=new THREE.MeshStandardMaterial({color:'#cfefff',emissive:'#9fdcf5',emissiveIntensity:.3});
+const winMat=new THREE.MeshStandardMaterial({color:'#2c4258',roughness:.2,metalness:.3,emissive:'#ffc46b',emissiveIntensity:0});
+function glowTex(){const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.35,'rgba(255,255,255,.35)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);}
+const gT=glowTex();
+const glowMats={warm:new THREE.SpriteMaterial({map:gT,color:'#ffcf7a',transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false}),
+                fire:new THREE.SpriteMaterial({map:gT,color:'#ff8a3a',transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false})};
+
+const geoCache={};
+function geo(k,f){if(!geoCache[k]){geoCache[k]=f();geoCache[k].userData.keep=true;}return geoCache[k];}
+const box=(x,y,z)=>new THREE.BoxGeometry(x,y,z);
+const cyl=(a,b,h,s)=>new THREE.CylinderGeometry(a,b,h,s||8);
+const ico=(r,d)=>new THREE.IcosahedronGeometry(r,d||0);
+function add(g,ge,m,x,y,z){const me=new THREE.Mesh(ge,m);me.position.set(x||0,y||0,z||0);me.castShadow=true;me.receiveShadow=true;g.add(me);return me;}
+
+/* ---------- canvas textures ---------- */
+function canvasTex(draw,size){size=size||128;const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');draw(x,size,mulberry(size+draw.length));const t=new THREE.CanvasTexture(c);t.anisotropy=4;return {tex:t,url:c.toDataURL(),canvas:c};}
+const TX={
+ soil:canvasTex((x,s,r)=>{x.fillStyle='#6d4c30';x.fillRect(0,0,s,s);for(let i=0;i<500;i++){x.fillStyle=['#5a3d25','#7d5a3a','#634228'][i%3];const z=1+r()*2.5;x.fillRect(r()*s,r()*s,z,z);}}),
+ grass:canvasTex((x,s,r)=>{x.fillStyle='#5c9a3e';x.fillRect(0,0,s,s);x.lineWidth=1.4;for(let i=0;i<700;i++){x.strokeStyle=['#4c8a32','#6fb04a','#3f7a2c','#7cbd55'][i%4];const a=r()*s,b=r()*s;x.beginPath();x.moveTo(a,b);x.lineTo(a+(r()-.5)*3,b-3-r()*4);x.stroke();}}),
+ path:canvasTex((x,s,r)=>{x.fillStyle='#6f6a62';x.fillRect(0,0,s,s);const h=s/2;for(let i=0;i<4;i++){const ox=(i%2)*h,oy=Math.floor(i/2)*h;x.fillStyle=['#b9b3a7','#a9a397','#c4beb2','#b0aa9d'][i];const m=5;x.beginPath();x.moveTo(ox+m+r()*4,oy+m+r()*4);x.lineTo(ox+h-m-r()*4,oy+m+r()*4);x.lineTo(ox+h-m-r()*4,oy+h-m-r()*4);x.lineTo(ox+m+r()*4,oy+h-m-r()*4);x.closePath();x.fill();for(let j=0;j<40;j++){x.fillStyle='rgba(0,0,0,.06)';x.fillRect(ox+m+r()*(h-2*m),oy+m+r()*(h-2*m),2,2);}}}),
+ gravel:canvasTex((x,s,r)=>{x.fillStyle='#cbbfa6';x.fillRect(0,0,s,s);for(let i=0;i<900;i++){x.fillStyle=['#b3a68b','#e0d6c2','#9e9279','#d6ccb6'][i%4];x.beginPath();x.arc(r()*s,r()*s,1+r()*1.8,0,7);x.fill();}}),
+ deck:canvasTex((x,s,r)=>{const n=4,w=s/n;for(let i=0;i<n;i++){x.fillStyle=['#a8713f','#9b6638','#b07a47','#a26c3c'][i];x.fillRect(i*w,0,w,s);x.fillStyle='#6e4526';x.fillRect(i*w,0,2,s);for(let j=0;j<10;j++){x.fillStyle='rgba(60,35,15,.18)';x.fillRect(i*w+4+r()*(w-8),r()*s,1,10+r()*20);}x.fillStyle='#4d3019';x.fillRect(i*w+w/2-1,6,2,2);x.fillRect(i*w+w/2-1,s-8,2,2);}})
+};
+const soilBaseTex=TX.soil.tex.clone();soilBaseTex.wrapS=soilBaseTex.wrapT=THREE.RepeatWrapping;soilBaseTex.needsUpdate=true;
+const surfMats=[null,
+ [new THREE.MeshStandardMaterial({map:TX.grass.tex,color:'#c9d6bd',roughness:.95}),new THREE.MeshStandardMaterial({map:TX.grass.tex,color:'#bccdab',roughness:.95}),new THREE.MeshStandardMaterial({map:TX.grass.tex,color:'#d2dec4',roughness:.95})],
+ [new THREE.MeshStandardMaterial({map:TX.path.tex,roughness:.9})],
+ [new THREE.MeshStandardMaterial({map:TX.gravel.tex,roughness:1})],
+ [new THREE.MeshStandardMaterial({map:TX.deck.tex,roughness:.8})]];
+const tileGeo=geo('tile',()=>box(1,1,1));
+
+/* ================= ITEM BUILDERS ================= */
+function bedBase(g){add(g,geo('bed',()=>box(.86,.12,.86)),M('#5e3f27'),0,.06,0);const e=M('#bdb5a6');add(g,geo('bedE1',()=>box(.92,.08,.06)),e,0,.1,.44);add(g,geo('bedE1',()=>box(.92,.08,.06)),e,0,.1,-.44);add(g,geo('bedE2',()=>box(.06,.08,.92)),e,.44,.1,0);add(g,geo('bedE2',()=>box(.06,.08,.92)),e,-.44,.1,0);}
+function b_flowers(r,cols){const g=new THREE.Group();bedBase(g);const stem=geo('stem',()=>cyl(.012,.012,1,4));
+ for(let i=0;i<11;i++){const x=(r()-.5)*.64,z=(r()-.5)*.64,h=.14+r()*.16;const s=add(g,stem,M('#3f7a2f'),x,.12+h/2,z);s.scale.y=h;s.castShadow=false;
+  add(g,geo('lf',()=>ico(.08)),M('#4a8a35'),x,.15,z).scale.set(1,.5,1);
+  add(g,geo('fh',()=>ico(.07)),M(cols[i%cols.length]),x,.12+h,z).scale.setScalar(.8+r()*.6);}
+ return g;}
+function b_lavender(r){const g=new THREE.Group();bedBase(g);
+ for(let i=0;i<6;i++){const cx=(r()-.5)*.55,cz=(r()-.5)*.55;add(g,geo('lavb',()=>ico(.13)),M('#7f9a77'),cx,.2,cz).scale.set(1,.7,1);
+  for(let k=0;k<5;k++){const m=add(g,geo('lavs',()=>new THREE.ConeGeometry(.035,.28,5)),M(k%2?'#8a6cc4':'#a587dc'),cx+(r()-.5)*.14,.4+r()*.08,cz+(r()-.5)*.14);m.rotation.set((r()-.5)*.4,0,(r()-.5)*.4);}}
+ return g;}
+function b_tulips(r){const g=new THREE.Group();bedBase(g);const cols=['#e3263b','#f06aa0','#f5d23a','#fafafa'];const stem=geo('stem',()=>cyl(.012,.012,1,4));
+ for(let i=0;i<10;i++){const x=(r()-.5)*.62,z=(r()-.5)*.62,h=.25+r()*.1;const s=add(g,stem,M('#3f7a2f'),x,.12+h/2,z);s.scale.y=h;s.castShadow=false;
+  add(g,geo('tl',()=>ico(.08)),M('#4f9a3a'),x,.18,z).scale.set(.5,1.3,.5);
+  add(g,geo('th',()=>new THREE.SphereGeometry(.065,6,4)),M(cols[i%4]),x,.14+h,z).scale.set(1,1.5,1);}
+ return g;}
+function b_hedge(r){const g=new THREE.Group();add(g,box(.96,.72,.96),M('#3d7a34'),0,.36,0);add(g,box(.9,.1,.9),M('#4c8b3e'),0,.76,0);return g;}
+function b_bush(r){const g=new THREE.Group();const c=['#4f8a3a','#5a9a42','#3f7a32'];for(let i=0;i<4;i++){const s=.26+r()*.12;add(g,ico(s,0),M(c[i%3]),(r()-.5)*.4,s*.9,(r()-.5)*.4).rotation.set(r()*3,r()*3,0);}return g;}
+function b_boxwood(r){const g=new THREE.Group();add(g,cyl(.32,.27,.26,10),M('#b9b2a4'),0,.13,0);add(g,cyl(.05,.05,.25,5),M('#6e4b32'),0,.36,0);add(g,ico(.36,1),M('#2f6b34'),0,.72,0);return g;}
+function b_sapling(r){const g=new THREE.Group();add(g,cyl(.04,.07,1.1,6),M('#6e4b32'),0,.55,0);
+ const c=['#f4c4d2','#f9dbe4','#eeb3c6','#7fb35a'];for(let i=0;i<5;i++)add(g,ico(.26+r()*.1),M(c[i%4]),(r()-.5)*.45,1.2+r()*.3,(r()-.5)*.45).rotation.set(r()*3,r()*3,0);return g;}
+function b_oak(r){const g=new THREE.Group();add(g,cyl(.12,.2,2,7),M('#6a4a33'),0,1,0);const c=['#4c8f3a','#5a9d45','#3f7f33'];
+ for(let i=0;i<6;i++){const a=i/6*Math.PI*2;add(g,ico(.55+r()*.3),M(c[i%3]),Math.cos(a)*.55*r(),2.2+r()*.6,Math.sin(a)*.55*r()).rotation.set(r()*3,r()*3,0);}
+ add(g,ico(.75),M('#4c8f3a'),0,2.9,0);return g;}
+function b_cypress(r){const g=new THREE.Group();add(g,cyl(.06,.09,.4,6),M('#5c4030'),0,.2,0);add(g,new THREE.SphereGeometry(.38,7,6),M('#2c5a32'),0,1.85,0).scale.set(1,4.2,1);add(g,new THREE.SphereGeometry(.3,6,5),M('#336a38'),.06,1.5,.05).scale.set(1,3,1);return g;}
+function b_olive(r){const g=new THREE.Group();const t=M('#7b6a55');add(g,cyl(.08,.15,1.1,6),t,.08,.5,0).rotation.z=.28;add(g,cyl(.07,.13,1.0,6),t,-.1,.48,.05).rotation.z=-.3;
+ const c=['#8ea876','#a4b88c','#7f9a6a'];for(let i=0;i<6;i++)add(g,ico(.42+r()*.12),M(c[i%3]),(r()-.5)*.9,1.25+r()*.35,(r()-.5)*.8).scale.set(1,.58,1);return g;}
+function b_palm(r){const g=new THREE.Group();let x=0,y=0;
+ for(let i=0;i<7;i++){const h=.42;add(g,cyl(.085-.005*i,.1-.005*i,h,6),M(i%2?'#8b6b47':'#7a5c3b'),x,y+h/2,0);y+=h*.96;x+=.018*i;}
+ for(let k=0;k<8;k++){const p=new THREE.Group();p.position.set(x,y,0);p.rotation.y=k*Math.PI/4+r()*.2;p.rotation.z=-.35-r()*.3;
+  const l=add(p,box(1.3,.03,.26),M(k%2?'#3f8f3f':'#4fa04a'),.62,0,0);l.rotation.x=.25;g.add(p);}
+ for(let k=0;k<3;k++)add(g,ico(.07),M('#5a3d22'),x+Math.cos(k*2)*.1,y-.08,Math.sin(k*2)*.1);return g;}
+function b_maple(r){const g=new THREE.Group();add(g,cyl(.06,.11,1.3,6),M('#4b3324'),0,.65,0).rotation.z=.08;const c=['#c2412d','#d9542b','#b8322a','#e0703a'];
+ for(let i=0;i<7;i++)add(g,ico(.33+r()*.16),M(c[i%4]),(r()-.5)*1.1,1.35+r()*.5,(r()-.5)*1.1).scale.set(1,.65,1);return g;}
+function b_bench(r){const g=new THREE.Group();const w=M('#a0683a'),m=M('#2b2f2d');
+ [-.13,0,.13].forEach(z=>add(g,box(1.7,.05,.11),w,0,.45,z));
+ [.62,.78].forEach(y=>{const s=add(g,box(1.7,.11,.04),w,0,y,-.22);s.rotation.x=-.15;});
+ [-.75,.75].forEach(x=>{add(g,box(.06,.45,.42),m,x,.225,0);add(g,box(.06,.05,.42),m,x,.62,.02);add(g,box(.06,.45,.05),m,x,.65,-.22);});return g;}
+function b_table(r){const g=new THREE.Group();const wt=M('#f4f1ea');add(g,cyl(.5,.5,.05,16),wt,0,.72,0);add(g,cyl(.05,.07,.7,8),M('#2b2f2d'),0,.35,0);
+ add(g,cyl(.025,.025,2.1,6),M('#d8d2c4'),0,1.05,0);add(g,new THREE.ConeGeometry(1.0,.45,8),M('#e2b04a'),0,2.05,0);add(g,new THREE.ConeGeometry(.6,.28,8),M('#f4f1ea'),0,2.14,0);
+ for(let i=0;i<4;i++){const a=i*Math.PI/2+Math.PI/4,cx=Math.cos(a)*.78,cz=Math.sin(a)*.78;const c=new THREE.Group();c.position.set(cx,0,cz);c.rotation.y=-a-Math.PI/2;
+  add(c,box(.38,.05,.38),M('#3b6e8f'),0,.44,0);add(c,box(.38,.42,.04),M('#3b6e8f'),0,.66,-.18);add(c,box(.06,.42,.06),M('#2b2f2d'),0,.21,0);g.add(c);}return g;}
+function b_lounger(r){const g=new THREE.Group();const f=M('#ece8df');add(g,box(.62,.1,1.7),f,0,.2,0);[[-.25,-.7],[.25,-.7],[-.25,.7],[.25,.7]].forEach(p=>add(g,box(.06,.16,.06),f,p[0],.08,p[1]));
+ add(g,box(.58,.07,1.1),M('#3b8ea5'),0,.29,.28);const b=add(g,box(.58,.07,.66),M('#3b8ea5'),0,.5,-.52);b.rotation.x=.75;add(g,box(.5,.03,.5),M('#f2c14e'),0,.34,.35);return g;}
+function b_lamp(r){const g=new THREE.Group();const m=M('#2a2f2c');add(g,cyl(.09,.12,.1,8),m,0,.05,0);add(g,cyl(.03,.03,1.3,6),m,0,.7,0);
+ add(g,geo('bulb',()=>new THREE.SphereGeometry(.09,10,8)),bulbMat,0,1.45,0);add(g,box(.22,.03,.22),m,0,1.33,0);const c=add(g,new THREE.ConeGeometry(.19,.16,4),m,0,1.62,0);c.rotation.y=Math.PI/4;return g;}
+function b_pot(r){const g=new THREE.Group();add(g,cyl(.22,.15,.34,10),M('#c2653a'),0,.17,0);add(g,cyl(.2,.2,.02,10),M('#5e3f27'),0,.33,0);add(g,ico(.22,0),M('#4f8a3a'),0,.5,0);
+ for(let i=0;i<4;i++)add(g,ico(.05),M('#e0475b'),Math.cos(i*1.6)*.17,.55+r()*.1,Math.sin(i*1.6)*.17);return g;}
+function b_birdhouse(r){const g=new THREE.Group();add(g,cyl(.035,.035,1.1,5),M('#7a5636'),0,.55,0);add(g,box(.3,.32,.3),M('#c9824a'),0,1.26,0);
+ const ro=add(g,new THREE.ConeGeometry(.3,.22,4),M('#a33a2a'),0,1.53,0);ro.rotation.y=Math.PI/4;const h=add(g,cyl(.05,.05,.02,10),M('#2a1a10'),0,1.3,.152);h.rotation.x=Math.PI/2;return g;}
+function b_statue(r){const g=new THREE.Group();add(g,box(.6,.8,.6),M('#d8d2c4'),0,.4,0);add(g,box(.72,.08,.72),M('#c9c1b1'),0,.84,0);
+ add(g,new THREE.TorusKnotGeometry(.2,.065,64,8),M('#f3f0ea',{roughness:.35,flatShading:false}),0,1.27,0);return g;}
+function b_pond(r){const g=new THREE.Group();add(g,cyl(.82,.82,.08,24),waterMat,0,.05,0);
+ for(let i=0;i<16;i++){const a=i/16*Math.PI*2;add(g,new THREE.DodecahedronGeometry(.17+r()*.05),M(['#9c978d','#b3ada1','#8a857b'][i%3]),Math.cos(a)*.88,.08,Math.sin(a)*.88).rotation.set(r()*3,r()*3,0);}
+ for(let i=0;i<4;i++){const a=r()*6.28,d=r()*.5;add(g,cyl(.12,.12,.01,10),M('#4f8a3a'),Math.cos(a)*d,.1,Math.sin(a)*d);}
+ add(g,ico(.05),M('#f49ab6'),.1,.13,.15);for(let i=0;i<5;i++)add(g,new THREE.ConeGeometry(.03,.6,4),M('#5e8f3e'),-.55+r()*.15,.3,-.4+r()*.2);return g;}
+function b_pergola(r){const g=new THREE.Group();const w=M('#8a5a35');add(g,box(1.95,.06,1.95),M('#c9c1b2'),0,.03,0);
+ [[-.82,-.82],[.82,-.82],[-.82,.82],[.82,.82]].forEach(p=>add(g,box(.12,2.2,.12),w,p[0],1.1,p[1]));
+ [-.82,.82].forEach(z=>add(g,box(2.05,.12,.14),w,0,2.25,z));for(let i=0;i<7;i++)add(g,box(.08,.08,2.05),w,-.9+i*.3,2.36,0);
+ for(let i=0;i<7;i++)add(g,ico(.2),M('#4f8a3a'),(r()-.5)*1.7,2.45,(r()-.5)*1.7).scale.set(1.2,.6,1.2);
+ for(let i=0;i<10;i++){const c=add(g,new THREE.ConeGeometry(.08,.38,5),M(i%2?'#9b7fd6':'#b79ce6'),(r()-.5)*1.7,2.08,(r()-.5)*1.7);c.rotation.x=Math.PI;}
+ add(g,box(1.2,.08,.4),w,0,.45,-.4);[-.5,.5].forEach(x=>add(g,box(.08,.42,.36),w,x,.21,-.4));return g;}
+function b_pool(r){const g=new THREE.Group();const s=M('#e9e4da');add(g,box(4,.18,.32),s,0,.09,1.34);add(g,box(4,.18,.32),s,0,.09,-1.34);add(g,box(.32,.18,2.36),s,1.84,.09,0);add(g,box(.32,.18,2.36),s,-1.84,.09,0);
+ add(g,box(3.36,.04,2.36),M('#3fa7c4'),0,.02,0);add(g,box(3.36,.1,2.36),waterMat,0,.1,0);const m=M('#c9ced2',{roughness:.3,metalness:.6});
+ [-.18,.18].forEach(z=>add(g,cyl(.02,.02,.6,6),m,1.55,.25,z-0.9));[.18,.32].forEach(y=>add(g,box(.04,.02,.36),m,1.55,y,-.9));return g;}
+function b_firepit(r){const g=new THREE.Group();const t=add(g,new THREE.TorusGeometry(.48,.15,6,14),M('#8f8a80'),0,.15,0);t.rotation.x=Math.PI/2;
+ add(g,cyl(.4,.4,.04,14),M('#2a2420'),0,.06,0);for(let i=0;i<3;i++){const l=add(g,cyl(.05,.05,.6,6),M('#5a3a22'),0,.15,0);l.rotation.z=Math.PI/2;l.rotation.y=i*Math.PI/3;}
+ const fl=[];for(let i=0;i<3;i++){const f=add(g,new THREE.ConeGeometry(.12-.02*i,.45,5),flameMat,(i-1)*.1,.38,(i%2)*.06);f.castShadow=false;fl.push(f);}g.userData.flames=fl;
+ for(let i=0;i<4;i++){const a=i*Math.PI/2+Math.PI/4;add(g,cyl(.15,.15,.4,8),M('#8a5a35'),Math.cos(a)*.95,.2,Math.sin(a)*.95);}return g;}
+function b_fountain(r){const g=new THREE.Group();const s=M('#cfc8ba'),s2=M('#b8b0a1');add(g,cyl(.95,1,.38,20),s2,0,.19,0);add(g,cyl(.85,.85,.05,20),waterMat,0,.36,0);
+ add(g,cyl(.1,.15,.9,10),s,0,.8,0);add(g,cyl(.45,.18,.18,16),s,0,1.2,0);add(g,cyl(.4,.4,.03,16),waterMat,0,1.29,0);add(g,cyl(.06,.08,.4,8),s,0,1.45,0);add(g,cyl(.2,.08,.1,12),s,0,1.68,0);add(g,ico(.07,1),s,0,1.78,0);
+ const dr=[];for(let i=0;i<20;i++){const m=add(g,geo('drop',()=>new THREE.SphereGeometry(.035,6,4)),dropMat,0,0,0);m.castShadow=false;dr.push({m,a:i/10*Math.PI*2+(i>9?.3:0),ph:r(),tier:i>9?1:0});}g.userData.drops=dr;return g;}
+function b_kosk(r){const g=new THREE.Group();add(g,cyl(1.45,1.5,.25,8),M('#c9c1b2'),0,.125,0);const w=M('#f4f1ea');
+ for(let i=0;i<8;i++){const a=i*Math.PI/4+Math.PI/8;add(g,cyl(.07,.07,2.1,6),w,Math.cos(a)*1.25,1.3,Math.sin(a)*1.25);
+  if(i!==1&&i!==2){const a2=a+Math.PI/8;const rl=add(g,box(.92,.07,.06),w,Math.cos(a2)*1.16,.72,Math.sin(a2)*1.16);rl.rotation.y=-a2-Math.PI/2;}}
+ const ring=add(g,new THREE.CylinderGeometry(1.38,1.38,.16,8,1,true),M('#f4f1ea',{side:THREE.DoubleSide}),0,2.38,0);ring.rotation.y=Math.PI/8;
+ const roof=add(g,new THREE.ConeGeometry(1.75,1.2,8),M('#2f5d62'),0,3.05,0);roof.rotation.y=Math.PI/8;add(g,ico(.12,1),M('#d4a73a',{metalness:.6,roughness:.3}),0,3.72,0);
+ add(g,cyl(.4,.4,.05,12),M('#8a5a35'),0,.72,0);add(g,cyl(.06,.06,.5,6),M('#8a5a35'),0,.47,0);return g;}
+
+/* ================= STATE ================= */
+let LI=0,L=null,W=0,D=0,surf=null,objs=[],occ=null,uidSeq=1;
+let tool=null,selected=null,ghostRot=0,night=false,nightK=0,presenting=false,modalOpen=false;
+let undoStack=[];
+let progress={unlocked:1,stars:{},profit:{},designs:{},sound:true};
+try{const s=JSON.parse(localStorage.getItem('bahceUstasi.v1')||'null');if(s)progress=Object.assign(progress,s);}catch(e){}
+function saveProgress(){try{localStorage.setItem('bahceUstasi.v1',JSON.stringify(progress));}catch(e){}}
+let saveT=0;function saveSoon(){clearTimeout(saveT);saveT=setTimeout(()=>{progress.designs[L.n]={surf:Array.from(surf),objs,uid:uidSeq};saveProgress();},400);}
+
+const levelRoot=new THREE.Group();scene.add(levelRoot);
+let envRoot,surfRoot,objRoot,gridLines,surfMeshes=[];
+const cellX=c=>c-W/2+.5, cellZ=r=>r-D/2+.5;
+const fp=(it,rot)=>rot%2?[it.d,it.w]:[it.w,it.d];
+let bonusBudget=0,budgetOffered=false;
+const remaining=()=>L.budget+bonusBudget-spent();
+// Bütçe yetmeyince bölüm başına bir kez: reklam izle, %15 ek bütçe
+function budgetOffer(){if(budgetOffered||!window.AdKit||presenting)return;budgetOffered=true;const add=Math.round(L.budget*.15/100)*100;
+ modalOpen=true;AdKit.offer({title:T('ad_title'),text:T('ad_text'),reward:T('ad_reward',{x:fmt(add)}),button:T('ad_button'),decline:T('ad_decline')})
+  .then(ok=>{modalOpen=false;if(ok){bonusBudget+=add;refresh();toast(T('toast_bonus_added',{x:fmt(add)}));}});}
+function spent(){let s=0;for(let i=0;i<surf.length;i++)s+=SURF[surf[i]].cost;for(const o of objs)s+=ITEM[o.id].cost;return s;}
+function computeOcc(){occ=new Int32Array(W*D);for(const o of objs){const [fw,fd]=fp(ITEM[o.id],o.rot);for(let r=o.r;r<o.r+fd;r++)for(let c=o.c;c<o.c+fw;c++)occ[r*W+c]=o.uid;}}
+function canPlace(it,c,r,rot,ignore){const [fw,fd]=fp(it,rot);if(c<0||r<0||c+fw>W||r+fd>D)return T('err_out');
+ for(let y=r;y<r+fd;y++)for(let x=c;x<c+fw;x++){const i=y*W+x;if(occ[i]&&occ[i]!==ignore)return T('err_full');if(PLANT[it.cat]&&surf[i]>1)return T('err_plant');}return null;}
+
+/* ================= LEVEL BUILD ================= */
+function disposeTree(o){o.traverse(n=>{if(n.geometry&&!n.geometry.userData.keep)n.geometry.dispose();});}
+function loadLevel(i){
+ LI=i;L=LEVELS[i];W=L.W;D=L.D;bonusBudget=0;budgetOffered=false;
+ if(envRoot){disposeTree(levelRoot);levelRoot.clear();}
+ envRoot=new THREE.Group();surfRoot=new THREE.Group();objRoot=new THREE.Group();levelRoot.add(envRoot,surfRoot,objRoot);
+ skyC=new THREE.Color(L.theme.sky);scene.background.copy(skyC);scene.fog.color.copy(skyC);
+ buildEnv();
+ const S=Math.max(W,D)/2+L.house.d+3;const sc=sun.shadow.camera;sc.left=-S;sc.right=S;sc.top=S;sc.bottom=-S;sc.near=1;sc.far=90;sc.updateProjectionMatrix();
+ sun.position.set(S*.7,28,S*.55);sun.target.position.set(0,0,-L.house.d/2);
+ const sv=progress.designs[L.n];
+ if(sv&&sv.surf&&sv.surf.length===W*D){surf=Uint8Array.from(sv.surf);objs=(sv.objs||[]).filter(o=>ITEM[o.id]);uidSeq=sv.uid||objs.reduce((a,o)=>Math.max(a,o.uid),0)+1;}
+ else{surf=new Uint8Array(W*D);objs=[];uidSeq=1;}
+ undoStack=[];tool=null;selected=null;ghostRot=0;
+ rebuildAll();
+ cam.tR=cam.r=baseR();cam.tTheta=cam.theta=.45;cam.tPhi=cam.phi=.9;cam.target.set(0,0,-1.2);
+ curTab='zemin';renderTabs();renderPalette();renderWish();refresh();renderCtx();
+ $('#hLvl').textContent=L.name;$('#hCli').textContent=L.client+' · '+L.place;
+}
+function buildEnv(){
+ const g=envRoot,h=L.house,th=L.theme,rnd=mulberry(L.n*99);
+ const seaZ=th.sea?-D/2-h.d-7:-140;const farZ=90;
+ const gr=new THREE.Mesh(new THREE.PlaneGeometry(260,farZ-seaZ),new THREE.MeshStandardMaterial({color:new THREE.Color(th.ground).multiplyScalar(.62),roughness:1}));gr.rotation.x=-Math.PI/2;gr.position.set(0,-.02,(farZ+seaZ)/2);gr.receiveShadow=true;g.add(gr);
+ if(th.sea){const sea=new THREE.Mesh(new THREE.PlaneGeometry(400,300),new THREE.MeshStandardMaterial({color:'#2f7fa3',roughness:.25,metalness:.25}));sea.rotation.x=-Math.PI/2;sea.position.set(0,-.25,seaZ-150);g.add(sea);
+  add(g,box(260,.3,2),M('#b9b3a6'),0,-.1,seaZ+1);}
+ if(th.mountains){for(let i=0;i<9;i++){const r=10+rnd()*9,hh=12+rnd()*12,x=-70+i*17+rnd()*6,z=-58-rnd()*20;const m=new THREE.Mesh(new THREE.ConeGeometry(r,hh,7),M(i%2?'#6f8a5c':'#7d9168'));m.position.set(x,hh/2-1,z);g.add(m);
+  const sn=new THREE.Mesh(new THREE.ConeGeometry(r*.28,hh*.28,7),M('#eef1f3'));sn.position.set(x,hh-1-hh*.14+.05,z);g.add(sn);}}
+ // yard base
+ const base=new THREE.Mesh(new THREE.PlaneGeometry(W,D),new THREE.MeshStandardMaterial({map:soilBaseTex,roughness:1}));soilBaseTex.repeat.set(W,D);base.rotation.x=-Math.PI/2;base.position.y=.001;base.receiveShadow=true;g.add(base);
+ // sidewalk & road
+ add(g,box(260,.12,2.2),M('#c8c1b4'),0,.04,D/2+1.5).castShadow=false;
+ add(g,box(260,.04,6),M('#3c3f42',{roughness:.95}),0,.0,D/2+5.6).castShadow=false;
+ for(let i=-14;i<=14;i++)add(g,box(1.6,.02,.14),M('#e8e2cf'),i*4,.035,D/2+5.6).castShadow=false;
+ // terrace + house
+ add(g,box(h.w+1.2,.3,1),M('#b9b0a2'),0,.15,-D/2-.5);
+ const hs=buildHouse(h,cellX(L.door));hs.position.set(0,0,-D/2-1-h.d/2);g.add(hs);
+ buildFence(g);
+ // background trees
+ for(let i=0;i<54;i++){let x,z,ok=false;for(let t=0;t<30&&!ok;t++){x=(rnd()-.5)*80;z=i<40?(-45+rnd()*(D/2+45)):(D/2+10+rnd()*22);ok=!(Math.abs(x)<W/2+2.5&&z>-D/2-h.d-3.5)&&z>seaZ+3;}if(!ok)continue;
+  const s=.8+rnd()*.9;if(th.trees==='pine'){add(g,cyl(.12,.16,1,5),M('#5c4030'),x,.5*s,z).scale.setScalar(s);for(let k=0;k<3;k++){const c=add(g,new THREE.ConeGeometry(1.1-k*.28,1.4,7),M('#2f5a36'),x,(1.2+k*.75)*s,z);c.scale.setScalar(s);c.castShadow=false;}}
+  else{add(g,cyl(.12,.18,1.4,5),M('#5c4030'),x,.7*s,z).scale.setScalar(s);const c=add(g,ico(1.1,0),M(['#5a8f44','#4c7f3a','#6a9c4c'][i%3]),x,(1.9)*s,z);c.scale.setScalar(s);c.castShadow=false;}}
+ // grid lines
+ const pts=[];for(let c=0;c<=W;c++){pts.push(c-W/2,.11,-D/2,c-W/2,.11,D/2);}for(let r=0;r<=D;r++){pts.push(-W/2,.11,r-D/2,W/2,.11,r-D/2);}
+ const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.Float32BufferAttribute(pts,3));
+ gridLines=new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:'#ffffff',transparent:true,opacity:.16}));g.add(gridLines);
+ // door / gate markers
+ const mk=(c,r)=>{const m=new THREE.Mesh(new THREE.RingGeometry(.3,.38,24),new THREE.MeshBasicMaterial({color:'#f3b23a',transparent:true,opacity:.75}));m.rotation.x=-Math.PI/2;m.position.set(cellX(c),.12,cellZ(r));g.add(m);};
+ mk(L.door,0);mk(L.gate,D-1);
+}
+function buildHouse(h,doorX){
+ const g=new THREE.Group(),fh=2.7,H=h.floors*fh,wallM=M(h.wall),trimM=M(h.trim||'#f4f1ea'),roofM=M(h.roof);
+ add(g,box(h.w+.3,.35,h.d+.3),M('#8d8579'),0,.175,0);
+ const fz=h.d/2;
+ for(let f=0;f<h.floors;f++){
+  const wf=h.modern&&f>0?h.w*.62:h.w,xo=h.modern&&f>0?-h.w*.19:0,y0=.35+f*fh;
+  add(g,box(wf,fh,h.d),wallM,xo,y0+fh/2,0);
+  if(f>0||h.modern)add(g,box(wf+.12,.14,h.d+.12),trimM,xo,y0+(f>0?0:fh),0);
+  const ww=h.bigWin?1.5:.85,wh=h.bigWin?1.9:1.15,n=Math.max(2,Math.floor(wf/(h.bigWin?2.1:1.7)));
+  for(let k=0;k<n;k++){const x=xo-wf/2+(k+.5)*wf/n;if(f===0&&Math.abs(x-doorX)<(ww/2+.65))continue;
+   const y=y0+(h.bigWin?1.25:1.45);add(g,box(ww+.16,wh+.16,.06),trimM,x,y,fz+.02);add(g,box(ww,wh,.08),winMat,x,y,fz+.04);add(g,box(ww+.3,.06,.18),trimM,x,y-wh/2-.1,fz+.08);}
+  for(const sx of [-1,1]){const xx=xo+sx*(wf/2+.02);const wn=add(g,box(.06,1.1,.8),winMat,xx,y0+1.45,0);wn.castShadow=false;}
+ }
+ if(h.modern){add(g,box(h.w+.4,.22,h.d+.4),trimM,0,.35+fh+.0,0);add(g,box(h.w*.62+.4,.25,h.d+.4),trimM,-h.w*.19,.35+H+.12,0);
+  const gl=new THREE.Mesh(box(h.w*.38-.3,.6,.04),new THREE.MeshStandardMaterial({color:'#bfe3ef',transparent:true,opacity:.35}));gl.position.set(h.w*.31,.35+fh+.42,fz);g.add(gl);}
+ // door
+ add(g,box(1.1,2.2,.1),trimM,doorX,.35+1.1,fz+.04);add(g,box(.88,2,.12),M(h.door||'#5a3a24'),doorX,.35+1,fz+.06);add(g,ico(.04),M('#d4a73a'),doorX+.3,.35+1,fz+.14);
+ add(g,geo('bulbS',()=>new THREE.SphereGeometry(.08,8,6)),bulbMat,doorX+.75,.35+2,fz+.15);
+ const rh=h.roofH||1.6;
+ if(h.roofType==='gable'){const s=new THREE.Shape();s.moveTo(-(h.w/2+.35),0);s.lineTo(h.w/2+.35,0);s.lineTo(0,rh);s.closePath();const ge=new THREE.ExtrudeGeometry(s,{depth:h.d+.6,bevelEnabled:false});ge.translate(0,0,-(h.d+.6)/2);add(g,ge,roofM,0,.35+H,0);}
+ else if(h.roofType==='hip'){const ge=new THREE.ConeGeometry(Math.SQRT1_2,rh,4);ge.rotateY(Math.PI/4);const m=add(g,ge,roofM,0,.35+H+rh/2,0);m.scale.set(h.w+.6,1,h.d+.6);add(g,box(h.w+.5,.18,h.d+.5),trimM,0,.35+H+.04,0);}
+ if(h.chimney)add(g,box(.55,1.7,.55),M('#8a5544'),h.w*.25,.35+H+rh*.45,-h.d*.15);
+ if(h.columns){const pw=4.6,cz=fz+.78;[-1.95,-.65,.65,1.95].forEach(x=>{add(g,cyl(.17,.2,H-.1,12),trimM,doorX+x,.35+H/2-.05,cz);add(g,box(.5,.2,.5),trimM,doorX+x,.45,cz);});
+  add(g,box(pw+.5,.4,1.2),trimM,doorX,.35+H+.1,fz+.55);const s=new THREE.Shape();s.moveTo(-(pw/2+.25),0);s.lineTo(pw/2+.25,0);s.lineTo(0,1.1);s.closePath();const ge=new THREE.ExtrudeGeometry(s,{depth:1.2,bevelEnabled:false});ge.translate(0,0,-.6);add(g,ge,trimM,doorX,.35+H+.3,fz+.55);}
+ return g;
+}
+function buildFence(g){
+ const th=L.theme,hw=W/2+.06,hd=D/2+.06,gx=cellX(L.gate),tw=L.house.w/2+.6;
+ const segs=[[-hw,-D/2,-hw,hd],[hw,-D/2,hw,hd],[-hw,hd,gx-.5,hd],[gx+.5,hd,hw,hd]];
+ if(hw>tw+.2){segs.push([-hw,-hd,-tw,-hd],[tw,-hd,hw,-hd]);}
+ segs.forEach(s=>fenceSeg(g,s,th.fence,th.fenceColor));
+ const pc=th.fence==='iron'?'#1f2321':th.fence==='wall'?th.fenceColor:'#8a6a45';
+ [gx-.56,gx+.56].forEach(x=>{add(g,box(.22,1.25,.22),M(pc),x,.62,hd);if(th.fence!=='picket')add(g,ico(.1,1),M(th.fence==='iron'?'#d4a73a':'#c9bfae'),x,1.33,hd);});
+}
+function fenceSeg(g,s,type,color){const [x1,z1,x2,z2]=s,len=Math.hypot(x2-x1,z2-z1);if(len<.05)return;
+ const sg=new THREE.Group();sg.position.set((x1+x2)/2,0,(z1+z2)/2);sg.rotation.y=-Math.atan2(z2-z1,x2-x1);g.add(sg);const m=M(color);
+ if(type==='wall'){add(sg,box(len,.75,.3),m,0,.375,0);add(sg,box(len+.04,.08,.38),M('#c9bfae'),0,.79,0);return;}
+ const rail=type==='iron'?[.25,1.0]:[.32,.7];rail.forEach(y=>add(sg,box(len,.05,.05),m,0,y,0));
+ const step=type==='iron'?.2:.26,n=Math.max(1,Math.round(len/step));
+ for(let i=0;i<=n;i++){const x=-len/2+i*len/n;if(type==='iron')add(sg,geo('ib',()=>box(.025,1.1,.025)),m,x,.55,0);else add(sg,geo('pk',()=>box(.1,.88,.035)),m,x,.44,.03);}
+ const pn=Math.max(1,Math.round(len/2));for(let i=0;i<=pn;i++)add(sg,geo('fp'+type,()=>box(.1,type==='iron'?1.15:.95,.1)),m,-len/2+i*len/pn,type==='iron'?.575:.475,0);}
+
+/* ---------- surfaces & objects ---------- */
+function setSurfMesh(i){if(surfMeshes[i]){surfRoot.remove(surfMeshes[i]);surfMeshes[i]=null;}const s=surf[i];if(!s)return;
+ const vs=surfMats[s],h=SURF[s].h,hash=(i*2654435761)>>>0;const m=new THREE.Mesh(tileGeo,vs[hash%vs.length]);m.scale.set(1,h,1);
+ const c=i%W,r=(i/W)|0;m.position.set(cellX(c),h/2,cellZ(r));m.rotation.y=(hash>>4)%4*Math.PI/2;m.receiveShadow=true;surfRoot.add(m);surfMeshes[i]=m;}
+function buildItem(id,seed){const it=ITEM[id];const inner=it.build(mulberry(seed*7919+13));inner.userData.anim=it.anim||null;return inner;}
+function footY(o){const it=ITEM[o.id],[fw,fd]=fp(it,o.rot);let y=0;for(let r=o.r;r<o.r+fd;r++)for(let c=o.c;c<o.c+fw;c++)y=Math.max(y,SURF[surf[r*W+c]].h);return y;}
+function placeRoot(root,o,c,r){const it=ITEM[o.id],[fw,fd]=fp(it,o.rot);c=c??o.c;r=r??o.r;root.position.set(c+fw/2-W/2,0,r+fd/2-D/2);root.rotation.y=-o.rot*Math.PI/2;}
+function addObjMesh(o,pop){const it=ITEM[o.id];const root=new THREE.Group();const inner=buildItem(o.id,o.uid);root.add(inner);
+ if(it.glow){const sp=new THREE.Sprite(glowMats[it.glow.k]);sp.position.set(0,it.glow.y,0);sp.scale.setScalar(it.glow.s);sp.raycast=()=>{};inner.add(sp);}
+ root.userData={uid:o.uid,inner,ph:(o.uid*1.37)%6.28,pop:pop?0:1};placeRoot(root,o);root.position.y=footY(o);objRoot.add(root);objMap.set(o.uid,root);return root;}
+const objMap=new Map();
+function removeObjMesh(uid){const r=objMap.get(uid);if(r){objRoot.remove(r);disposeTree(r);objMap.delete(uid);}}
+function rebuildAll(){surfMeshes.forEach(m=>m&&surfRoot.remove(m));surfMeshes=new Array(W*D).fill(null);for(let i=0;i<W*D;i++)setSurfMesh(i);
+ [...objMap.keys()].forEach(removeObjMesh);computeOcc();objs.forEach(o=>addObjMesh(o,false));selMesh.visible=false;}
+
+/* ---------- helpers: ghost, highlight, selection ---------- */
+const hl=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({color:'#7cff8a',transparent:true,opacity:.35,depthWrite:false}));hl.rotation.x=-Math.PI/2;hl.visible=false;hl.renderOrder=5;scene.add(hl);
+const selMesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({color:'#f3b23a',transparent:true,opacity:.35,depthWrite:false}));selMesh.rotation.x=-Math.PI/2;selMesh.visible=false;scene.add(selMesh);
+let ghost=null,ghostKey='';
+function setHL(c,r,fw,fd,ok){hl.visible=true;hl.scale.set(fw,fd,1);hl.position.set(c+fw/2-W/2,.13,r+fd/2-D/2);hl.material.color.set(ok?'#7cff8a':'#ff6a4d');}
+function ensureGhost(id,rot){const k=id+':'+rot;if(ghostKey===k&&ghost)return ghost;if(ghost){scene.remove(ghost);ghost.traverse(n=>{if(n.material&&n.material._g)n.material.dispose();});disposeTree(ghost);}
+ ghost=new THREE.Group();const inner=buildItem(id,7);inner.traverse(n=>{if(n.isMesh){n.material=n.material.clone();n.material._g=1;n.material.transparent=true;n.material.opacity=.6;n.material.depthWrite=false;n.castShadow=false;}});ghost.add(inner);ghost.rotation.y=-rot*Math.PI/2;scene.add(ghost);ghostKey=k;return ghost;}
+function hideGhost(){if(ghost)ghost.visible=false;hl.visible=false;}
+
+/* ---------- raycast ---------- */
+const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),gPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0);ray.camera=camera;
+function setRay(cx,cy){const b=canvas.getBoundingClientRect();ndc.set((cx-b.left)/b.width*2-1,-(cy-b.top)/b.height*2+1);ray.setFromCamera(ndc,camera);}
+function groundAt(cx,cy){setRay(cx,cy);const p=new THREE.Vector3();return ray.ray.intersectPlane(gPlane,p)?p:null;}
+function anchorFor(it,rot,p){const [fw,fd]=fp(it,rot);return [Math.round(p.x+W/2-fw/2),Math.round(p.z+D/2-fd/2)];}
+function cellAt(p){const c=Math.floor(p.x+W/2),r=Math.floor(p.z+D/2);return(c>=0&&r>=0&&c<W&&r<D)?[c,r]:null;}
+function pickAt(cx,cy){setRay(cx,cy);const hits=ray.intersectObjects(objRoot.children,true);for(const h of hits){let o=h.object;while(o&&o.userData.uid===undefined)o=o.parent;if(o)return o.userData.uid;}
+ const p=groundAt(cx,cy);if(p){const ce=cellAt(p);if(ce&&occ[ce[1]*W+ce[0]])return occ[ce[1]*W+ce[0]];}return null;}
+
+/* ================= ACTIONS ================= */
+function snapshot(){return {surf:Array.from(surf),objs:objs.map(o=>Object.assign({},o)),uid:uidSeq};}
+function pushUndo(){undoStack.push(snapshot());if(undoStack.length>60)undoStack.shift();$('#bUndo').disabled=false;}
+function undo(){const s=undoStack.pop();if(!s)return;surf=Uint8Array.from(s.surf);objs=s.objs;uidSeq=s.uid;selected=null;rebuildAll();afterChange();toast(T('toast_undone'));}
+function afterChange(){computeOcc();refresh();updatePalStates();renderCtx();saveSoon();$('#bUndo').disabled=!undoStack.length;}
+
+function tryPlace(id,cx,cy,rot){const it=ITEM[id],p=groundAt(cx,cy);if(!p)return false;const [c,r]=anchorFor(it,rot,p);
+ const err=canPlace(it,c,r,rot,0);if(err){toast(err,true);sfx(180,.12,'triangle');return false;}
+ if(it.cost>remaining()){toast(T('toast_need',{need:fmt(it.cost),left:fmt(remaining())}),true);sfx(180,.12,'triangle');budgetOffer();return false;}
+ pushUndo();const o={uid:uidSeq++,id,c,r,rot};objs.push(o);computeOcc();addObjMesh(o,true);afterChange();sfx(520,.09);return true;}
+function removeObj(uid,silent){const i=objs.findIndex(o=>o.uid===uid);if(i<0)return;const o=objs[i];objs.splice(i,1);removeObjMesh(uid);computeOcc();if(selected===uid)selected=null;if(!silent)toast(T('toast_removed',{name:ITEM[o.id].name,x:fmt(ITEM[o.id].cost)}));}
+function rotateSel(){const o=objs.find(o=>o.uid===selected);if(!o)return;const it=ITEM[o.id],nr=(o.rot+1)%4;
+ if(canPlace(it,o.c,o.r,nr,o.uid)){toast(T('toast_no_rot'),true);return;}pushUndo();o.rot=nr;const root=objMap.get(o.uid);placeRoot(root,o);root.position.y=footY(o);afterChange();showSel();}
+let paintMsgT=0;
+function paintCell(c,r){const i=r*W+c,t=tool.s;
+ if(t==='erase'){if(occ[i]){removeObj(occ[i],true);return true;}if(surf[i]){surf[i]=0;setSurfMesh(i);return true;}return false;}
+ if(occ[i]){if(Date.now()-paintMsgT>1500){toast(T('toast_remove_first'),true);paintMsgT=Date.now();}return false;}
+ if(surf[i]===t)return false;const delta=SURF[t].cost-SURF[surf[i]].cost;
+ if(delta>remaining()){if(Date.now()-paintMsgT>1500){toast(T('toast_budget_over'),true);paintMsgT=Date.now();budgetOffer();}return false;}
+ surf[i]=t;setSurfMesh(i);return true;}
+let lastPaint=null;
+function paintAt(cx,cy){const p=groundAt(cx,cy);if(!p)return;const ce=cellAt(p);if(!ce)return;
+ const cells=[];if(lastPaint){let [x0,y0]=lastPaint;const [x1,y1]=ce;const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy;
+  for(let k=0;k<200;k++){cells.push([x0,y0]);if(x0===x1&&y0===y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx;}if(e2<=dx){e+=dx;y0+=sy;}}}else cells.push(ce);
+ let ch=false;cells.forEach(([c,r])=>{if(paintCell(c,r))ch=true;});lastPaint=ce;setHL(ce[0],ce[1],1,1,true);
+ if(ch){computeOcc();refresh();updatePalStates();sfx(700+Math.random()*120,.04,'sine',.025);}}
+function fillGrass(){let n=0,blocked=false;const snap=snapshot();for(let i=0;i<W*D;i++){if(surf[i]===0&&!occ[i]){if(SURF[1].cost>remaining()){blocked=true;break;}surf[i]=1;setSurfMesh(i);n++;}}
+ if(!n){toast(blocked?T('toast_budget_short'):T('toast_no_soil'),blocked);return;}undoStack.push(snap);afterChange();toast(T('toast_grass_laid',{n:n,x:fmt(n*SURF[1].cost)})+(blocked?T('grass_partial'):''));sfx(620,.12);}
+
+/* ---------- moving objects ---------- */
+let moving=null;
+function beginMove(uid){const o=objs.find(o=>o.uid===uid);if(!o)return false;moving={o,cand:null,snap:snapshot()};selected=uid;selMesh.visible=false;objMap.get(uid).position.y+=.25;return true;}
+function moveTo(cx,cy){if(!moving)return;const p=groundAt(cx,cy);if(!p)return;const o=moving.o,it=ITEM[o.id],[c,r]=anchorFor(it,o.rot,p);
+ const ok=!canPlace(it,c,r,o.rot,o.uid);const [fw,fd]=fp(it,o.rot);const root=objMap.get(o.uid);placeRoot(root,o,c,r);root.position.y=.25;setHL(c,r,fw,fd,ok);moving.cand=ok?[c,r]:null;}
+function commitMove(){if(!moving)return;const o=moving.o,root=objMap.get(o.uid);hl.visible=false;
+ if(moving.cand&&(moving.cand[0]!==o.c||moving.cand[1]!==o.r)){undoStack.push(moving.snap);o.c=moving.cand[0];o.r=moving.cand[1];sfx(460,.07);}else if(!moving.cand)toast(T('toast_cant_move'),true);
+ placeRoot(root,o);moving=null;computeOcc();root.position.y=footY(o);afterChange();showSel();}
+function cancelMove(){if(!moving)return;const o=moving.o,root=objMap.get(o.uid);placeRoot(root,o);root.position.y=footY(o);moving=null;hl.visible=false;showSel();}
+
+function select(uid){selected=uid;showSel();renderCtx();}
+function showSel(){const o=objs.find(o=>o.uid===selected);if(!o){selMesh.visible=false;return;}const [fw,fd]=fp(ITEM[o.id],o.rot);selMesh.visible=true;selMesh.scale.set(fw+.1,fd+.1,1);selMesh.position.set(o.c+fw/2-W/2,.12,o.r+fd/2-D/2);}
+function setTool(t){tool=t;selected=null;showSel();hideGhost();lastPaint=null;updatePalStates();renderCtx();}
+function toggleTool(t){const same=tool&&tool.kind===t.kind&&(tool.id===t.id&&tool.s===t.s);setTool(same?null:t);}
+
+/* ================= EVALUATION ================= */
+function connected(){const st=L.door,en=(D-1)*W+L.gate;const ok=i=>SURF[surf[i]].walk&&!occ[i];if(!ok(st)||!ok(en))return false;
+ const seen=new Uint8Array(W*D),q=[st];seen[st]=1;while(q.length){const i=q.shift();if(i===en)return true;const c=i%W,r=(i/W)|0;
+  [[c+1,r],[c-1,r],[c,r+1],[c,r-1]].forEach(([x,y])=>{if(x<0||y<0||x>=W||y>=D)return;const j=y*W+x;if(!seen[j]&&ok(j)){seen[j]=1;q.push(j);}});}return false;}
+function symmetry(){if(!objs.length)return 0;let m=0;for(const o of objs){const [fw]=fp(ITEM[o.id],o.rot),mc=W-o.c-fw;if(mc===o.c||objs.some(p=>p!==o&&p.id===o.id&&p.r===o.r&&p.c===mc))m++;}return m/objs.length;}
+function evaluate(){const cnt={},cat={},ids=new Set();let beauty=0;
+ for(const o of objs){const it=ITEM[o.id];cnt[o.id]=(cnt[o.id]||0)+1;cat[it.cat]=(cat[it.cat]||0)+1;ids.add(o.id);beauty+=it.beauty*(L.loves.includes(o.id)?1.5:1);}
+ const sc=[0,0,0,0,0];for(let i=0;i<surf.length;i++)sc[surf[i]]++;sc.forEach((n,i)=>{if(i&&n){beauty+=n*SURF[i].beauty;ids.add('s'+i);}});
+ const reqs=L.reqs.map(q=>{let v=0,t=1,txt='';
+  if(q.t==='connect'){v=connected()?1:0;txt=v?T('ok'):T('missing');}
+  else if(q.t==='surf'){v=sc[q.s]/(W*D);t=q.pct;txt=T('pct',{n:Math.round(v*100)})+' / '+T('pct',{n:Math.round(t*100)});}
+  else if(q.t==='surfN'){v=sc[q.s];t=q.n;txt=v+' / '+t+' '+T('m2');}
+  else if(q.t==='cat'){v=cat[q.cat]||0;t=q.n;txt=v+' / '+t;}
+  else if(q.t==='item'){v=q.ids.reduce((a,id)=>a+(cnt[id]||0),0);t=q.n;txt=v+' / '+t;}
+  else if(q.t==='variety'){v=ids.size;t=q.n;txt=v+' / '+t;}
+  else if(q.t==='sym'){v=symmetry();t=q.pct;txt=T('pct',{n:Math.round(v*100)});}
+  const p=Math.min(1,t?v/t:0);return {label:q.label,p,done:p>=1,txt};});
+ const req=reqs.reduce((a,r)=>a+r.p,0)/reqs.length,bS=Math.min(1,beauty/L.beautyTarget),vS=Math.min(1,ids.size/L.variety);
+ const sat=Math.round(100*(.55*req+.3*bS+.15*vS));const stars=sat>=95?3:sat>=85?2:sat>=70?1:0;
+ return {reqs,req,beauty,bS,variety:ids.size,vS,sat,stars};}
+
+/* ================= UI ================= */
+const ICON={erase:'<svg viewBox="0 0 24 24"><path d="M14 3l7 7-4 4-7-7z"/><path d="M10 7l-6 6a2 2 0 0 0 0 3l2 2h6l5-5"/><path d="M6 21h14"/></svg>',
+ fill:'<svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M6 20c0-4 1-7 2-9M10 20c0-5 1-9 3-12M14 20c0-3 1-6 3-8M18 20c0-2 .5-4 1.5-5"/></svg>'};
+const THUMB={};
+function makeThumbs(){let tr;try{tr=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});}catch(e){return;}
+ tr.setPixelRatio(1);tr.setSize(116,116);const ts=new THREE.Scene();ts.add(new THREE.HemisphereLight('#ffffff','#556644',1));const dl=new THREE.DirectionalLight('#ffffff',.75);dl.position.set(3,5,4);ts.add(dl);
+ const tc=new THREE.PerspectiveCamera(28,1,.05,100);
+ ITEMS.forEach(it=>{const g=it.build(mulberry(7));ts.add(g);const b=new THREE.Box3().setFromObject(g),s=b.getSize(new THREE.Vector3()),c=b.getCenter(new THREE.Vector3());
+  const rad=s.length()*.5,dist=rad/Math.sin(14*Math.PI/180)*.62;tc.position.copy(c).add(new THREE.Vector3(1,.8,1.25).normalize().multiplyScalar(dist));tc.lookAt(c);tr.render(ts,tc);THUMB[it.id]=tr.domElement.toDataURL();ts.remove(g);});
+ tr.dispose();try{tr.forceContextLoss();}catch(e){}}
+let curTab='zemin';
+function tabItems(t){if(t==='zemin'){const a=[];SURF.forEach((s,i)=>{if(i&&s.unlock<=L.n)a.push({k:'s:'+i,name:s.name,cost:s.cost,img:TX[s.key].url,unit:'/'+T('m2'),isNew:s.unlock===L.n&&L.n>1});});a.push({k:'fill',name:T('fill_grass'),icon:'fill'},{k:'erase',name:T('shovel_card'),icon:'erase'});return a;}
+ return ITEMS.filter(i=>i.tab===t&&i.unlock<=L.n).map(i=>({k:'o:'+i.id,name:i.name,cost:i.cost,img:THUMB[i.id],isNew:i.unlock===L.n&&L.n>1,loved:L.loves.includes(i.id)}));}
+function renderTabs(){const el=$('#tabs');el.innerHTML=TABS.filter(([k])=>tabItems(k).length).map(([k,n])=>`<button class="tab${k===curTab?' on':''}" role="tab" data-t="${k}">${n}</button>`).join('');}
+function renderPalette(){$('#pal').innerHTML=tabItems(curTab).map(x=>`<button class="pc" data-k="${x.k}" data-cost="${x.cost||0}">${x.img?`<img src="${x.img}" alt="">`:`<span class="ico">${ICON[x.icon]}</span>`}<span class="n">${x.name}</span>${x.cost!=null?`<span class="p">${fmt(x.cost)}${x.unit||''}</span>`:'<span class="p">&nbsp;</span>'}${x.loved?'<span class="bd lv">'+T('badge_loved')+'</span>':x.isNew?'<span class="bd">'+T('badge_new')+'</span>':''}</button>`).join('');updatePalStates();}
+function toolKey(){if(!tool)return '';if(tool.kind==='obj')return 'o:'+tool.id;return tool.s==='erase'?'erase':'s:'+tool.s;}
+function updatePalStates(){const rem=remaining(),tk=toolKey();document.querySelectorAll('.pc').forEach(b=>{b.classList.toggle('on',b.dataset.k===tk);b.classList.toggle('poor',+b.dataset.cost>rem);});}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('.tab');if(!b)return;curTab=b.dataset.t;renderTabs();renderPalette();$('#pal').scrollLeft=0;});
+
+function refresh(){const ev=evaluate(),rem=remaining();$('#hBud').textContent=fmt(rem);const bar=$('#hBar');bar.style.width=clamp(rem/L.budget*100,0,100)+'%';bar.classList.toggle('low',rem/L.budget<.12);
+ $('#hSat').textContent=T('pct',{n:ev.sat});const sb=$('#hSatBar');sb.style.width=ev.sat+'%';sb.classList.toggle('ok',ev.sat>=70);
+ const done=ev.reqs.filter(r=>r.done).length;$('#wCount').textContent=done+'/'+ev.reqs.length;
+ document.querySelectorAll('#wish .rq[data-i]').forEach(el=>{const r=ev.reqs[+el.dataset.i];if(!r)return;el.classList.toggle('ok',r.done);el.querySelector('.v').textContent=r.txt;});
+ const ws=$('#wSat');if(ws)ws.textContent=T('pct',{n:ev.sat});const bv=$('#wBeauty');if(bv)bv.textContent=Math.round(ev.beauty)+' / '+L.beautyTarget;}
+function renderWish(){const lv=L.loves.map(id=>ITEM[id].name).join(', ');
+ $('#wish').innerHTML=`<h3>${L.client}</h3><div class="who">${L.role} · ${L.name} · ${T('wish_est')} <b id="wSat" style="color:var(--sun)"></b></div>${L.reqs.map((r,i)=>`<div class="rq" data-i="${i}"><span class="ck"><svg viewBox="0 0 12 12"><path d="M2 6.5l2.5 2.5L10 3"/></svg></span><span class="t">${r.label}</span><span class="v"></span></div>`).join('')}<div class="rq"><span></span><span class="t">${T('aesthetic_score')}</span><span class="v" id="wBeauty"></span></div><div class="loves">${T('loves_label')}${lv}</div>`;refresh();}
+function renderCtx(){const el=$('#ctx');let h='';
+ if(tool&&tool.kind==='obj'){const it=ITEM[tool.id];h=`<span class="tx">${T('ctx_obj',{name:it.name})}</span>${it.w!==it.d?'<button class="cb" data-a="rotg">'+T('rotate')+'</button>':''}<button class="cb" data-a="drop">${T('drop')}</button>`;}
+ else if(tool&&tool.kind==='paint'){h=tool.s==='erase'?`<span class="tx">${T('ctx_shovel')}</span><button class="cb" data-a="drop">${T('drop')}</button>`:`<span class="tx">${T('ctx_brush',{name:SURF[tool.s].name,cost:fmt(SURF[tool.s].cost)})}</span><button class="cb" data-a="drop">${T('drop')}</button>`;}
+ else if(selected){const o=objs.find(o=>o.uid===selected),it=ITEM[o.id];h=`<span class="tx">${T('ctx_sel',{name:it.name})}</span>${it.w!==it.d?'<button class="cb" data-a="rot">'+T('rotate')+'</button>':''}<button class="cb warn" data-a="del">${T('remove_btn',{x:fmt(it.cost)})}</button>`;}
+ else h=`<span class="tx">${T('ctx_idle')}</span>`;
+ el.innerHTML=h;}
+$('#ctx').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
+ if(a==='drop')setTool(null);else if(a==='rot')rotateSel();else if(a==='rotg'){ghostRot=(ghostRot+1)%4;toast(T('toast_dir'));}
+ else if(a==='del'){pushUndo();removeObj(selected);afterChange();sfx(300,.08,'triangle');}});
+
+let toastT=0;function toast(m,bad){const t=$('#toast');t.textContent=m;t.classList.toggle('bad',!!bad);t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),1900);}
+let ac=null;function sfx(f,d,type,v){if(!progress.sound)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.type=type||'sine';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+d);g.gain.setValueAtTime(v||.05,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+.02);}catch(e){}}
+
+/* ================= INPUT: canvas ================= */
+const cam={theta:.45,phi:.9,r:20,tTheta:.45,tPhi:.9,tR:20,target:new THREE.Vector3()};
+function orbit(dx,dy){cam.tTheta-=dx*.0065;cam.tPhi=clamp(cam.tPhi-dy*.005,.28,1.38);}
+const ptrs=new Map();let mode=null,md=null,gest=null;
+function gInfo(){const a=[...ptrs.values()];return {mx:(a[0].x+a[1].x)/2,my:(a[0].y+a[1].y)/2,d:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)};}
+function endSingle(){if(mode==='move')cancelMove();if(mode==='paint'){lastPaint=null;afterChange();}md=null;}
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+canvas.addEventListener('pointerdown',e=>{if(presenting||modalOpen)return;canvas.focus({preventScroll:true});try{canvas.setPointerCapture(e.pointerId);}catch(_){}
+ ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(ptrs.size===2){endSingle();mode='gesture';gest=gInfo();hideGhost();return;}if(ptrs.size>2)return;
+ md={sx:e.clientX,sy:e.clientY,moved:false};
+ if(e.button===2||e.button===1){mode='orbit';return;}
+ if(tool&&tool.kind==='paint'){pushUndo();mode='paint';lastPaint=null;paintAt(e.clientX,e.clientY);return;}
+ if(tool&&tool.kind==='obj'){mode='placePending';return;}
+ const uid=pickAt(e.clientX,e.clientY);if(uid){mode='objPending';md.uid=uid;}else mode='orbitPending';});
+canvas.addEventListener('pointermove',e=>{if(pdrag)return;const p=ptrs.get(e.pointerId);
+ if(!p){if(e.pointerType==='mouse'&&!presenting&&!modalOpen){if(tool&&tool.kind==='obj')hoverGhost(e.clientX,e.clientY);else if(tool&&tool.kind==='paint'){const q=groundAt(e.clientX,e.clientY),ce=q&&cellAt(q);if(ce)setHL(ce[0],ce[1],1,1,tool.s!=='erase');else hl.visible=false;}}return;}
+ const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
+ if(mode==='gesture'){if(ptrs.size<2)return;const g=gInfo();cam.tTheta-=(g.mx-gest.mx)*.0065;cam.tPhi=clamp(cam.tPhi-(g.my-gest.my)*.005,.28,1.38);if(gest.d>10)cam.tR=clamp(cam.tR*gest.d/g.d,5,Math.max(W,D)*2.6+8);gest=g;return;}
+ if(!md)return;if(Math.hypot(e.clientX-md.sx,e.clientY-md.sy)>7)md.moved=true;
+ if(mode==='orbit')orbit(dx,dy);
+ else if(mode==='orbitPending'){if(md.moved)mode='orbit';}
+ else if(mode==='placePending'){if(md.moved){mode='orbit';hideGhost();}else if(e.pointerType==='mouse')hoverGhost(e.clientX,e.clientY);}
+ else if(mode==='objPending'){if(md.moved&&beginMove(md.uid)){mode='move';moveTo(e.clientX,e.clientY);}}
+ else if(mode==='move')moveTo(e.clientX,e.clientY);
+ else if(mode==='paint')paintAt(e.clientX,e.clientY);});
+function pUp(e){if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);
+ if(mode==='gesture'){if(!ptrs.size){mode=null;gest=null;}return;}
+ if(!md){mode=null;return;}
+ if(e.type==='pointercancel'){endSingle();mode=null;return;}
+ if(mode==='placePending'&&!md.moved){tryPlace(tool.id,e.clientX,e.clientY,ghostRot);if(e.pointerType!=='mouse')hideGhost();}
+ else if(mode==='objPending'&&!md.moved){select(md.uid);sfx(400,.05);}
+ else if(mode==='orbitPending'&&!md.moved)select(null);
+ else if(mode==='move')commitMove();
+ else if(mode==='paint'){lastPaint=null;if(e.pointerType!=='mouse')hl.visible=false;const s=undoStack[undoStack.length-1];if(s&&s.surf.every((v,i)=>v===surf[i])&&s.objs.length===objs.length)undoStack.pop();afterChange();}
+ mode=null;md=null;}
+canvas.addEventListener('pointerup',pUp);canvas.addEventListener('pointercancel',pUp);
+canvas.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'&&!ptrs.size&&!pdrag)hideGhost();});
+canvas.addEventListener('wheel',e=>{e.preventDefault();cam.tR=clamp(cam.tR*(1+e.deltaY*.0012),5,Math.max(W,D)*2.6+8);},{passive:false});
+function hoverGhost(cx,cy){if(!tool||tool.kind!=='obj')return;const it=ITEM[tool.id],p=groundAt(cx,cy);if(!p){hideGhost();return;}
+ const [c,r]=anchorFor(it,ghostRot,p),[fw,fd]=fp(it,ghostRot),ok=!canPlace(it,c,r,ghostRot,0)&&it.cost<=remaining();
+ const g=ensureGhost(tool.id,ghostRot);g.visible=true;g.position.set(c+fw/2-W/2,.02,r+fd/2-D/2);setHL(c,r,fw,fd,ok);}
+
+/* ================= INPUT: palette drag ================= */
+let pd=null,pdrag=false;
+const pal=$('#pal'),tray=$('#tray');
+pal.addEventListener('pointerdown',e=>{if(presenting||modalOpen)return;const card=e.target.closest('.pc');if(!card)return;pd={k:card.dataset.k,x:e.clientX,y:e.clientY,id:e.pointerId,active:false};});
+window.addEventListener('pointermove',e=>{if(!pd||e.pointerId!==pd.id)return;const dx=e.clientX-pd.x,dy=e.clientY-pd.y;
+ if(!pd.active){if(dy<-12&&Math.abs(dy)>Math.abs(dx)*1.1&&pd.k.startsWith('o:')){pd.active=true;pdrag=true;pd.prevTool=tool;tool={kind:'obj',id:pd.k.slice(2)};selected=null;showSel();updatePalStates();renderCtx();}else return;}
+ if(e.clientY<$('#ctxrow').getBoundingClientRect().top-4)hoverGhost(e.clientX,e.clientY);else hideGhost();});
+window.addEventListener('pointerup',e=>{if(!pd||e.pointerId!==pd.id)return;const s=pd;pd=null;
+ if(s.active){pdrag=false;const over=e.clientY<$('#ctxrow').getBoundingClientRect().top-4;if(over)tryPlace(s.k.slice(2),e.clientX,e.clientY,ghostRot);hideGhost();tool=null;updatePalStates();renderCtx();return;}
+ if(Math.hypot(e.clientX-s.x,e.clientY-s.y)<10)cardTap(s.k);});
+window.addEventListener('pointercancel',e=>{if(!pd||e.pointerId!==pd.id)return;if(pd.active){pdrag=false;hideGhost();tool=null;updatePalStates();renderCtx();}pd=null;});
+pal.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const c=e.target.closest('.pc');if(c){e.preventDefault();cardTap(c.dataset.k);}}});
+function cardTap(k){if(k==='fill'){fillGrass();return;}if(k==='erase'){toggleTool({kind:'paint',s:'erase'});return;}
+ if(k.startsWith('s:')){toggleTool({kind:'paint',s:+k.slice(2)});return;}const id=k.slice(2);if(!(tool&&tool.id===id))ghostRot=0;toggleTool({kind:'obj',id});
+ if(tool&&ITEM[id].cost>remaining())toast(T('toast_item_budget'),true);}
+
+window.addEventListener('keydown',e=>{if(modalOpen||presenting)return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo();return;}
+ if(e.key==='Escape')setTool(null);else if(e.key==='r'||e.key==='R'){if(selected)rotateSel();else if(tool&&tool.kind==='obj'){ghostRot=(ghostRot+1)%4;}}
+ else if((e.key==='Delete'||e.key==='Backspace')&&selected){pushUndo();removeObj(selected);afterChange();}});
+
+$('#bUndo').onclick=undo;
+$('#bNight').onclick=()=>{night=!night;$('#bNight').innerHTML=night?'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>':'<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>';$('#bNight').setAttribute('aria-label',night?T('day_view'):T('night_view'));};
+$('#bWish').onclick=()=>$('#wish').classList.toggle('open');
+$('#bMenu').onclick=()=>showTitle();
+$('#present').onclick=present;
+
+/* ================= SCREENS ================= */
+const starSvg=on=>`<svg viewBox="0 0 24 24" class="st${on?' on':''}"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg>`;
+const starsRow=n=>`<span class="stars">${[1,2,3].map(i=>starSvg(i<=n)).join('')}</span>`;
+function openModal(html){$('#card').innerHTML=html;$('#modal').hidden=false;modalOpen=true;hideGhost();$('#card').scrollTop=0;$('#modal').scrollTop=0;}
+function closeModal(){$('#modal').hidden=true;modalOpen=false;}
+function kasa(){return Object.values(progress.profit).reduce((a,b)=>a+b,0);}
+function showTitle(){const rows=LEVELS.map((l,i)=>{const lock=l.n>progress.unlocked,st=progress.stars[l.n]||0;
+  return `<button class="lrow" data-act="lvl" data-i="${i}" ${lock?'disabled':''}><span class="no">${l.n}</span><span><span class="nm">${l.name}</span><br><span class="sub">${l.client} · ${l.place} · ${T('budget')} ${fmt(l.budget)}</span></span>${lock?'<span class="sub">'+T('locked')+'</span>':starsRow(st)}</button>`;}).join('');
+ openModal(`<div class="eyebrow">${T('eyebrow_sim')}</div><h1>${T('title')}</h1><p class="mut">${T('title_blurb')}</p>
+ <div class="facts"><div class="fact"><span>${T('company_cash')}</span><b>${fmt(kasa())}</b></div><div class="fact"><span>${T('total_stars')}</span><b>${Object.values(progress.stars).reduce((a,b)=>a+b,0)} / 15</b></div></div>
+ <div class="lv">${rows}</div>
+ <ul class="ul small mut"><li>${T('help1')}</li><li>${T('help2')}</li><li>${T('help3')}</li></ul>
+ <div class="btns">${L&&!presenting?'<button class="btn pri" data-act="close">'+T('back_design')+'</button>':''}<button class="btn" data-act="sound">${T('sound',{v:progress.sound?T('on'):T('off')})}</button><button class="btn" data-act="lang" aria-label="${T('language')}">🌐 ${SG_LANG_NAMES[SG_LANG]}</button></div>`);}
+function showLang(){openModal(`<div class="eyebrow">🌐 ${T('language')}</div><div class="lv" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">${SG_LANGS.map(c=>`<button class="btn${c===SG_LANG?' pri':''}" data-act="setlang" data-l="${c}" lang="${c}">${SG_LANG_NAMES[c]}</button>`).join('')}</div><div class="btns"><button class="btn" data-act="title">${T('back')}</button></div>`);}
+function showBrief(){const nw=ITEMS.filter(i=>i.unlock===L.n),ns=SURF.filter(s=>s.unlock===L.n);
+ const newHtml=(L.n>1&&(nw.length||ns.length))?`<div class="eyebrow" style="margin-top:16px">${T('brief_new')}</div><div class="newi">${ns.map(s=>`<div><img src="${TX[s.key].url}" alt="">${s.name}</div>`).join('')}${nw.map(i=>`<div><img src="${THUMB[i.id]||''}" alt="">${i.name}</div>`).join('')}</div>`:'';
+ openModal(`<div class="eyebrow">${T('house_n',{n:L.n,total:LEVELS.length})} · ${L.place}</div><h2>${L.name}</h2><p class="mut">${L.client} · ${L.role}</p>
+ <div class="quote">“${L.quote}”</div>
+ <div class="facts"><div class="fact"><span>${T('budget')}</span><b>${fmt(L.budget)}</b></div><div class="fact"><span>${T('fee')}</span><b>${fmt(L.fee)}</b></div><div class="fact"><span>${T('garden')}</span><b>${L.W} × ${L.D} ${T('m')}</b></div></div>
+ <div class="eyebrow">${T('requests')}</div><ul class="ul" style="margin-top:8px">${L.reqs.map(r=>`<li>${r.label}</li>`).join('')}</ul>
+ <p class="small mut" style="margin-top:12px">${T('brief_loves',{list:L.loves.map(id=>ITEM[id].name).join(', ')})}</p>${newHtml}
+ <div class="btns"><button class="btn pri" data-act="close">${T('start_design')}</button><button class="btn" data-act="title">${T('houses')}</button></div>`);}
+let lastEv=null;
+function present(){if(!objs.length&&surf.every(v=>!v)){toast(T('toast_edit_first'),true);return;}
+ const ev=evaluate();lastEv=ev;presenting=true;setTool(null);selected=null;showSel();document.body.classList.add('presenting');gridLines.visible=false;
+ const ci=$('#cine');ci.textContent=T('touring',{name:L.client});ci.hidden=false;cam.tPhi=.95;cam.tR=Math.max(W,D)*1.1+6;
+ setTimeout(()=>{ci.hidden=true;showResult(ev);},3200);}
+function showResult(ev){const pass=ev.stars>0,rem=Math.max(0,remaining()-bonusBudget),mult=[0,.6,.8,1][ev.stars],earn=pass?rem+L.fee*mult:0;
+ if(pass){const prevS=progress.stars[L.n]||0;progress.stars[L.n]=Math.max(prevS,ev.stars);progress.profit[L.n]=Math.max(progress.profit[L.n]||0,Math.round(earn));progress.unlocked=Math.max(progress.unlocked,L.n+1);saveProgress();confetti();[523,659,784].forEach((f,i)=>setTimeout(()=>sfx(f,.18,'sine',.05),i*120));}
+ else sfx(220,.25,'triangle');
+ let say;if(pass)say=L.say[ev.stars];else{const w=ev.reqs.filter(r=>!r.done).sort((a,b)=>a.p-b.p)[0];say=w?T('fail_missing',{x:SG_LANG==='de'?w.label:w.label.charAt(0).toLocaleLowerCase(SG_LANG)+w.label.slice(1)}):ev.bS<.8?T('fail_lifeless'):T('fail_variety');}
+ const last=L.n===LEVELS.length;
+ const bar=(lbl,p,t)=>`<div><span>${lbl}</span><span class="bar"><i class="${p>=1?'ok':''}" style="width:${Math.round(p*100)}%;${p>=1?'background:var(--sun)':''}"></i></span><em>${t}</em></div>`;
+ openModal(`<div class="eyebrow">${L.name} · ${T('client_review')}</div>
+ <div class="score"><span class="pct">${T('pct',{n:ev.sat})}</span><span class="big">${starsRow(ev.stars)}</span></div>
+ <div class="quote">“${say}” <span class="mut small">— ${L.client}</span></div>
+ <div class="brk">${bar(T('requests'),ev.req,ev.reqs.filter(r=>r.done).length+' / '+ev.reqs.length)}${bar(T('aesthetic'),ev.bS,Math.round(ev.beauty)+' / '+L.beautyTarget)}${bar(T('variety'),ev.vS,ev.variety+' / '+L.variety)}</div>
+ ${pass?`<div class="ledger"><div><span>${T('spent')}</span><span>${fmt(spent())}</span></div><div><span>${T('rem_profit')}</span><span>${fmt(rem)}</span></div><div><span>${T('fee_x',{m:mult.toLocaleString(SG_LOCALE)})}</span><span>${fmt(L.fee*mult)}</span></div><div class="tot"><span>${T('earn')}</span><span>${fmt(earn)}</span></div></div>`
+ :`<p class="mut" style="margin-top:12px">${T('need70')}</p>`}
+ ${pass&&last?`<p style="margin-top:14px">${T('all_done',{x:fmt(kasa())})}</p>`:''}
+ <div class="btns">${pass&&!last?'<button class="btn pri" data-act="next">'+T('next_house')+'</button>':''}<button class="btn${pass?'':' pri'}" data-act="edit">${T('back_design')}</button><button class="btn" data-act="reset">${T('reset_garden')}</button><button class="btn" data-act="title">${T('houses')}</button></div>`);}
+function endPresent(){presenting=false;document.body.classList.remove('presenting');gridLines.visible=true;}
+$('#modal').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+ if(a==='close'){closeModal();}
+ else if(a==='lvl'){endPresent();loadLevel(+b.dataset.i);showBrief();}
+ else if(a==='title'){endPresent();showTitle();}
+ else if(a==='sound'){progress.sound=!progress.sound;saveProgress();b.textContent=T('sound',{v:progress.sound?T('on'):T('off')});}
+ else if(a==='lang'){showLang();}
+ else if(a==='setlang'){clearTimeout(saveT);if(L&&surf){progress.designs[L.n]={surf:Array.from(surf),objs,uid:uidSeq};}saveProgress();SG_setLang(b.dataset.l);}
+ else if(a==='next'){endPresent();closeModal();const nx=LI+1;
+  const go=ok=>{loadLevel(nx);if(ok){bonusBudget=Math.round(L.budget*.1/100)*100;refresh();}showBrief();if(ok)toast(T('toast_bonus',{x:fmt(bonusBudget)}));};
+  if(window.AdKit){modalOpen=true;AdKit.levelDone({title:T('newclient_title'),reward:T('newclient_reward')}).then(go);}else go(false);}
+ else if(a==='edit'){endPresent();closeModal();cam.tR=baseR();}
+ else if(a==='reset'){endPresent();pushUndo();surf=new Uint8Array(W*D);objs=[];rebuildAll();afterChange();closeModal();toast(T('toast_reset'));}});
+function confetti(){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('div');c.className='conf';const cols=['#f3b23a','#a8d37f','#e3694b','#f1eee3','#9b7fd6'];
+ for(let i=0;i<70;i++){const p=document.createElement('i');p.style.left=Math.random()*100+'%';p.style.background=cols[i%5];p.style.animationDuration=(1.6+Math.random()*1.6)+'s';p.style.animationDelay=Math.random()*.5+'s';p.style.transform=`rotate(${Math.random()*360}deg)`;c.appendChild(p);}
+ $('#app').appendChild(c);setTimeout(()=>c.remove(),4000);}
+
+/* ================= LOOP ================= */
+function baseR(){const a=camera.aspect||1;return (Math.max(W,D)*1.25+6)*(a<.8?1.5:a<1.1?1.2:1);}
+function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/Math.max(1,h);camera.updateProjectionMatrix();}
+window.addEventListener('resize',resize);
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const easeBack=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);};
+let tm=0,last=performance.now(),lastNK=-1;
+function applyNight(k){hemi.intensity=.85-.63*k;sun.intensity=1-.82*k;sun.color.copy(dayC).lerp(moonC,k);scene.background.copy(skyC).lerp(nightSky,k);scene.fog.color.copy(scene.background);
+ bulbMat.emissiveIntensity=.25+2.4*k;winMat.emissiveIntensity=k*1.1;glowMats.warm.opacity=k*.9;glowMats.fire.opacity=.3+.6*k;waterMat.emissiveIntensity=.05+.4*k;}
+function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;tm+=dt;
+ if(presenting)cam.tTheta+=dt*.55;const k=Math.min(1,dt*9);cam.theta+=(cam.tTheta-cam.theta)*k;cam.phi+=(cam.tPhi-cam.phi)*k;cam.r+=(cam.tR-cam.r)*k;
+ const sp=Math.sin(cam.phi);camera.position.set(cam.target.x+cam.r*sp*Math.sin(cam.theta),cam.target.y+cam.r*Math.cos(cam.phi),cam.target.z+cam.r*sp*Math.cos(cam.theta));camera.lookAt(cam.target);
+ nightK+=((night?1:0)-nightK)*Math.min(1,dt*3);if(Math.abs(nightK-lastNK)>.002){applyNight(nightK);lastNK=nightK;}
+ if(objRoot)for(const root of objRoot.children){const u=root.userData,inn=u.inner;
+  if(u.pop<1){u.pop=Math.min(1,u.pop+dt*3.2);inn.scale.setScalar(Math.max(.01,easeBack(u.pop)));}
+  const a=inn.userData.anim;if(!a)continue;
+  if(a==='sway'&&!reduce){inn.rotation.z=Math.sin(tm*1.3+u.ph)*.02;inn.rotation.x=Math.cos(tm*1.1+u.ph)*.014;}
+  else if(a==='fire')inn.userData.flames.forEach((f,i)=>f.scale.set(1,.75+.35*Math.sin(tm*9+i*2+u.ph)+.15*Math.sin(tm*23+i),1));
+  else if(a==='fountain')inn.userData.drops.forEach(d=>{const s=(tm*.7+d.ph)%1;let rr,y;if(d.tier===0){rr=.05+.36*s;y=1.8+.2*Math.sin(Math.PI*s)-.5*s*s;}else{rr=.42+.45*s;y=1.3-.92*s*s;}d.m.position.set(Math.cos(d.a)*rr,y,Math.sin(d.a)*rr);});}
+ if(selMesh.visible)selMesh.material.opacity=.25+.15*Math.sin(tm*5);
+ renderer.render(scene,camera);}
+
+/* ================= BOOT ================= */
+makeThumbs();
+resize();
+loadLevel(Math.min(progress.unlocked,LEVELS.length)-1);
+showTitle();
+requestAnimationFrame(loop);
+})();
+</script>
+
+</body></html>
