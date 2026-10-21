@@ -1,0 +1,638 @@
+<!doctype html><html><head>
+<script>window.ADKIT_CONFIG={};</script>
+<script src="../../adkit-web.js" data-pkg="com.sampagames.okyolu"></script>
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Arrow Path: Tap Away Puzzle – Play Free Online | Sampa Games</title>
+<meta name="description" content="Tap in the right order and slide every arrow off the board. 60 levels. Play free in your browser, then get it on Google Play.">
+<link rel="canonical" href="https://sampagames.github.io/g/ok-yolu/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Figtree:wght@400;600;700&display=swap">
+<style>
+/* Layout: tek ekran oyun — üst bar, ilerleme çizgisi, tam alan tahta, alt bilgi şeridi */
+:root{
+  --bg:#EEF0F5; --paper:#F8F9FC; --ink:#1C2233; --muted:#7A8199; --dot:#C9CEDD;
+  --accent:#4A4BE0; --accent-soft:#DCDDFB; --danger:#E0453A; --ok:#24936A; --gold:#E6A817;
+  --d0:#3B5BDB; --d1:#0F8B8D; --d2:#C2410C; --d3:#8B3FD9;
+  --display:"Unbounded","Arial Rounded MT Bold",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10121A; --paper:#161924; --ink:#E4E7F2; --muted:#8890A8; --dot:#2C3142;
+  --accent:#8C8DFF; --accent-soft:#272A55; --danger:#FF6B5E; --ok:#3CC48E; --gold:#F2C14E;
+  --d0:#7C95FF; --d1:#3CC7C4; --d2:#FF8A4C; --d3:#C08BFF; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10121A; --paper:#161924; --ink:#E4E7F2; --muted:#8890A8; --dot:#2C3142;
+  --accent:#8C8DFF; --accent-soft:#272A55; --danger:#FF6B5E; --ok:#3CC48E; --gold:#F2C14E;
+  --d0:#7C95FF; --d1:#3CC7C4; --d2:#FF8A4C; --d3:#C08BFF; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.app{height:100%;display:flex;flex-direction:column;max-width:560px;margin:0 auto;padding-inline:16px;box-sizing:border-box}
+.bar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding-block:12px 8px}
+.btn{border:0;background:var(--accent-soft);color:var(--accent);font:600 15px var(--body);height:44px;min-width:44px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding-inline:12px;cursor:pointer}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn:active{transform:scale(.95)}
+.btn.solid{background:var(--accent);color:var(--paper)}
+.btn svg{width:20px;height:20px}
+.mid{text-align:center;min-width:0}
+.lvl{font:700 15px var(--display);letter-spacing:.02em}
+.tier{font:700 11px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.tier.kabus{color:var(--danger)}
+.hearts{display:flex;gap:4px;justify-content:center;margin-top:4px}
+.hearts svg{width:18px;height:18px;transition:transform .3s}
+.hearts .on{fill:var(--danger)} .hearts .off{fill:var(--dot)}
+.hearts .lost{animation:pop .5s}
+@keyframes pop{40%{transform:scale(1.5)}}
+.badge{background:var(--paper);color:var(--accent);border-radius:99px;font-size:12px;padding:1px 7px;font-variant-numeric:tabular-nums}
+.progress{height:4px;background:var(--dot);border-radius:4px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s}
+.stage{flex:1;position:relative;min-height:0;margin-block:10px}
+canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:pointer;border-radius:18px;background:var(--paper)}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:4px 14px;font-variant-numeric:tabular-nums}
+.stat{font-size:13px;color:var(--muted)} .stat b{color:var(--ink);font:700 16px var(--display)}
+.foot .btns{display:flex;gap:8px}
+.combo{position:absolute;left:50%;top:14px;transform:translateX(-50%);font:700 16px var(--display);color:var(--accent);pointer-events:none;opacity:0;transition:opacity .2s}
+.toast{position:absolute;left:12px;right:12px;bottom:12px;background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.4;text-align:center;pointer-events:none;transition:opacity .4s}
+.overlay{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:5}
+.card{background:var(--paper);border-radius:22px;padding:24px 20px;width:100%;max-width:420px;max-height:88%;overflow:auto;box-shadow:0 20px 60px rgb(0 0 0 / .18);display:flex;flex-direction:column;gap:14px;text-align:center}
+.card h2{font:700 22px var(--display);margin:0;text-wrap:balance}
+.card p{margin:0;color:var(--muted);line-height:1.5}
+.stars{display:flex;gap:10px;justify-content:center}
+.stars svg{width:44px;height:44px;fill:var(--dot)}
+.stars svg.on{fill:var(--gold);animation:pop .5s backwards}
+.stars svg.on:nth-child(2){animation-delay:.15s}.stars svg.on:nth-child(3){animation-delay:.3s}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.row .btn{flex:1;min-width:120px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.lv{border:0;aspect-ratio:1;border-radius:12px;background:var(--bg);color:var(--ink);font:700 15px var(--display);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0}
+.lv small{font:600 10px var(--body);color:var(--gold);letter-spacing:1px}
+.lv.cur{background:var(--accent);color:var(--paper)}
+.lv:disabled{opacity:.35;cursor:default}
+.sect{font:700 11px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:left;margin-top:4px}
+.sect.kabus{color:var(--danger)}
+.toggles{display:flex;flex-direction:column;gap:8px;text-align:left}
+.toggles label{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:12px;padding:10px 14px;font-weight:600}
+.toggles button.lang{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:12px;padding:10px 14px;text-align:left;border:0;font:600 14px var(--body);color:var(--ink);cursor:pointer;gap:10px}
+.toggles button.lang span{color:var(--accent);text-align:right;min-width:0}
+.card>*{flex-shrink:0}
+.langs{display:flex;flex-direction:column;gap:8px}
+.langs .btn{width:100%}
+.langs .btn.cur{background:var(--accent);color:var(--paper)}
+.toggles input{width:20px;height:20px;accent-color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="app">
+  <header class="bar">
+    <button class="btn" id="menuBtn" aria-label="Seviyeler" data-i18n-aria="a_levels"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></button>
+    <div class="mid">
+      <div class="lvl" id="lvlName"></div>
+      <div class="tier" id="tierName"></div>
+      <div class="hearts" id="hearts"></div>
+    </div>
+    <button class="btn solid" id="hintBtn" aria-label="İpucu" data-i18n-aria="a_hint"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zm-3 18h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/></svg><span class="badge" id="hintCount">3</span></button>
+  </header>
+  <div class="progress"><i id="prog"></i></div>
+  <div class="stage" id="stage">
+    <canvas id="cv"></canvas>
+    <div class="combo" id="combo"></div>
+    <div class="toast" id="toast" hidden></div>
+  </div>
+  <footer class="foot">
+    <div class="stat"><span data-i18n="left">Kalan</span> <b id="left">0</b></div>
+    <div class="stat"><span data-i18n="time">Süre</span> <b id="time">0:00</b></div>
+    <div class="btns">
+      <button class="btn" id="zoomBtn" aria-label="Tümünü gör / yaklaş" data-i18n-aria="a_zoom" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button class="btn" id="restartBtn" aria-label="Yeniden başla" data-i18n-aria="a_restart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg></button>
+    </div>
+  </footer>
+</div>
+
+<div class="overlay" id="ovl" hidden><div class="card" id="card"></div></div>
+<script>
+(function(){
+var SUP=["tr", "en", "es", "pt", "de", "fr", "id", "ru"], NAMES={"tr": "Türkçe", "en": "English", "es": "Español", "pt": "Português", "de": "Deutsch", "fr": "Français", "id": "Bahasa Indonesia", "ru": "Русский"}, DICT={"title": {"tr": "Ok Yolu", "en": "Arrow Path", "es": "Arrow Path", "pt": "Arrow Path", "de": "Arrow Path", "fr": "Arrow Path", "id": "Arrow Path", "ru": "Arrow Path"}, "a_levels": {"tr": "Seviyeler", "en": "Levels", "es": "Niveles", "pt": "Níveis", "de": "Level", "fr": "Niveaux", "id": "Level", "ru": "Уровни"}, "a_hint": {"tr": "İpucu", "en": "Hint", "es": "Pista", "pt": "Dica", "de": "Tipp", "fr": "Indice", "id": "Petunjuk", "ru": "Подсказка"}, "a_zoom": {"tr": "Tümünü gör / yaklaş", "en": "View all / zoom in", "es": "Ver todo / acercar", "pt": "Ver tudo / aproximar", "de": "Alles zeigen / zoomen", "fr": "Tout voir / zoomer", "id": "Lihat semua / perbesar", "ru": "Показать всё / приблизить"}, "a_restart": {"tr": "Yeniden başla", "en": "Restart", "es": "Reiniciar", "pt": "Reiniciar", "de": "Neustart", "fr": "Recommencer", "id": "Mulai ulang", "ru": "Заново"}, "level": {"tr": "Seviye {n}", "en": "Level {n}", "es": "Nivel {n}", "pt": "Nível {n}", "de": "Level {n}", "fr": "Niveau {n}", "id": "Level {n}", "ru": "Уровень {n}"}, "left": {"tr": "Kalan", "en": "Left", "es": "Quedan", "pt": "Restam", "de": "Übrig", "fr": "Reste", "id": "Sisa", "ru": "Осталось"}, "time": {"tr": "Süre", "en": "Time", "es": "Tiempo", "pt": "Tempo", "de": "Zeit", "fr": "Temps", "id": "Waktu", "ru": "Время"}, "tiers": {"tr": ["Isınma", "Kolay", "Rahat", "Orta", "Dikkat", "Zor", "Çetin", "Uzman", "Usta", "Kabus", "Derin Kabus", "Efsane"], "en": ["Warm-up", "Easy", "Relaxed", "Medium", "Careful", "Hard", "Tough", "Expert", "Master", "Nightmare", "Deep Nightmare", "Legend"], "es": ["Calentamiento", "Fácil", "Tranquilo", "Medio", "Atención", "Difícil", "Duro", "Experto", "Maestro", "Pesadilla", "Pesadilla total", "Leyenda"], "pt": ["Aquecimento", "Fácil", "Tranquilo", "Médio", "Atenção", "Difícil", "Duro", "Expert", "Mestre", "Pesadelo", "Pesadelo total", "Lenda"], "de": ["Aufwärmen", "Leicht", "Locker", "Mittel", "Achtung", "Schwer", "Knifflig", "Experte", "Meister", "Albtraum", "Tiefer Albtraum", "Legende"], "fr": ["Échauffement", "Facile", "Tranquille", "Moyen", "Attention", "Difficile", "Coriace", "Expert", "Maître", "Cauchemar", "Cauchemar total", "Légende"], "id": ["Pemanasan", "Mudah", "Santai", "Sedang", "Waspada", "Sulit", "Alot", "Ahli", "Master", "Mimpi Buruk", "Mimpi Buruk Pekat", "Legenda"], "ru": ["Разминка", "Легко", "Спокойно", "Средне", "Внимание", "Сложно", "Жёстко", "Эксперт", "Мастер", "Кошмар", "Глубокий кошмар", "Легенда"]}, "newTier": {"tr": "Yeni kademe: {tier}. Tahtada {n} ok var.", "en": "New tier: {tier}. {n} arrows on the board.", "es": "Nueva etapa: {tier}. Hay {n} flechas en el tablero.", "pt": "Nova etapa: {tier}. Há {n} flechas no tabuleiro.", "de": "Neue Stufe: {tier}. {n} Pfeile auf dem Brett.", "fr": "Nouveau palier : {tier}. {n} flèches sur le plateau.", "id": "Tingkat baru: {tier}. Ada {n} panah di papan.", "ru": "Новый этап: {tier}. На поле стрелок: {n}."}, "tut1": {"tr": "Bir oka dokun. Önü açıksa tahtadan kayıp çıkar.", "en": "Tap an arrow. If its path is clear, it slides off the board.", "es": "Toca una flecha. Si su camino está libre, sale del tablero.", "pt": "Toque numa flecha. Se o caminho estiver livre, ela sai do tabuleiro.", "de": "Tippe einen Pfeil an. Ist der Weg frei, gleitet er vom Brett.", "fr": "Touche une flèche. Si la voie est libre, elle sort du plateau.", "id": "Ketuk panah. Jika jalannya kosong, panah meluncur keluar papan.", "ru": "Нажми на стрелку. Если путь свободен, она улетит с поля."}, "tut2": {"tr": "Önü kapalı oka dokunursan çarpar ve bir can gider.", "en": "Tap a blocked arrow and it crashes: you lose a life.", "es": "Si tocas una flecha bloqueada, choca y pierdes una vida.", "pt": "Se tocar numa flecha bloqueada, ela bate e você perde uma vida.", "de": "Tippst du einen blockierten Pfeil an, prallt er ab und du verlierst ein Leben.", "fr": "Une flèche bloquée se cogne et tu perds une vie.", "id": "Ketuk panah yang terhalang, ia menabrak dan nyawamu berkurang.", "ru": "Заблокированная стрелка врежется, и ты потеряешь жизнь."}, "noHintT": {"tr": "İpucun kalmadı", "en": "Out of hints", "es": "Sin pistas", "pt": "Sem dicas", "de": "Keine Tipps mehr", "fr": "Plus d'indices", "id": "Petunjuk habis", "ru": "Подсказки кончились"}, "noHintX": {"tr": "Kısa bir reklam izle, bu seviyede kullanman için ipucu kazan.", "en": "Watch a short ad to get hints for this level.", "es": "Mira un anuncio corto y gana pistas para este nivel.", "pt": "Assista a um anúncio curto e ganhe dicas para este nível.", "de": "Sieh dir kurz Werbung an und erhalte Tipps für dieses Level.", "fr": "Regarde une courte pub pour gagner des indices pour ce niveau.", "id": "Tonton iklan singkat untuk dapat petunjuk di level ini.", "ru": "Посмотри короткую рекламу и получи подсказки для этого уровня."}, "hints2": {"tr": "+2 ipucu", "en": "+2 hints", "es": "+2 pistas", "pt": "+2 dicas", "de": "+2 Tipps", "fr": "+2 indices", "id": "+2 petunjuk", "ru": "+2 подсказки"}, "watchAd": {"tr": "Reklam izle", "en": "Watch ad", "es": "Ver anuncio", "pt": "Ver anúncio", "de": "Werbung ansehen", "fr": "Voir la pub", "id": "Tonton iklan", "ru": "Смотреть рекламу"}, "noThanks": {"tr": "Hayır, teşekkürler", "en": "No, thanks", "es": "No, gracias", "pt": "Não, obrigado", "de": "Nein, danke", "fr": "Non merci", "id": "Tidak, terima kasih", "ru": "Нет, спасибо"}, "hints2Added": {"tr": "+2 ipucu eklendi", "en": "+2 hints added", "es": "+2 pistas añadidas", "pt": "+2 dicas adicionadas", "de": "+2 Tipps erhalten", "fr": "+2 indices ajoutés", "id": "+2 petunjuk ditambahkan", "ru": "+2 подсказки добавлены"}, "combo": {"tr": "Seri ×{n}", "en": "Combo ×{n}", "es": "Combo ×{n}", "pt": "Combo ×{n}", "de": "Kombo ×{n}", "fr": "Combo ×{n}", "id": "Kombo ×{n}", "ru": "Комбо ×{n}"}, "zoomTip": {"tr": "Tahta ekrana sığmıyor: sürükleyerek gez, iki parmakla yakınlaştır. Sağ üstteki harita nerede olduğunu gösterir.", "en": "The board doesn't fit the screen: drag to move, pinch to zoom. The map at top right shows where you are.", "es": "El tablero no cabe en la pantalla: arrastra para moverte y pellizca para hacer zoom. El mapa arriba a la derecha muestra dónde estás.", "pt": "O tabuleiro não cabe na tela: arraste para mover e use dois dedos para dar zoom. O mapa no canto superior direito mostra onde você está.", "de": "Das Brett passt nicht auf den Bildschirm: ziehen zum Bewegen, mit zwei Fingern zoomen. Die Karte oben rechts zeigt, wo du bist.", "fr": "Le plateau ne tient pas à l'écran : glisse pour te déplacer, pince pour zoomer. La carte en haut à droite montre où tu es.", "id": "Papan tidak muat di layar: geser untuk bergerak, cubit untuk zoom. Peta di kanan atas menunjukkan posisimu.", "ru": "Поле не помещается на экран: перетаскивай его, приближай двумя пальцами. Карта справа вверху показывает, где ты."}, "allDone": {"tr": "Tüm seviyeler bitti", "en": "All levels complete", "es": "¡Todos los niveles listos!", "pt": "Todos os níveis concluídos", "de": "Alle Level geschafft", "fr": "Tous les niveaux finis", "id": "Semua level selesai", "ru": "Все уровни пройдены"}, "clear": {"tr": "Tahta temiz", "en": "Board clear!", "es": "¡Tablero limpio!", "pt": "Tabuleiro limpo!", "de": "Brett leer!", "fr": "Plateau vidé !", "id": "Papan bersih!", "ru": "Поле чисто!"}, "arrowsN": {"tr": "{n} ok", "en": "Arrows: {n}", "es": "Flechas: {n}", "pt": "Flechas: {n}", "de": "Pfeile: {n}", "fr": "Flèches : {n}", "id": "Panah: {n}", "ru": "Стрелок: {n}"}, "crashesN": {"tr": "{n} çarpma", "en": "Crashes: {n}", "es": "Choques: {n}", "pt": "Batidas: {n}", "de": "Kollisionen: {n}", "fr": "Chocs : {n}", "id": "Tabrakan: {n}", "ru": "Ударов: {n}"}, "flawless": {"tr": "hatasız", "en": "flawless", "es": "sin errores", "pt": "sem erros", "de": "fehlerfrei", "fr": "sans faute", "id": "tanpa salah", "ru": "без ошибок"}, "newBest": {"tr": "yeni rekor", "en": "new record", "es": "nuevo récord", "pt": "novo recorde", "de": "neuer Rekord", "fr": "nouveau record", "id": "rekor baru", "ru": "новый рекорд"}, "playAgain": {"tr": "Tekrar oyna", "en": "Play again", "es": "Otra vez", "pt": "Jogar de novo", "de": "Nochmal", "fr": "Rejouer", "id": "Main lagi", "ru": "Ещё раз"}, "nextLevel": {"tr": "Sonraki seviye", "en": "Next level", "es": "Siguiente", "pt": "Próximo nível", "de": "Nächstes Level", "fr": "Niveau suivant", "id": "Level berikut", "ru": "Дальше"}, "outLives": {"tr": "Canın bitti", "en": "Out of lives", "es": "Sin vidas", "pt": "Sem vidas", "de": "Keine Leben mehr", "fr": "Plus de vies", "id": "Nyawa habis", "ru": "Жизни кончились"}, "reviveX": {"tr": "{a} / {b} ok çıkardın. Kaldığın yerden devam etmek ister misin?", "en": "You cleared {a} / {b} arrows. Want to continue where you left off?", "es": "Sacaste {a} / {b} flechas. ¿Quieres seguir donde lo dejaste?", "pt": "Você tirou {a} / {b} flechas. Quer continuar de onde parou?", "de": "Du hast {a} / {b} Pfeile entfernt. Willst du weitermachen?", "fr": "Tu as retiré {a} / {b} flèches. Continuer là où tu en étais ?", "id": "Kamu mengeluarkan {a} / {b} panah. Mau lanjut dari sini?", "ru": "Убрано стрелок: {a} / {b}. Продолжить с того же места?"}, "reviveR": {"tr": "+1 can ile devam", "en": "Continue with +1 life", "es": "Sigue con +1 vida", "pt": "Continue com +1 vida", "de": "Weiter mit +1 Leben", "fr": "Continuer avec +1 vie", "id": "Lanjut dengan +1 nyawa", "ru": "Продолжить с +1 жизнью"}, "reviveB": {"tr": "Reklam izle, devam et", "en": "Watch ad & continue", "es": "Ver anuncio y seguir", "pt": "Ver anúncio e continuar", "de": "Werbung & weiter", "fr": "Pub et continuer", "id": "Tonton iklan & lanjut", "ru": "Реклама и дальше"}, "revived": {"tr": "Devam! Bir canın var.", "en": "Go on! You have one life.", "es": "¡Sigue! Te queda una vida.", "pt": "Vai! Você tem uma vida.", "de": "Weiter! Du hast ein Leben.", "fr": "Allez ! Il te reste une vie.", "id": "Lanjut! Nyawamu tinggal satu.", "ru": "Вперёд! У тебя одна жизнь."}, "loseX": {"tr": "{a} / {b} ok çıkarıldı. Bu tahta her zaman çözülebilir; bir sonraki denemede okların uçlarına bak.", "en": "Arrows cleared: {a} / {b}. This board can always be solved; next time, watch where the arrowheads point.", "es": "Flechas sacadas: {a} / {b}. Este tablero siempre tiene solución; la próxima vez, fíjate en las puntas de las flechas.", "pt": "Flechas tiradas: {a} / {b}. Este tabuleiro sempre tem solução; na próxima, olhe para as pontas das flechas.", "de": "Entfernte Pfeile: {a} / {b}. Dieses Brett ist immer lösbar – achte beim nächsten Mal auf die Pfeilspitzen.", "fr": "Flèches retirées : {a} / {b}. Ce plateau a toujours une solution ; la prochaine fois, regarde bien les pointes des flèches.", "id": "Panah keluar: {a} / {b}. Papan ini selalu bisa diselesaikan; lain kali perhatikan ujung panahnya.", "ru": "Убрано стрелок: {a} / {b}. Это поле всегда решаемо; в следующий раз смотри, куда указывают наконечники."}, "tryAgain": {"tr": "Tekrar dene", "en": "Try again", "es": "Reintentar", "pt": "Tentar de novo", "de": "Nochmal", "fr": "Réessayer", "id": "Coba lagi", "ru": "Ещё раз"}, "settings": {"tr": "Ayarlar", "en": "Settings", "es": "Ajustes", "pt": "Ajustes", "de": "Einstellungen", "fr": "Réglages", "id": "Pengaturan", "ru": "Настройки"}, "sound": {"tr": "Ses efektleri", "en": "Sound effects", "es": "Efectos de sonido", "pt": "Efeitos sonoros", "de": "Soundeffekte", "fr": "Effets sonores", "id": "Efek suara", "ru": "Звуковые эффекты"}, "colorArrows": {"tr": "Yöne göre renkli oklar", "en": "Color arrows by direction", "es": "Flechas de color según dirección", "pt": "Flechas coloridas por direção", "de": "Pfeile nach Richtung färben", "fr": "Flèches colorées selon la direction", "id": "Warna panah sesuai arah", "ru": "Цвет стрелок по направлению"}, "backToGame": {"tr": "Oyuna dön", "en": "Back to game", "es": "Volver al juego", "pt": "Voltar ao jogo", "de": "Zurück zum Spiel", "fr": "Retour au jeu", "id": "Kembali ke permainan", "ru": "Вернуться к игре"}, "hint1": {"tr": "+1 ipucu", "en": "+1 hint", "es": "+1 pista", "pt": "+1 dica", "de": "+1 Tipp", "fr": "+1 indice", "id": "+1 petunjuk", "ru": "+1 подсказка"}, "lvlBonus": {"tr": "Seviye bonusu", "en": "Level bonus", "es": "Bonus de nivel", "pt": "Bônus de nível", "de": "Level-Bonus", "fr": "Bonus de niveau", "id": "Bonus level", "ru": "Бонус за уровень"}, "bonusHint": {"tr": "Bonus: +1 ipucu", "en": "Bonus: +1 hint", "es": "Bonus: +1 pista", "pt": "Bônus: +1 dica", "de": "Bonus: +1 Tipp", "fr": "Bonus : +1 indice", "id": "Bonus: +1 petunjuk", "ru": "Бонус: +1 подсказка"}, "language": {"tr": "Dil", "en": "Language", "es": "Idioma", "pt": "Idioma", "de": "Sprache", "fr": "Langue", "id": "Bahasa", "ru": "Язык"}, "back": {"tr": "Geri", "en": "Back", "es": "Volver", "pt": "Voltar", "de": "Zurück", "fr": "Retour", "id": "Kembali", "ru": "Назад"}};
+var lang=null;
+try{var s=localStorage.getItem('sg_lang');if(s&&SUP.indexOf(s)>=0)lang=s}catch(e){}
+if(!lang){var ls=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']);
+  for(var i=0;i<ls.length&&!lang;i++){var p=String(ls[i]||'').toLowerCase().split(/[-_]/)[0];if(p==='in')p='id';if(SUP.indexOf(p)>=0)lang=p}}
+if(!lang)lang='en';
+window.SG_LANG=lang;document.documentElement.lang=lang;
+window.SG_LANGS=SUP;window.SG_LANG_NAMES=NAMES;
+window.t=function(key,params){var e=DICT[key],v=e?(e[lang]!=null?e[lang]:e.en!=null?e.en:e.tr):undefined;if(v==null)v=key;
+  if(params&&typeof v==='string')v=v.replace(/\{(\w+)\}/g,function(m,k){return params[k]!=null?params[k]:m});return v};
+window.SG_setLang=function(c){if(SUP.indexOf(c)<0)return;try{localStorage.setItem('sg_lang',c)}catch(e){}location.reload()};
+document.title=t('title');
+document.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.getAttribute('data-i18n'))});
+document.querySelectorAll('[data-i18n-aria]').forEach(function(el){var v=t(el.getAttribute('data-i18n-aria'));el.setAttribute('aria-label',v);el.title=v});
+})();
+</script>
+
+<script>
+(()=>{
+const DIRS=[[0,-1],[1,0],[0,1],[-1,0]];
+const MAX_LEVEL=60, HINTS=3, LIVES=3;
+// Her 5 seviyede bir yeni kademe: zorluk bu sınırlarda belirgin bir sıçrama yapar.
+const TIER_NAMES=t('tiers');
+const TIERS=TIER_NAMES.map((nm,i)=>[1+i*5,nm]);
+const isDark=nm=>TIER_NAMES.indexOf(nm)>=9;
+const tierOf=n=>{let r=TIERS[0][1];for(const[s,nm] of TIERS)if(n>=s)r=nm;return r};
+const $=id=>document.getElementById(id);
+
+/* ---------- kayıt ---------- */
+let save={unlocked:1,stars:{},best:{},sound:true,color:false,level:1};
+try{const s=JSON.parse(localStorage.getItem('okyolu')||'null');if(s)save=Object.assign(save,s)}catch(e){}
+const persist=()=>{try{localStorage.setItem('okyolu',JSON.stringify(save))}catch(e){}};
+
+/* ---------- seviye üretimi (her zaman çözülebilir) ----------
+   Oklar sırayla yerleştirilir; her yeni okun çıkış hattı o ana kadar
+   yerleşmiş oklardan boştur. Ters sırayla kaldırmak her zaman çözümdür. */
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+/* Zorluk eğrisi: her seviyede ok sayısı, tahta boyu, ok uzunluğu ve
+   "zincir derinliği" (kaç tur sırayla açılması gerektiği) yavaşça artar. */
+function curve(lvl,fill){
+  // Kademe içinde (5 seviye) hafif artış, kademe sınırında büyük sıçrama.
+  const st=Math.floor((lvl-1)/5),i=(lvl-1)%5,n=5*st+1+i*.4;
+  // Ok sayısı hızlı artar: 1→10, 10→37, 20→73, 30→117, 40→167, 50→225, 60→289
+  const target=Math.round(7+2.6*n+.035*n*n);
+  const maxLen=Math.min(3+Math.floor(n/8),10);
+  const avg=2+.42*(maxLen-2);
+  const cols=Math.max(5,Math.ceil(Math.sqrt(target*avg/fill/1.5)));
+  return{cols,rows:Math.round(cols*1.5),target,maxLen,
+    straight:Math.max(.35,.75-n*.007),
+    depth:2+n*.13};
+}
+function analyse(L){ // açılış sayısı ve zincir derinliği
+  const occ=L.occ.slice(),alive=L.arrows.map(()=>true);let left=L.arrows.length,depth=0,free0=0;
+  while(left){
+    const ready=[];
+    for(const a of L.arrows){if(!alive[a.id])continue;
+      const[hx,hy]=a.body[a.body.length-1],[dx,dy]=DIRS[a.dir];let x=hx+dx,y=hy+dy,ok=true;
+      while(x>=0&&y>=0&&x<L.cols&&y<L.rows){if(occ[y*L.cols+x]!==-1){ok=false;break}x+=dx;y+=dy}
+      if(ok)ready.push(a)}
+    if(!ready.length)break;
+    if(!depth)free0=ready.length;depth++;
+    for(const a of ready){alive[a.id]=false;left--;for(const[bx,by]of a.body)occ[by*L.cols+bx]=-1}
+  }
+  return{depth,free0};
+}
+function genLevel(n){
+  // En sıkı tahtadan başla; hedef ok sayısı sığmazsa tahtayı biraz büyüt.
+  for(const fill of (n>25?[.6,.55,.5,.45,.4]:[.8,.72,.64,.56,.48])){
+    const c=curve(n,fill);let best=null,bs=-1e9;
+    const K=c.cols*c.rows>900?5:c.cols*c.rows>400?8:12;
+    for(let k=0;k<K;k++){
+      const L=genCandidate(n,k,c);if(L.arrows.length<c.target)continue;
+      const A=analyse(L);
+      const s=-Math.abs(A.depth-c.depth)*3-(n>15?A.free0/L.arrows.length*6:0);
+      if(s>bs){bs=s;best=L}
+    }
+    if(best)return best;
+  }
+  return genCandidate(n,0,curve(n,.35));
+}
+function genCandidate(n,k,c){
+  const r=rng(n*9973+17+k*7919);
+  const{cols,rows,maxLen,straight,target}=c;
+  const occ=new Int16Array(cols*rows).fill(-1);
+  const arrows=[];
+  const inb=(x,y)=>x>=0&&y>=0&&x<cols&&y<rows;
+  const tries=cols*rows*14;
+  for(let a=0;a<tries&&arrows.length<target;a++){
+    const x0=Math.floor(r()*cols),y0=Math.floor(r()*rows);
+    if(occ[y0*cols+x0]!==-1)continue;
+    const L=2+Math.floor(Math.pow(r(),1.5)*(maxLen-1));
+    const body=[[x0,y0]],set=new Set([y0*cols+x0]);
+    let d=Math.floor(r()*4);
+    while(body.length<L){
+      const nd=r()<straight?d:(d+(r()<.5?1:3))%4;
+      let moved=false;
+      for(const dd of [nd,(d+1)%4,(d+3)%4,d]){
+        const[hx,hy]=body[body.length-1],nx=hx+DIRS[dd][0],ny=hy+DIRS[dd][1],k=ny*cols+nx;
+        if(inb(nx,ny)&&occ[k]===-1&&!set.has(k)){body.push([nx,ny]);set.add(k);d=dd;moved=true;break}
+      }
+      if(!moved)break;
+    }
+    if(body.length<2)continue;
+    const[hx,hy]=body[body.length-1];let ok=true;
+    for(let x=hx+DIRS[d][0],y=hy+DIRS[d][1];inb(x,y);x+=DIRS[d][0],y+=DIRS[d][1]){
+      const k=y*cols+x;if(occ[k]!==-1||set.has(k)){ok=false;break}
+    }
+    if(!ok)continue;
+    const id=arrows.length;arrows.push({id,body,dir:d,alive:true});
+    for(const k of set)occ[k]=id;
+  }
+  return{cols,rows,arrows,occ};
+}
+
+/* ---------- ses ---------- */
+let ac=null;
+function tone(f,dur,type='sine',vol=.12,slide=0,delay=0){
+  if(!save.sound)return;
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    const t=ac.currentTime+delay,o=ac.createOscillator(),g=ac.createGain();
+    o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(f*slide,t+dur);
+    g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    o.connect(g).connect(ac.destination);o.start(t);o.stop(t+dur);
+  }catch(e){}
+}
+const sfx={
+  go:c=>tone(380+Math.min(c,8)*60,.16,'triangle',.1,2.2),
+  bump:()=>{tone(140,.22,'square',.07,.6);tone(90,.25,'sine',.15,.7)},
+  hint:()=>{tone(660,.12,'sine',.08);tone(990,.18,'sine',.08,1,.1)},
+  win:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.3,'triangle',.1,1,i*.11)),
+  lose:()=>[330,262,196].forEach((f,i)=>tone(f,.35,'sine',.12,1,i*.16))
+};
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+
+/* ---------- oyun durumu ---------- */
+let G=null;
+function start(n){
+  n=Math.max(1,Math.min(MAX_LEVEL,n));
+  const lv=genLevel(n);
+  const maxLives=lv.arrows.length>200?5:lv.arrows.length>100?4:LIVES;
+  G={n,...lv,lives:maxLives,maxLives,hints:HINTS+Math.floor(lv.arrows.length/60),movers:[],parts:[],flash:new Map(),hintId:-1,hintT:0,
+     t0:performance.now(),elapsed:0,mistakes:0,done:false,shake:0,combo:0,lastClear:0,total:lv.arrows.length,left:lv.arrows.length};
+  save.level=n;persist();
+  $('lvlName').textContent=t('level',{n});
+  const tn=tierOf(n);$('tierName').textContent=tn;$('tierName').className='tier'+(isDark(tn)?' kabus':'');
+  renderHearts();updateHud();closeOverlay();
+  const tierStart=TIERS.find(t=>t[0]===n&&n>1);
+  if(tierStart)toast(t('newTier',{tier:tn,n:G.total}),3200);
+  else if(n<=2)toast(n===1?t('tut1'):t('tut2'),4200);
+  introCam();
+}
+
+function rayInfo(a){ // önündeki boş hücre sayısı, engel id'si
+  const[hx,hy]=a.body[a.body.length-1],[dx,dy]=DIRS[a.dir];
+  let x=hx+dx,y=hy+dy,free=0;
+  while(x>=0&&y>=0&&x<G.cols&&y<G.rows){
+    const o=G.occ[y*G.cols+x];if(o!==-1)return{free,blocker:o};
+    free++;x+=dx;y+=dy;
+  }
+  return{free,blocker:-1};
+}
+function pathFor(a,extra){ // gövde + baş yönünde devam eden noktalar
+  const p=a.body.map(c=>c.slice()),[dx,dy]=DIRS[a.dir];let[hx,hy]=p[p.length-1];
+  for(let i=1;i<=extra;i++)p.push([hx+dx*i,hy+dy*i]);
+  return p;
+}
+
+function tap(a){
+  if(G.done||!a.alive||G.movers.some(m=>m.a===a))return;
+  if(ac&&ac.state==='suspended')ac.resume();
+  const{free,blocker}=rayInfo(a);
+  if(blocker===-1){
+    a.alive=false;for(const[x,y]of a.body)G.occ[y*G.cols+x]=-1;
+    const L=a.body.length;
+    G.movers.push({a,mode:'exit',t:0,v:9,path:pathFor(a,free+L+3),end:free+L+1,edge:free+.5,burst:false});
+    const now=performance.now();G.combo=(now-G.lastClear<1100)?G.combo+1:1;G.lastClear=now;
+    if(G.combo>=3)showCombo(G.combo);
+    G.left--;sfx.go(G.combo);buzz(8);
+    if(G.hintId===a.id)G.hintId=-1;
+    updateHud();
+  }else{
+    G.movers.push({a,mode:'bump',t:0,phase:0,target:free+.32,path:pathFor(a,free+1),blocker});
+    G.lives--;G.mistakes++;G.shake=1;G.flash.set(blocker,1);G.flash.set(a.id,1);
+    G.combo=0;sfx.bump();buzz([30,40,30]);renderHearts(true);
+  }
+}
+
+function useHint(){
+  if(!G||G.done)return;
+  if(G.hints<=0){
+    if(window.AdKit)AdKit.offer({title:t('noHintT'),text:t('noHintX'),reward:t('hints2'),button:t('watchAd'),decline:t('noThanks')})
+      .then(ok=>{if(ok&&G&&!G.done){G.hints+=2;updateHud();toast(t('hints2Added'),1800)}});
+    return;
+  }
+  // en uzun bekleyen yerine, şu an çıkabilen ve en fazla oku serbest bırakan oku seç
+  let best=-1,score=-1;
+  for(const a of G.arrows){
+    if(!a.alive||G.movers.some(m=>m.a===a))continue;
+    if(rayInfo(a).blocker!==-1)continue;
+    let s=0;for(const b of G.arrows)if(b.alive&&b!==a&&rayInfo(b).blocker===a.id)s++;
+    if(s>score){score=s;best=a.id}
+  }
+  if(best<0)return;
+  G.hints--;G.hintId=best;G.hintT=performance.now();sfx.hint();updateHud();
+  const[hx,hy]=G.arrows[best].body.at(-1);if(playS>fitS*1.05)goCam(Math.max(cam.s,playS),hx+.5,hy+.5);
+}
+
+/* ---------- HUD ---------- */
+const heartSvg=c=>`<svg viewBox="0 0 24 24" class="${c}"><path d="M12 21s-7.5-4.6-9.6-9.3C1 8.4 3 5 6.5 5c2 0 3.3 1 4.1 2.2h2.8C14.2 6 15.5 5 17.5 5 21 5 23 8.4 21.6 11.7 19.5 16.4 12 21 12 21z"/></svg>`;
+function renderHearts(lost){
+  let h='';for(let i=0;i<G.maxLives;i++)h+=heartSvg(i<G.lives?'on':'off'+(lost&&i===G.lives?' lost':''));
+  $('hearts').innerHTML=h;
+}
+function updateHud(){
+  $('left').textContent=G.left;
+  $('hintCount').textContent=G.hints;
+  $('hintBtn').disabled=false;$('hintBtn').style.opacity=G.hints>0?1:.7;
+  $('prog').style.width=(100*(G.total-G.left)/Math.max(1,G.total))+'%';
+}
+const fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+let comboTimer;
+function showCombo(c){const el=$('combo');el.textContent=t('combo',{n:c});el.style.opacity=1;clearTimeout(comboTimer);comboTimer=setTimeout(()=>el.style.opacity=0,700)}
+let toastTimer;
+function toast(msg,ms){const t=$('toast');t.textContent=msg;t.hidden=false;t.style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.hidden=true,400)},ms)}
+
+/* ---------- çizim + kamera ----------
+   Küçük tahtalar ekrana tam sığar. Tahta büyüyünce kamera önce tamamını
+   gösterir, sonra oynanabilir yakınlığa iner; sürükleyip kaydırılır,
+   iki parmakla / tekerlekle yakınlaştırılır. */
+const cv=$('cv'),ctx=cv.getContext('2d');
+let W=0,H=0,cs=20,ox=0,oy=0,dpr=1;
+const PLAY=26;                    // rahat dokunma için en küçük hücre boyu (px)
+const cam={s:20,x:0,y:0},camT={s:20,x:0,y:0};let camAnim=false;
+let fitS=20,playS=26,maxS=60;
+function resize(){
+  const r=$('stage').getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,3);
+  W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;
+  if(!G)return;
+  fitS=Math.min((W-16)/G.cols,(H-16)/G.rows);
+  playS=Math.max(fitS,PLAY);maxS=Math.max(fitS*1.6,56);
+  clampCam(cam);clampCam(camT);updateZoomBtn();
+}
+addEventListener('resize',resize);
+function clampCam(c){
+  c.s=Math.max(fitS,Math.min(maxS,c.s));
+  const hw=W/2/c.s,hh=H/2/c.s,m=.8;
+  c.x=G.cols<=2*hw-.2?G.cols/2:Math.max(hw-m,Math.min(G.cols-hw+m,c.x));
+  c.y=G.rows<=2*hh-.2?G.rows/2:Math.max(hh-m,Math.min(G.rows-hh+m,c.y));
+}
+function goCam(s,x,y){camT.s=s;camT.x=x;camT.y=y;clampCam(camT);camAnim=true}
+function introCam(){
+  resize();
+  cam.s=fitS;cam.x=G.cols/2;cam.y=G.rows/2;camT.s=cam.s;camT.x=cam.x;camT.y=cam.y;camAnim=false;
+  if(playS>fitS*1.05){ // büyük tahta: önce bütün tabloyu göster, sonra yaklaş
+    setTimeout(()=>{if(G)goCam(playS,G.cols/2,G.rows/2)},900);
+    if(!save.zoomTip){save.zoomTip=1;persist();toast(t('zoomTip'),5200)}
+  }
+  updateZoomBtn();
+}
+function updateZoomBtn(){const b=$('zoomBtn');if(b)b.hidden=!G||playS<=fitS*1.05}
+function toggleZoom(){
+  if(!G)return;
+  if(cam.s>fitS*1.08)goCam(fitS,G.cols/2,G.rows/2);
+  else goCam(playS,cam.x,cam.y);
+}
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let C={};
+function readColors(){C={ink:css('--ink'),dot:css('--dot'),accent:css('--accent'),danger:css('--danger'),ok:css('--ok'),gold:css('--gold'),paper:css('--paper'),muted:css('--muted'),d:[css('--d0'),css('--d1'),css('--d2'),css('--d3')]}}
+readColors();
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',readColors)}catch(e){}
+new MutationObserver(readColors).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+const px=(x,y)=>[ox+(x+.5)*cs,oy+(y+.5)*cs];
+function sample(P,s){
+  s=Math.max(0,Math.min(P.length-1.0001,s));const i=Math.floor(s),f=s-i;
+  return[P[i][0]+(P[i+1][0]-P[i][0])*f,P[i][1]+(P[i+1][1]-P[i][1])*f,P[i+1][0]-P[i][0],P[i+1][1]-P[i][1]];
+}
+function drawArrow(P,t,L,color,width){
+  const e=t+L-1,pts=[sample(P,t)];
+  for(let k=Math.ceil(t+1e-6);k<e;k++)pts.push(P[k]);
+  const end=sample(P,e);pts.push(end);
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.beginPath();pts.forEach((p,i)=>{const[X,Y]=px(p[0],p[1]);i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)});ctx.stroke();
+  const[ex,ey]=px(end[0],end[1]),dx=end[2],dy=end[3];
+  const tip=cs*.34,back=cs*.08,wing=cs*.24;
+  ctx.beginPath();
+  ctx.moveTo(ex+dx*tip,ey+dy*tip);
+  ctx.lineTo(ex-dx*back-dy*wing,ey-dy*back+dx*wing);
+  ctx.lineTo(ex-dx*back+dy*wing,ey-dy*back-dx*wing);
+  ctx.closePath();ctx.fill();
+}
+function colorFor(a){return save.color?C.d[a.dir]:C.ink}
+function staticPath(a){return a.p1||(a.p1=pathFor(a,1))}
+function bbox(a){
+  if(a.bb)return a.bb;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  for(const[x,y]of staticPath(a)){x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y)}
+  return a.bb=[x0,y0,x1,y1];
+}
+
+// mini harita (yalnızca yakınlaştırılmışken)
+let mini=null;
+function drawMini(){
+  mini=null;if(cam.s<=fitS*1.08)return;
+  const mw=Math.min(84,W*.24),ms=mw/G.cols,mh=G.rows*ms,mx=W-mw-10,my=10;
+  mini={x:mx,y:my,w:mw,h:mh,s:ms};
+  ctx.globalAlpha=.92;ctx.fillStyle=C.paper;ctx.strokeStyle=C.dot;ctx.lineWidth=1;
+  ctx.beginPath();ctx.roundRect?ctx.roundRect(mx-4,my-4,mw+8,mh+8,8):ctx.rect(mx-4,my-4,mw+8,mh+8);ctx.fill();ctx.stroke();
+  ctx.fillStyle=C.muted;
+  for(let y=0;y<G.rows;y++)for(let x=0;x<G.cols;x++)if(G.occ[y*G.cols+x]!==-1)ctx.fillRect(mx+x*ms,my+y*ms,ms+.3,ms+.3);
+  if(G.hintId>=0&&G.arrows[G.hintId].alive){const[hx,hy]=G.arrows[G.hintId].body.at(-1);ctx.fillStyle=C.accent;ctx.beginPath();ctx.arc(mx+(hx+.5)*ms,my+(hy+.5)*ms,3,0,7);ctx.fill()}
+  const vx=(cam.x-W/2/cam.s)*ms,vy=(cam.y-H/2/cam.s)*ms;
+  ctx.strokeStyle=C.accent;ctx.lineWidth=1.5;ctx.strokeRect(mx+vx,my+vy,W/cam.s*ms,H/cam.s*ms);
+  ctx.globalAlpha=1;
+}
+
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+  if(G){
+    if(!G.done)G.elapsed=(now-G.t0)/1000;
+    $('time').textContent=fmt(G.elapsed);
+    if(camAnim){
+      const k=1-Math.exp(-dt*7);
+      cam.s+=(camT.s-cam.s)*k;cam.x+=(camT.x-cam.x)*k;cam.y+=(camT.y-cam.y)*k;
+      if(Math.abs(camT.s-cam.s)<.01&&Math.abs(camT.x-cam.x)<.005&&Math.abs(camT.y-cam.y)<.005){Object.assign(cam,camT);camAnim=false}
+    }
+    cs=cam.s;ox=W/2-cam.x*cs;oy=H/2-cam.y*cs;
+    let sx=0;if(G.shake>0){sx=Math.sin(now/22)*6*G.shake;G.shake=Math.max(0,G.shake-dt*3)}
+    ctx.save();ctx.translate(sx,0);
+    // görünen alan (hücre)
+    const vx0=Math.max(0,Math.floor(-ox/cs)-1),vy0=Math.max(0,Math.floor(-oy/cs)-1);
+    const vx1=Math.min(G.cols-1,Math.ceil((W-ox)/cs)),vy1=Math.min(G.rows-1,Math.ceil((H-oy)/cs));
+    // noktalar
+    ctx.fillStyle=C.dot;const rd=Math.max(1,cs*.07);
+    for(let y=vy0;y<=vy1;y++)for(let x=vx0;x<=vx1;x++){
+      if(G.occ[y*G.cols+x]!==-1)continue;const[X,Y]=px(x,y);
+      if(cs<10)ctx.fillRect(X-rd,Y-rd,rd*2,rd*2);else{ctx.beginPath();ctx.arc(X,Y,rd,0,7);ctx.fill()}
+    }
+    const lw=Math.max(1.6,cs*.15);
+    const moving=new Set(G.movers.map(m=>m.a));
+    if(G.hintId>=0){
+      const a=G.arrows[G.hintId],k=(now-G.hintT)/1000;
+      if(a.alive&&!moving.has(a)){
+        ctx.globalAlpha=.25+.2*Math.sin(k*7);drawArrow(staticPath(a),0,a.body.length,C.accent,lw*3.2);ctx.globalAlpha=1;
+      }
+    }
+    for(const a of G.arrows){
+      if(!a.alive||moving.has(a))continue;
+      const b=bbox(a);if(b[2]<vx0-1||b[0]>vx1+1||b[3]<vy0-1||b[1]>vy1+1)continue;
+      let col=colorFor(a);
+      if(G.flash.get(a.id))col=C.danger;
+      if(G.hintId===a.id)col=C.accent;
+      drawArrow(staticPath(a),0,a.body.length,col,lw);
+    }
+    for(const[id,v]of G.flash){const nv=v-dt*1.4;nv<=0?G.flash.delete(id):G.flash.set(id,nv)}
+    for(let i=G.movers.length-1;i>=0;i--){
+      const m=G.movers[i],L=m.a.body.length;
+      if(m.mode==='exit'){
+        m.v=Math.min(m.v+dt*90,46);m.t+=m.v*dt;
+        if(!m.burst&&m.t>=m.edge){m.burst=true;const h=sample(m.path,m.edge+L-1);burst(h[0],h[1],colorFor(m.a))}
+        if(m.t>=m.end){G.movers.splice(i,1);continue}
+        drawArrow(m.path,m.t,L,colorFor(m.a),lw);
+      }else{
+        if(m.phase===0){m.t+=dt*18;if(m.t>=m.target){m.t=m.target;m.phase=1}}
+        else{m.t-=dt*10;if(m.t<=0){G.movers.splice(i,1);if(G.lives<=0)lose();continue}}
+        drawArrow(m.path,m.t,L,C.danger,lw);
+      }
+    }
+    for(let i=G.parts.length-1;i>=0;i--){
+      const p=G.parts[i];p.life-=dt*1.8;if(p.life<=0){G.parts.splice(i,1);continue}
+      p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.92;p.vy*=.92;
+      const[X,Y]=px(p.x,p.y);
+      ctx.globalAlpha=p.life;ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(X,Y,p.r*p.life*Math.min(1.4,cs/24),0,7);ctx.fill();
+    }
+    ctx.globalAlpha=1;ctx.restore();
+    drawMini();
+    if(!G.done&&G.left===0&&G.movers.length===0)win();
+  }
+  requestAnimationFrame(frame);
+}
+function burst(cx,cy,c){ // parçacıklar hücre biriminde tutulur, kamerayla birlikte kayar
+  const X=Math.max(-.5,Math.min(G.cols-.5,cx)),Y=Math.max(-.5,Math.min(G.rows-.5,cy));
+  for(let i=0;i<10;i++){const an=Math.random()*6.28,s=2.5+Math.random()*6;
+    G.parts.push({x:X,y:Y,vx:Math.cos(an)*s,vy:Math.sin(an)*s,r:2+Math.random()*3,life:1,c:Math.random()<.5?c:C.accent})}
+}
+
+/* ---------- dokunma, kaydırma, yakınlaştırma ---------- */
+const ptrs=new Map();let gesture=null;
+function local(e){const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+function zoomAt(mx,my,ns){
+  ns=Math.max(fitS,Math.min(maxS,ns));
+  const wx=(mx-ox)/cs,wy=(my-oy)/cs;     // imlecin altındaki dünya noktası sabit kalır
+  cam.s=ns;cam.x=wx-(mx-W/2)/ns;cam.y=wy-(my-H/2)/ns;clampCam(cam);
+  camAnim=false;cs=cam.s;ox=W/2-cam.x*cs;oy=H/2-cam.y*cs;
+}
+cv.addEventListener('pointerdown',e=>{
+  if(!G)return;
+  try{cv.setPointerCapture(e.pointerId)}catch(_){}
+  const p=local(e);ptrs.set(e.pointerId,{x:p[0],y:p[1],sx:p[0],sy:p[1]});
+  if(ptrs.size===1)gesture={type:'tap',moved:0};
+  else if(ptrs.size===2){const[a,b]=[...ptrs.values()];gesture={type:'pinch',d:Math.hypot(a.x-b.x,a.y-b.y),s:cam.s}}
+});
+cv.addEventListener('pointermove',e=>{
+  const q=ptrs.get(e.pointerId);if(!q||!G)return;
+  const p=local(e),dx=p[0]-q.x,dy=p[1]-q.y;q.x=p[0];q.y=p[1];
+  if(gesture&&gesture.type==='pinch'&&ptrs.size>=2){
+    const[a,b]=[...ptrs.values()],d=Math.hypot(a.x-b.x,a.y-b.y);
+    zoomAt((a.x+b.x)/2,(a.y+b.y)/2,gesture.s*d/gesture.d);
+    cam.x-=dx/2/cam.s;cam.y-=dy/2/cam.s;clampCam(cam);
+  }else if(gesture){
+    gesture.moved+=Math.abs(dx)+Math.abs(dy);
+    if(gesture.moved>10)gesture.type='pan';
+    if(gesture.type==='pan'){camAnim=false;cam.x-=dx/cam.s;cam.y-=dy/cam.s;clampCam(cam)}
+  }
+});
+function endPtr(e){
+  const q=ptrs.get(e.pointerId);if(!q)return;ptrs.delete(e.pointerId);
+  if(gesture&&gesture.type==='tap'&&ptrs.size===0)tapAt(q.x,q.y);
+  if(ptrs.size===0)gesture=null;
+  else if(gesture&&gesture.type==='pinch')gesture={type:'pan',moved:99};
+}
+cv.addEventListener('pointerup',endPtr);
+cv.addEventListener('pointercancel',e=>{ptrs.delete(e.pointerId);if(!ptrs.size)gesture=null});
+cv.addEventListener('wheel',e=>{
+  if(!G)return;e.preventDefault();const[mx,my]=local(e);
+  zoomAt(mx,my,cam.s*Math.exp(-e.deltaY*.0015));
+},{passive:false});
+cv.addEventListener('dblclick',e=>{e.preventDefault()});
+function tapAt(mx,my){
+  if(!G||G.done)return;
+  if(mini&&mx>=mini.x-4&&mx<=mini.x+mini.w+4&&my>=mini.y-4&&my<=mini.y+mini.h+4){
+    goCam(cam.s,(mx-mini.x)/mini.s,(my-mini.y)/mini.s);return;
+  }
+  const gx=(mx-ox)/cs-.5,gy=(my-oy)/cs-.5;
+  let best=null,bd=Math.max(.8,14/cs);         // çok uzaktan bakarken dokunma alanı büyür
+  const R=Math.ceil(bd);
+  for(let y=Math.round(gy)-R;y<=Math.round(gy)+R;y++)for(let x=Math.round(gx)-R;x<=Math.round(gx)+R;x++){
+    if(x<0||y<0||x>=G.cols||y>=G.rows)continue;const o=G.occ[y*G.cols+x];if(o===-1)continue;
+    const d=Math.hypot(x-gx,y-gy);if(d<bd){bd=d;best=G.arrows[o]}
+  }
+  if(best)tap(best);
+}
+
+/* ---------- ekranlar ---------- */
+const starSvg=on=>`<svg viewBox="0 0 24 24" class="${on?'on':''}"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6L2.5 9.3l6.6-.8z"/></svg>`;
+function openOverlay(html){$('card').innerHTML=html;$('ovl').hidden=false}
+function closeOverlay(){$('ovl').hidden=true}
+function win(){
+  G.done=true;const s=Math.max(1,3-G.mistakes);
+  save.stars[G.n]=Math.max(save.stars[G.n]||0,s);
+  const prevBest=save.best[G.n];if(!prevBest||G.elapsed<prevBest)save.best[G.n]=Math.round(G.elapsed);
+  save.unlocked=Math.max(save.unlocked,Math.min(MAX_LEVEL,G.n+1));persist();sfx.win();
+  const last=G.n>=MAX_LEVEL;
+  setTimeout(()=>openOverlay(`
+    <div class="stars">${[0,1,2].map(i=>starSvg(i<s)).join('')}</div>
+    <h2>${last?t('allDone'):t('clear')}</h2>
+    <p>${t('arrowsN',{n:G.total})} · ${fmt(G.elapsed)} · ${G.mistakes?t('crashesN',{n:G.mistakes}):t('flawless')}${prevBest&&G.elapsed<prevBest?' · '+t('newBest'):''}</p>
+    <div class="row">
+      <button class="btn" data-act="retry">${t('playAgain')}</button>
+      ${last?'':'<button class="btn solid" data-act="next">'+t('nextLevel')+'</button>'}
+    </div>`),450);
+}
+function lose(){
+  if(G.done)return;G.done=true;sfx.lose();
+  if(window.AdKit&&!G.revived&&G.left>0){
+    G.revived=true;
+    AdKit.offer({title:t('outLives'),text:t('reviveX',{a:G.total-G.left,b:G.total}),reward:t('reviveR'),button:t('reviveB'),decline:t('noThanks'),timeout:8})
+      .then(ok=>{if(ok){G.done=false;G.lives=1;renderHearts();toast(t('revived'),1800)}else loseCard()});
+    return;
+  }
+  loseCard();
+}
+function loseCard(){
+  openOverlay(`<h2>${t('outLives')}</h2><p>${t('loseX',{a:G.total-G.left,b:G.total})}</p>
+    <div class="row"><button class="btn" data-act="levels">${t('a_levels')}</button><button class="btn solid" data-act="retry">${t('tryAgain')}</button></div>`);
+}
+function levels(){
+  let h='<h2>'+t('a_levels')+'</h2>';
+  for(let t=0;t<TIERS.length;t++){
+    const from=TIERS[t][0],to=t+1<TIERS.length?TIERS[t+1][0]-1:MAX_LEVEL;
+    h+=`<div class="sect${isDark(TIERS[t][1])?' kabus':''}">${TIERS[t][1]} · ${from}–${to}</div><div class="grid">`;
+    for(let n=from;n<=to;n++){const st=save.stars[n]||0,lock=n>save.unlocked;
+      h+=`<button class="lv${G&&G.n===n?' cur':''}" data-lv="${n}" ${lock?'disabled':''}>${n}<small>${st?'★'.repeat(st):(lock?'':'·')}</small></button>`}
+    h+='</div>';
+  }
+  h+=`<div class="sect">${t('settings')}</div><div class="toggles">
+    <button class="lang" data-act="langs"><b>🌐 ${t('language')}</b><span>${SG_LANG_NAMES[SG_LANG]} ›</span></button>
+    <label for="optSound">${t('sound')} <input type="checkbox" id="optSound" ${save.sound?'checked':''}></label>
+    <label for="optColor">${t('colorArrows')} <input type="checkbox" id="optColor" ${save.color?'checked':''}></label></div>
+    <button class="btn solid" data-act="close">${t('backToGame')}</button>`;
+  openOverlay(h);
+}
+function langList(){
+  let h=`<h2>🌐 ${t('language')}</h2><div class="langs">`;
+  for(const c of SG_LANGS)h+=`<button class="btn${c===SG_LANG?' cur':''}" data-lang="${c}" lang="${c}">${SG_LANG_NAMES[c]}</button>`;
+  h+=`</div><button class="btn solid" data-act="levels">${t('back')}</button>`;
+  openOverlay(h);
+}
+$('card').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.lang){if(b.dataset.lang===SG_LANG)levels();else{persist();SG_setLang(b.dataset.lang)}return}
+  if(b.dataset.act==='langs'){langList();return}
+  if(b.dataset.lv)start(+b.dataset.lv);
+  else if(b.dataset.act==='retry')start(G.n);
+  else if(b.dataset.act==='next'){const nx=G.n+1;
+    if(window.AdKit){closeOverlay();AdKit.levelDone({reward:t('hint1'),title:t('lvlBonus')}).then(ok=>{start(nx);if(ok){G.hints++;updateHud();toast(t('bonusHint'),1800)}})}else start(nx);}
+  else if(b.dataset.act==='levels')levels();
+  else if(b.dataset.act==='close'){closeOverlay();if(G&&G.done&&G.lives<=0)start(G.n)}
+});
+$('card').addEventListener('change',e=>{
+  if(e.target.id==='optSound')save.sound=e.target.checked;
+  if(e.target.id==='optColor')save.color=e.target.checked;persist();
+});
+$('menuBtn').onclick=levels;
+$('hintBtn').onclick=useHint;
+$('zoomBtn').onclick=toggleZoom;
+$('restartBtn').onclick=()=>G&&start(G.n);
+
+start(Math.min(save.level||1,save.unlocked));
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>
