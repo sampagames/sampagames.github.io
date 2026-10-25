@@ -1,5 +1,11 @@
 /* Sampa Games oyun listesi (Google Play'de yayında olanlar). o: p=dikey, l=yatay, f=serbest */
 window.SAMPA_GAMES = [
+  { id: 'gulp-city', pkg: 'com.sampagames.gulpcity', name: 'Gulp City: Şehri Yut', nameEn: "Gulp City: Swallow the City", cat: 'arcade', o: 'p', isNew: true,
+    tr: 'Deliği büyüt, şehri yut! Dev yapıları ve rakip delikleri yut. 6 harita, 14 dil.',
+    en: 'Grow your hole and swallow the city! Eat giant landmarks and rival holes.' },
+  { id: 'tycoon-worlds', pkg: 'com.sampagames.tycoonworlds', name: 'Tycoon Worlds: Idle Fabrika', nameEn: "Tycoon Worlds: Idle Factory", cat: 'sim', o: 'p', isNew: true,
+    tr: 'Kaynak topla, makinede işle, fabrikanı büyüt. 7 dünyalı 3D tycoon oyunu.',
+    en: 'Gather resources, process them in machines and grow your factory across 7 worlds.' },
   { id: 'piazza', pkg: 'com.sampagames.piazza', name: 'Piazza: Market Sort Puzzle', nameEn: "Piazza: Market Sort Puzzle", cat: 'puzzle', o: 'p', isNew: true,
     tr: 'Avrupa’nın 6 pazarında ürünleri sırala, üç aynısını eşle, tezgâhı boşalt!',
     en: 'Sort goods in 6 European markets. Match 3 alike and clear the stall!' },
