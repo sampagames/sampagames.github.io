@@ -154,6 +154,7 @@ button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
 .goal{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 112px);transform:translateX(-50%);width:min(88%,340px);background:rgba(15,24,48,.82);color:#fff;border-radius:20px;padding:14px 16px;text-align:center;box-shadow:0 0 0 3px var(--yellow)}
 .goal b{display:block;font-family:var(--display);font-weight:400;font-size:24px;color:var(--yellow);letter-spacing:.02em}
 .goal p{margin:6px 0 0;font-weight:800;font-size:14px;line-height:1.4}
+/*sticky-play*/#playBtn{position:sticky;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:5;box-shadow:0 6px 0 rgba(0,0,0,.25),0 10px 30px rgba(0,0,0,.35)}
 </style>
 
 <style>body{margin:0;font-size:14px}</style>
@@ -1248,6 +1249,21 @@ function renderMapCards(){
 }
 $("langSel").addEventListener("change",e=>{lang=e.target.value;store.set("gulp_lang",lang);applyLang();});
 $("playBtn").addEventListener("click",startGame);
+/* ---------- günlük ödül + seri (Sampa) ---------- */
+(function(){
+ const DT={en:["Daily bonus!","Your next round starts at Lv 3","Day {d} streak"],tr:["Günlük ödül!","Sonraki tura Lv 3 başlıyorsun","{d}. gün serisi"],es:["¡Bono diario!","Tu próxima ronda empieza en Nv 3","Racha de {d} días"],pt:["Bônus diário!","Sua próxima rodada começa no Nv 3","Sequência de {d} dias"],de:["Tagesbonus!","Deine nächste Runde startet auf Lv 3","{d}-Tage-Serie"],fr:["Bonus du jour !","Ta prochaine manche commence au Nv 3","Série de {d} jours"],ru:["Ежедневный бонус!","Следующий раунд начнёшь с ур. 3","Серия: {d} дн."],id:["Bonus harian!","Ronde berikutnya mulai di Lv 3","Beruntun {d} hari"]};
+ const d=new Date(),today=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+ const y=new Date(d-864e5),yest=y.getFullYear()+"-"+(y.getMonth()+1)+"-"+y.getDate();
+ const last=store.get("gulp_day");if(last===today)return;
+ let st=+(store.get("gulp_streak")||0);st=(last===yest)?st+1:1;
+ store.set("gulp_day",today);store.set("gulp_streak",String(st));bigNext=true;
+ const L=DT[lang]||DT.en,b=document.createElement("div");
+ b.style.cssText="background:linear-gradient(180deg,#ffe27a,#ffc928);color:#3a2800;border-radius:16px;padding:10px 14px;margin:6px auto 4px;max-width:420px;text-align:center;font-weight:900;box-shadow:0 4px 0 #c99400";
+ b.innerHTML="🎁 "+L[0]+"<br><small style='font-weight:800'>"+L[1]+" · 🔥 "+L[2].replace("{d}",st)+"</small>";
+ const pb=$("playBtn"),ts=document.querySelector(".totstars");ts.parentNode.insertBefore(b,ts.nextSibling);
+ pb.addEventListener("click",()=>{b.remove()},{once:true});
+})();
+
 function afterRound(next){
   if(!hasAds()){next();return;}
   AdKit.levelDone({title:t("bigT"),text:t("bigP"),reward:t("bigR")}).then(ok=>{if(ok)bigNext=true;next();},()=>next());
