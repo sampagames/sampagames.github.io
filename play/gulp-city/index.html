@@ -140,6 +140,8 @@ button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
 .map .mstars{display:flex;justify-content:center;gap:2px}
 .map .mstars i{width:12px;height:12px;background:#d5dbe8;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
 .map .mstars i.on{background:var(--yellow-d)}
+.map{position:relative}
+.map .evt{position:absolute;top:-7px;right:-6px;z-index:2;background:linear-gradient(#ff4d4d,#d42a2a);color:#fff;font-weight:900;font-size:10.5px;letter-spacing:.04em;padding:3px 7px;border-radius:9px;box-shadow:0 2px 0 #9e1c1c;transform:rotate(6deg);text-transform:uppercase;pointer-events:none}
 .map.locked{background:#c9d2e6;cursor:not-allowed}
 .map.locked canvas{filter:grayscale(1) brightness(.6)}
 .map .lock{display:none}
@@ -248,6 +250,7 @@ const TXT={
  hi:{"reviveT": "आपको निगल लिया गया!", "reviveP": "विज्ञापन देखें और उसी आकार के साथ तुरंत वापस आएँ।", "reviveB": "वापस आएँ", "extT": "बस थोड़ा और!", "extP": "विज्ञापन देखें और लक्ष्य पूरे करने के लिए +30 सेकंड पाएँ।", "extB": "+30 सेकंड", "bigT": "बड़ी शुरुआत!", "bigP": "विज्ञापन देखें और अगला राउंड Lv 3 से शुरू करें।", "bigR": "Lv 3 से शुरुआत", "holeColor": "छेद का रंग", "mPct": "शहर का {p}% निगलें", "mFirst": "पहले स्थान पर रहें", "mBoss": "{n} निगलें", "goalT": "लक्ष्य: {n}", "goalP": "Lv {l} तक बढ़ें और विरोधियों से पहले विशाल लक्ष्य को निगल लें! पीला तीर आपको रास्ता दिखाएगा।", "bossYou": "विशाल लक्ष्य निगल लिया!", "bossBot": "{n} ने विशाल लक्ष्य ले लिया!", "combo": "कॉम्बो x{c}", "frenzy": "धमाल!", "frenzySub": "आखिरी 20 सेकंड: दोगुने अंक", "starsTot": "सितारे", "locked": "{s}★ चाहिए", "unlocked": "नया मैप खुला: {n}!", "skinUnlocked": "छेद का नया रंग खुला!", "lm_city": "घंटाघर", "lm_beach": "लाइटहाउस", "lm_snow": "बर्फ़ का महल", "lm_farm": "पवनचक्की", "lm_desert": "पिरामिड", "lm_night": "टीवी टावर", "pctNow": "{p}%", "rankNow": "अभी #{r}", "tagline": "छेद बड़ा करो, शहर निगल जाओ!", "chooseMap": "अपना मैप चुनें", "play": "खेलें", "hint": "छूकर खींचें। अपने से छोटी हर चीज़ निगल लें। काफ़ी बड़े होकर विरोधी छेदों को भी निगलें!", "best": "सर्वश्रेष्ठ", "city": "महानगर", "beach": "समुद्र तट", "snow": "बर्फ़ीला गाँव", "farm": "खेत", "desert": "रेगिस्तानी कस्बा", "night": "रात का शहर", "you": "आप", "eatenBy": "{n} ने आपको निगल लिया!", "back": "{s} सेकंड में वापसी", "ate": "आपने {n} को निगल लिया!", "levelUp": "लेवल {l}!", "timeUp": "समय समाप्त!", "place": "आप #{p} पर रहे", "pts": "अंक", "again": "फिर से खेलें", "menu": "मैप चुनें", "newBest": "नया रिकॉर्ड!", "go": "शुरू!"},
  ar:{"reviveT": "لقد ابتُلعت!", "reviveP": "شاهد إعلانًا وعُد فورًا بنفس الحجم.", "reviveB": "عودة", "extT": "اقتربت!", "extP": "شاهد إعلانًا واحصل على 30+ ثانية لإكمال أهدافك.", "extB": "30+ ثانية", "bigT": "ابدأ كبيرًا!", "bigP": "شاهد إعلانًا وابدأ الجولة التالية من المستوى 3.", "bigR": "بداية من المستوى 3", "holeColor": "لون الحفرة", "mPct": "ابتلع {p}% من المدينة", "mFirst": "احتل المركز الأول", "mBoss": "ابتلع {n}", "goalT": "الهدف: {n}", "goalP": "اكبر حتى المستوى {l} وابتلع الهدف العملاق قبل منافسيك! السهم الأصفر يرشدك إليه.", "bossYou": "تم ابتلاع الهدف العملاق!", "bossBot": "{n} أخذ الهدف العملاق!", "combo": "كومبو x{c}", "frenzy": "جنون!", "frenzySub": "آخر 20 ثانية: نقاط مضاعفة", "starsTot": "نجوم", "locked": "تحتاج {s}★", "unlocked": "خريطة جديدة: {n}!", "skinUnlocked": "لون حفرة جديد!", "lm_city": "برج الساعة", "lm_beach": "المنارة", "lm_snow": "قلعة الجليد", "lm_farm": "طاحونة الهواء", "lm_desert": "الهرم", "lm_night": "برج التلفاز", "pctNow": "{p}%", "rankNow": "الآن #{r}", "tagline": "كبّر الحفرة وابتلع المدينة!", "chooseMap": "اختر خريطتك", "play": "العب", "hint": "المس واسحب. ابتلع كل ما هو أصغر منك. عندما تكبر يمكنك ابتلاع حفر المنافسين أيضًا!", "best": "الأفضل", "city": "المدينة الكبرى", "beach": "الساحل", "snow": "قرية الثلج", "farm": "المزرعة", "desert": "بلدة الصحراء", "night": "مدينة الليل", "you": "أنت", "eatenBy": "{n} ابتلعك!", "back": "العودة بعد {s} ث", "ate": "ابتلعت {n}!", "levelUp": "المستوى {l}!", "timeUp": "انتهى الوقت!", "place": "حللت في المركز {p}", "pts": "نقطة", "again": "العب مجددًا", "menu": "اختر الخريطة", "newBest": "رقم قياسي جديد!", "go": "انطلق!"}
 };
+for(const [l,v] of Object.entries({"en": {"xmas": "Christmas Town", "lm_xmas": "Giant Christmas Tree", "evNew": "Event"}, "tr": {"xmas": "Noel Kasabası", "lm_xmas": "Dev Noel Ağacı", "evNew": "Etkinlik"}, "es": {"xmas": "Pueblo Navideño", "lm_xmas": "Árbol de Navidad Gigante", "evNew": "Evento"}, "pt": {"xmas": "Vila de Natal", "lm_xmas": "Árvore de Natal Gigante", "evNew": "Evento"}, "de": {"xmas": "Weihnachtsdorf", "lm_xmas": "Riesiger Weihnachtsbaum", "evNew": "Event"}, "fr": {"xmas": "Village de Noël", "lm_xmas": "Sapin de Noël géant", "evNew": "Événement"}, "it": {"xmas": "Città del Natale", "lm_xmas": "Albero di Natale Gigante", "evNew": "Evento"}, "ru": {"xmas": "Рождественский город", "lm_xmas": "Гигантская ёлка", "evNew": "Событие"}, "id": {"xmas": "Kota Natal", "lm_xmas": "Pohon Natal Raksasa", "evNew": "Event"}, "ja": {"xmas": "クリスマスタウン", "lm_xmas": "巨大クリスマスツリー", "evNew": "イベント"}, "ko": {"xmas": "크리스마스 마을", "lm_xmas": "거대한 크리스마스 트리", "evNew": "이벤트"}, "zh": {"xmas": "圣诞小镇", "lm_xmas": "巨型圣诞树", "evNew": "活动"}, "hi": {"xmas": "क्रिसमस टाउन", "lm_xmas": "विशाल क्रिसमस ट्री", "evNew": "इवेंट"}, "ar": {"xmas": "بلدة الميلاد", "lm_xmas": "شجرة الميلاد العملاقة", "evNew": "حدث"}}))if(TXT[l])Object.assign(TXT[l],v);
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let lang=store.get("gulp_lang")||((navigator.language||"en").slice(0,2).toLowerCase());if(lang==="in")lang="id";
 if(!TXT[lang])lang="en";
@@ -309,7 +312,13 @@ const THEMES={
    weights:{houses:4,park:3,plaza:1,tower:1},styles:["apt"],fl:[2,4],
    bld:[0xa86b45,0xc98f5e,0x8fa6bf,0xe0c9a6],glass:[0xffd27a,0xffc65c],
    walls:[0xa0613a,0x8a5232,0xc4865a,0x6f8fb3,0xd9584a],roofs:[0xffffff],tree:"pine",green:[0x2f7a52,0x3b8a5f,0x27694a],
-   cars:["hatch","sedan","pickup","van"],bus:0,glow:.35},
+   cars:["hatch","sedan","pickup","van"],bus:0,glow:.35,snowy:true,snowfall:1},
+ xmas:{seed:97,sky:0x5a7cc0,border:"#eef4fb",edge:"#dbe5f1",edgeW:3,road:"#5a6378",side:"#e4ebf4",curb:"#b9c4d4",lane:"#ffffff",center:"#ffd23f",
+   lot:"#d5dfeb",lawn:"#f4f8fd",grass:"#f6f9fe",path:"#cfdbe9",plaza:"#d9e3ee",plazaLine:"#c2d0e0",water:"#a9dcf5",stone:"#b9c4d2",
+   weights:{houses:4.2,plaza:1.8,park:2.2,tower:1},styles:["apt"],fl:[2,4],
+   bld:[0xc0392b,0x2e8b57,0xf3e6d0,0x8a5232],glass:[0xffd27a,0xffc65c],
+   walls:[0xc0392b,0x2e7d4f,0xf3e6d0,0x9a5a34,0xd9584a,0x6f8fb3],roofs:[0xffffff],tree:"pine",green:[0x2f7a52,0x3b8a5f,0x27694a],
+   cars:["hatch","sedan","van","pickup"],bus:0,glow:.85,snowy:true,xmas:true,snowfall:1.6,light:{hemi:[0xaabbee,0x4a5068,.62],sun:[0xd6dcff,.55]}},
  farm:{seed:51,sky:0x9fdcff,border:"#6cbf4f",edge:"#79c75a",edgeW:3,road:"#c29a63",side:"#86c862",curb:"#6fae50",lane:"#ffffff",center:"#ffffff",marks:false,tiles:false,
    lot:"#a8d66f",lawn:"#8fd468",grass:"#7ccf5d",path:"#dcbc84",plaza:"#d8b981",plazaLine:"#c4a26a",water:"#46b8ec",stone:"#9c8f78",soil:"#9a6b3f",crop:"#5fbf3f",
    weights:{field:3,farm:2.4,houses:1.4,park:1},styles:["apt"],fl:[2,3],
@@ -328,7 +337,8 @@ const THEMES={
 };
 const DEFLIGHT={hemi:[0xdcefff,0x9d8f78,.52],sun:[0xfff0d6,.74]};
 const NEON=[0xff3d9a,0x3dfcff,0xffe23d,0x7dff5a,0xb05cff,0xff7a2e];
-const MAPKEYS=["city","beach","snow","farm","desert","night"];
+const MAPKEYS=["xmas","city","beach","snow","farm","desert","night"];
+const EVENTMAP="xmas";
 const CARS=[0xe94b3c,0x3a7bd5,0xf5c33b,0xffffff,0x2ecc71,0x9b59b6,0x2b2f3a,0xff8a3d,0x1fb5c9];
 const SHIRTS=[0xe74c3c,0x3498db,0xf1c40f,0x2ecc71,0x9b59b6,0xff6fa5,0x1abc9c,0xffffff,0xff8c42];
 const PANTS=[0x2c3e66,0x3b3b45,0x5a4636,0x1f6f8b,0x6b6b75];
@@ -415,7 +425,7 @@ function shade(h,f){const c=new THREE.Color(h);c.r=Math.min(1,c.r*f);c.g=Math.mi
 /* ---------- models ---------- */
 let TH=THEMES.city;
 function person(){
-  const b=new Bld(),sk=pick(SKINS),sh=pick(SHIRTS),pa=pick(PANTS),snow=TH===THEMES.snow,hr=snow?pick([0xe23d3d,0x2e7dd1,0xf2b705]):pick(HAIR);
+  const b=new Bld(),sk=pick(SKINS),sh=pick(SHIRTS),pa=pick(PANTS),snow=TH.snowy,hr=snow?pick([0xe23d3d,0x2e7dd1,0xf2b705]):pick(HAIR);
   b.add(G.box,pa,.15,.52,.17,-.1,.3,0).add(G.box,pa,.15,.52,.17,.1,.3,0)
    .add(G.box,0x22252c,.16,.09,.24,-.1,.045,.03).add(G.box,0x22252c,.16,.09,.24,.1,.045,.03)
    .add(G.box,sh,.42,.52,.25,0,.8,0)
@@ -491,7 +501,7 @@ function tree(s=rr(.85,1.2)){
   return{b,r:1.15*s,h:3.6*s};
 }
 function bush(){const b=new Bld(),g=pick(TH.green);b.add(G.ico,g,.7,.55,.7,0,.45,0,R()*3,R()*3,0).add(G.ico,shade(g,1.15),.5,.45,.5,.35,.55,.15,R()*3,R()*3,0);
-  if(TH===THEMES.snow)b.add(G.ico,0xffffff,.55,.2,.55,0,.85,0);if(TH===THEMES.city&&R()<.5)for(let i=0;i<4;i++)b.add(G.sph,pick([0xff5a8a,0xffd23f,0xffffff]),.09,.09,.09,rr(-.5,.5),rr(.6,.9),rr(-.4,.5));
+  if(TH.snowy)b.add(G.ico,0xffffff,.55,.2,.55,0,.85,0);if(TH===THEMES.city&&R()<.5)for(let i=0;i<4;i++)b.add(G.sph,pick([0xff5a8a,0xffd23f,0xffffff]),.09,.09,.09,rr(-.5,.5),rr(.6,.9),rr(-.4,.5));
   return{b,r:.75,h:1};}
 function lamp(){const b=new Bld();b.add(G.cyl,0x39414f,.09,3.6,.09,0,1.8,0).add(G.cyl,0x39414f,.16,.3,.16,0,.15,0)
   .add(G.box,0x39414f,1,.09,.09,.45,3.55,0).add(G.box,0x2a303b,.5,.16,.32,.9,3.5,0).glow(1).add(G.box,0xfff3c4,.4,.05,.24,.9,3.41,0).glow(0);return{b,r:.35,h:3.7};}
@@ -515,6 +525,16 @@ function lifeguard(){const b=new Bld();for(const x of[-.8,.8])for(const z of[-.8
 function snowman(){const b=new Bld();b.add(G.sph,0xffffff,.6,.55,.6,0,.55,0).add(G.sph,0xffffff,.42,.42,.42,0,1.38,0).add(G.sph,0xffffff,.3,.3,.3,0,2.0,0)
   .add(G.cone8,0xff8c1a,.07,.38,.07,0,2.0,.42,PI/2,0,0).add(G.cyl,0x1a1a1a,.28,.08,.28,0,2.27,0).add(G.cyl,0x1a1a1a,.2,.4,.2,0,2.47,0)
   .add(G.cyl,0xe23d3d,.36,.12,.36,0,1.68,0).add(G.box,0xe23d3d,.12,.45,.06,.15,1.48,.33).add(G.sph,0x1a1a1a,.05,.05,.05,-.1,2.08,.27).add(G.sph,0x1a1a1a,.05,.05,.05,.1,2.08,.27);return{b,r:.6,h:2.7};}
+const XLIGHTS=[0xff3b30,0xffd23f,0x2fd46a,0x3d8bfd];
+function candyCane(){const b=new Bld();for(let i=0;i<7;i++)b.add(G.cyl,i%2?0xffffff:0xe23d3d,.12,.3,.12,0,.15+i*.3,0);
+  for(let i=0;i<5;i++){const a=i/4*PI;b.add(G.cyl,i%2?0xffffff:0xe23d3d,.12,.24,.12,-.28+Math.cos(a)*.28,2.1+Math.sin(a)*.28,0,0,0,a);}return{b,r:.5,h:2.4};}
+function giantTree(){const b=new Bld();b.add(G.cyl,0xd9e3ee,6.6,.5,6.6,0,.25,0).add(G.cyl6,0x6b4426,1.1,3,1.1,0,1.8,0);
+  [[6.4,6,5.2],[5.1,5.4,8.8],[3.9,4.8,12],[2.7,4.2,14.8],[1.5,3.4,17.2]].forEach(([r,hh,y],i)=>{b.add(G.cone8,shade(0x23784a,1+i*.06),r,hh,r,0,y,0,0,i*.35,0).add(G.cone8,0xffffff,r*.82,.35,r*.82,0,y-hh/2+.25,0,0,i*.35,0);});
+  for(let i=0;i<70;i++){const y=rr(3,18),r=(19.4-y)*.36+.2,a=i*2.399;b.glow(1).add(G.sph,XLIGHTS[i%4],.32,.32,.32,Math.cos(a)*r,y,Math.sin(a)*r).glow(0);}
+  b.glow(1).add(G.ico,0xffd23f,1.3,1.3,.5,0,19.6,0).add(G.ico,0xfff2a8,.7,.7,.6,0,19.6,0).glow(0);
+  for(let k=0;k<8;k++){const a=k/8*PI*2+.2,s=rr(1,1.5),c=pick([0xe23d3d,0x2e7dd1,0x2fb36a,0xb06cff,0xffd23f]),x=Math.cos(a)*7.4,z=Math.sin(a)*7.4;
+    b.add(G.box,c,s,s,s,x,s/2,z,0,a,0).add(G.box,c===0xffd23f?0xe23d3d:0xffd23f,s+.03,s+.03,.18,x,s/2,z,0,a,0).add(G.box,c===0xffd23f?0xe23d3d:0xffd23f,.18,s+.03,s+.03,x,s/2,z,0,a,0);}
+  return{b,r:7,h:20};}
 function present(){const b=new Bld(),c=pick([0xe23d3d,0x2e7dd1,0x2fb36a,0xb06cff]),s=rr(.5,.8);b.add(G.box,c,s,s,s,0,s/2,0).add(G.box,0xffd23f,s+.02,s+.02,.1,0,s/2,0).add(G.box,0xffd23f,.1,s+.02,s+.02,0,s/2,0);return{b,r:s*.7,h:s};}
 function fountain(){const b=new Bld();b.add(G.cyl,TH===THEMES.beach?0xffffff:0xc9c3b5,2.8,.6,2.8,0,.3,0).add(G.cyl,0x3fb4f0,2.5,.62,2.5,0,.32,0)
   .add(G.cyl,0xc9c3b5,.35,1.8,.35,0,.9,0).add(G.cyl,0xc9c3b5,1,.2,1,0,1.8,0).add(G.cyl,0x7fd3ff,.85,.22,.85,0,1.82,0).add(G.cone,0xbfeaff,.35,1,.35,0,2.4,0);return{b,r:2.8,h:2.9};}
@@ -528,15 +548,17 @@ function xmasTree(){const b=new Bld();b.add(G.cyl6,0x7a5236,.4,1.5,.4,0,.75,0);
 
 function house(){
   if(TH.flat)return adobeHouse();
-  const b=new Bld(),w=rr(4,5.2),d=rr(3.8,4.8),h=rr(2.6,3.2),rh=rr(1.6,2.2),wall=pick(TH.walls),roof=pick(TH.roofs),GL=(TH===THEMES.snow||TH.night)?0xffd27a:0x5fb6f0;
+  const b=new Bld(),w=rr(4,5.2),d=rr(3.8,4.8),h=rr(2.6,3.2),rh=rr(1.6,2.2),wall=pick(TH.walls),roof=pick(TH.roofs),GL=(TH.snowy||TH.night)?0xffd27a:0x5fb6f0;
   b.add(G.box,wall,w,h,d,0,h/2,0).add(G.box,shade(wall,.78),w+.1,.35,d+.1,0,.17,0);
   b.add(G.prism,wall,w,rh*.92,d+.02,0,h,0).add(G.prism,roof,w+.7,rh,d+.4,0,h-.05,0);
-  if(TH===THEMES.snow)b.add(G.box,0xffffff,w+.75,.12,.3,0,h-.04,d/2+.05);
+  if(TH.snowy)b.add(G.box,0xffffff,w+.75,.12,.3,0,h-.04,d/2+.05);
   b.add(G.box,0x7a4b2e,.95,1.7,.1,0,.85,d/2+.02).add(G.box,0xffffff,1.15,1.85,.06,0,.9,d/2+.01).add(G.box,0xffd23f,.08,.08,.08,.3,.85,d/2+.08);
   for(const sx of[-1,1])b.add(G.box,0xffffff,1.05,1,.06,sx*w*.3,h*.55+.1,d/2+.02).glow(1).add(G.box,GL,.85,.8,.08,sx*w*.3,h*.55+.1,d/2+.03).glow(0);
   b.add(G.box,0xffffff,w+.06,1,1.05,0,h*.55,0).glow(1).add(G.box,GL,w+.08,.8,.85,0,h*.55,0).glow(0);
   b.add(G.box,0xffffff,1.05,1,.06,0,h*.55,-d/2-.02).glow(1).add(G.box,GL,.85,.8,.08,0,h*.55,-d/2-.03).glow(0);
   b.add(G.box,0xa0523a,.55,1.5,.55,w*.25,h+rh*.55,-d*.15);
+  if(TH.xmas){const n=Math.round(w/.45);for(let i=0;i<=n;i++){const x=-w/2-.3+i*(w+.6)/n;b.glow(1).add(G.sph,XLIGHTS[i%4],.13,.16,.13,x,h-.2-Math.abs(Math.sin(i*1.3))*.06,d/2+.22).glow(0);}
+    b.add(G.cyl,0x2f7a52,.42,.14,.42,0,1.95,d/2+.12,PI/2,0,0).add(G.box,0xe23d3d,.16,.16,.06,0,1.68,d/2+.16);}
   b.add(G.box,0xb7b0a3,1.4,.08,.9,0,.04,d/2+.5);
   return{b,r:Math.hypot(w,d)/2*.9,h:h+rh};
 }
@@ -546,7 +568,7 @@ function roofKit(b,w,d,h,c){
   b.add(G.box,pc,w+.1,.55,.3,0,h+.27,d/2-.1).add(G.box,pc,w+.1,.55,.3,0,h+.27,-d/2+.1).add(G.box,pc,.3,.55,d,w/2-.1,h+.27,0).add(G.box,pc,.3,.55,d,-w/2+.1,h+.27,0);
   const n=1+Math.floor(R()*3);for(let i=0;i<n;i++){const x=rr(-w/4,w/4),z=rr(-d/4,d/4);b.add(G.box,0xd5d9e0,1.3,.8,1.1,x,h+.4,z).add(G.cyl,0x5a6070,.4,.1,.4,x,h+.82,z);}
   if(R()<.35)b.add(G.cyl,0x9a6b45,.8,1.4,.8,w/4,h+1.4,-d/4).add(G.cone8,0x7a5236,.9,.6,.9,w/4,h+2.4,-d/4).add(G.box,0x5a4030,.1,.8,.1,w/4+.5,h+.4,-d/4+.5).add(G.box,0x5a4030,.1,.8,.1,w/4-.5,h+.4,-d/4-.5);
-  if(TH===THEMES.snow)b.add(G.box,0xffffff,w-.4,.25,d-.4,0,h+.15,0);
+  if(TH.snowy)b.add(G.box,0xffffff,w-.4,.25,d-.4,0,h+.15,0);
 }
 function glassBlock(b,w,d,y0,floors,c,gl,fh){
   const h=floors*fh+1.2;
@@ -569,8 +591,8 @@ function building(){
     return{b,r:Math.hypot(w,d)/2*.92,h:h+1};}
   else{
     h=floors*fh+1.6;b.add(G.box,c,w,h,d,0,h/2,0);
-    const nx=Math.max(2,Math.floor(w/2.3)),nz=Math.max(2,Math.floor(d/2.3)),fr0=TH===THEMES.snow?0xf3e6d0:0xffffff;let fr=TH.night?0x5a6278:fr0;
-    b.glow(1).add(G.box,(TH===THEMES.snow||TH.night)?0xffd27a:0x9fd8ff,w+.06,1.3,d+.06,0,.95,0).glow(0);
+    const nx=Math.max(2,Math.floor(w/2.3)),nz=Math.max(2,Math.floor(d/2.3)),fr0=TH.snowy?0xf3e6d0:0xffffff;let fr=TH.night?0x5a6278:fr0;
+    b.glow(1).add(G.box,(TH.snowy||TH.night)?0xffd27a:0x9fd8ff,w+.06,1.3,d+.06,0,.95,0).glow(0);
     b.add(G.box,shade(c,.8),w+.1,.25,d+.1,0,1.75,0);
     const aw=pick([0xff5a5f,0x2ec4b6,0xffb703,0x3d8bfd,0x7bcf3f]);
     for(const sz of[-1,1])for(let i=0;i<3;i++)b.add(G.box,i%2?0xffffff:aw,w*.28,.1,1.1,(i-1)*w*.28,2.0,sz*(d/2+.5),sz*.32,0,0);
@@ -583,7 +605,7 @@ function building(){
   if(TH.night)neon(b,w,d,h);
   return{b,r:Math.hypot(w,d)/2*.92,h:h+.6};
 }
-function roofKitless(b,w,d,h,c){b.add(G.box,0x8f97a8,w-.3,.06,d-.3,0,h+.03,0);if(TH===THEMES.snow)b.add(G.box,0xffffff,w-.4,.25,d-.4,0,h+.15,0);}
+function roofKitless(b,w,d,h,c){b.add(G.box,0x8f97a8,w-.3,.06,d-.3,0,h+.03,0);if(TH.snowy)b.add(G.box,0xffffff,w-.4,.25,d-.4,0,h+.15,0);}
 
 function neon(b,w,d,h){
   const c=pick(NEON);b.glow(1);
@@ -701,7 +723,7 @@ function tvTower(){const b=new Bld(),c=0xd9dee8;
   for(let y=6;y<22;y+=4)b.glow(1).add(G.cyl,0x3dfcff,1.15,.15,1.15,0,y,0).glow(0);
   return{b,r:7,h:34};}
 function landmark(){
-  if(TH===THEMES.beach)return lighthouse();if(TH===THEMES.snow)return iceCastle();if(TH===THEMES.farm)return windmill();
+  if(TH===THEMES.beach)return lighthouse();if(TH.xmas)return giantTree();if(TH.snowy)return iceCastle();if(TH===THEMES.farm)return windmill();
   if(TH===THEMES.desert){const b=new Bld(),c=0xe8bf6a;b.add(G.cone4,c,10,14,10,0,7,0,0,PI/4,0).add(G.cone4,0xffd76a,2.3,3.2,2.3,0,12.4,0,0,PI/4,0)
     .add(G.box,0x5a3b1f,1.6,2.4,1.2,0,1.2,6.2).add(G.box,0xc9a050,10.4,.6,10.4,0,.3,0);
     for(const sx of[-1,1])b.add(G.box,c,1,6,1,sx*3,3,8.5).add(G.cone4,0xffd76a,.75,1,.75,sx*3,6.5,8.5,0,PI/4,0);return{b,r:7,h:15};}
@@ -743,13 +765,26 @@ function walker(x,z,rad){return{type:"walk",hx:x,hz:z,ang:R()*6.28,spd:rr(.7,1.3
 function sidewalkPoint(x0,z0){const e=Math.floor(R()*4),s=rr(1,B-1),off=rr(.8,2.2);
   return e===0?[x0+s,z0+off]:e===1?[x0+s,z0+B-off]:e===2?[x0+off,z0+s]:[x0+B-off,z0+s];}
 
+let snowPts=null;const SNOWN=1400,SNOWBOX=[150,90,150];
+function snowTex(){const c=document.createElement("canvas");c.width=c.height=32;const x=c.getContext("2d"),g=x.createRadialGradient(16,16,0,16,16,16);
+  g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(.45,"rgba(255,255,255,.85)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(0,0,32,32);return new THREE.CanvasTexture(c);}
+function setSnow(on){if(!on){if(snowPts)snowPts.visible=false;return;}
+  if(!snowPts){const g=new THREE.BufferGeometry(),p=new Float32Array(SNOWN*3);for(let i=0;i<SNOWN;i++){p[i*3]=(Math.random()-.5)*SNOWBOX[0];p[i*3+1]=Math.random()*SNOWBOX[1];p[i*3+2]=(Math.random()-.5)*SNOWBOX[2];}
+    g.setAttribute("position",new THREE.BufferAttribute(p,3));
+    snowPts=new THREE.Points(g,new THREE.PointsMaterial({size:.7,map:snowTex(),transparent:true,depthWrite:false,opacity:.95,sizeAttenuation:true}));snowPts.frustumCulled=false;snowPts.renderOrder=5;scene.add(snowPts);}
+  snowPts.visible=true;snowPts.userData.k=on;}
+function updateSnow(dt,cx,cz){if(!snowPts||!snowPts.visible)return;const p=snowPts.geometry.attributes.position,a=p.array,k=snowPts.userData.k,hx=SNOWBOX[0]/2,hz=SNOWBOX[2]/2;
+  for(let i=0;i<SNOWN;i++){const j=i*3;a[j+1]-=dt*(3.2+(i%7)*.45)*k;a[j]+=Math.sin(clock*.9+i)*dt*.8;
+    if(a[j+1]<0){a[j+1]+=SNOWBOX[1];}
+    let dx=a[j]-cx;if(dx>hx)a[j]-=2*hx;else if(dx<-hx)a[j]+=2*hx;let dz=a[j+2]-cz;if(dz>hz)a[j+2]-=2*hz;else if(dz<-hz)a[j+2]+=2*hz;}
+  p.needsUpdate=true;}
 function buildWorld(key){
   if(world){scene.remove(world);world.traverse(o=>{if(o.userData.own&&o.geometry)o.geometry.dispose();if(o.userData.ownMat&&o.material)o.material.dispose();});}
   world=new THREE.Group();scene.add(world);objs=[];landmarkObj=null;
   TH=THEMES[key];
   scene.background=new THREE.Color(TH.sky);scene.fog=new THREE.Fog(TH.sky,230,640);
   const li=TH.light||DEFLIGHT;hemi.color.set(li.hemi[0]);hemi.groundColor.set(li.hemi[1]);hemi.intensity=li.hemi[2];sun.color.set(li.sun[0]);sun.intensity=li.sun[1];
-  glowU.value=TH.glow||0;
+  glowU.value=TH.glow||0;setSnow(TH.snowfall||0);
   const types=layoutFor(key),gk=groundKit();
   gk.rect(0,-1200,-1200,1200,1200,TH.border);
   gk.rect(1,-HALF-TH.edgeW,-HALF-TH.edgeW,HALF+TH.edgeW,HALF+TH.edgeW,TH.edge);
@@ -763,7 +798,7 @@ function buildWorld(key){
 }
 
 function populate(types,gk){
-  const city=TH===THEMES.city||TH===THEMES.night,beach=TH===THEMES.beach,snow=TH===THEMES.snow,farm=TH===THEMES.farm,desert=TH===THEMES.desert,night=!!TH.night;
+  const city=TH===THEMES.city||TH===THEMES.night,beach=TH===THEMES.beach,snow=TH.snowy,farm=TH===THEMES.farm,desert=TH===THEMES.desert,night=!!TH.night;
   const marks=TH.marks!==false,tiles=TH.tiles!==false;
   if(marks){
     for(let i=0;i<=N;i++){const c=roadCenter(i);
@@ -784,7 +819,7 @@ function populate(types,gk){
   const streetProp=()=>{const f=R();
     if(farm)return f<.35?fence():f<.55?hay():f<.75?tree(rr(.6,.8)):f<.88?bush():mailbox();
     if(desert)return f<.3?lamp():f<.55?cactus():f<.7?vase():f<.85?rock():bench();
-    return f<.3?lamp():f<.45?bin():f<.6?(snow?snowman():hydrant()):f<.72?bench():f<.82?(city?mailbox():planter()):f<.92?planter():tree(rr(.6,.8));};
+    return f<.3?lamp():f<.45?bin():f<.6?(TH.xmas?(R()<.5?candyCane():snowman()):snow?snowman():hydrant()):f<.72?bench():f<.82?(city?mailbox():planter()):f<.92?planter():tree(rr(.6,.8));};
   for(let i=0;i<N;i++)for(let j=0;j<N;j++){
     const x0=blockStart(i),z0=blockStart(j),ty=types[i*N+j],placed=[];
     gk.rect(3,x0-.4,z0-.4,x0+B+.4,z0+B+.4,TH.curb);
@@ -1016,7 +1051,7 @@ function updateBoard(){
 }
 
 /* ---------- progression ---------- */
-const MAPREQ={city:0,beach:1,snow:3,farm:5,desert:8,night:11};
+const MAPREQ={xmas:0,city:0,beach:1,snow:3,farm:5,desert:8,night:11};
 const SKINS_=[["#ff3d7f",0],["#ffc21a",2],["#18d4e8",4],["#7be33a",7],["#a35cff",10],["rainbow",14]];
 const PCT_GOAL=20,FRENZY=20;
 const starsOf=k=>+(store.get("gulp_stars_"+k)||0);
@@ -1027,7 +1062,7 @@ let ateArea=0,bossDone=false,bossLost=false,combo=0,comboT=0,frenzy=false;
 
 /* ---------- game state ---------- */
 let paused=false,reviveUsed=false,extUsed=false,bigNext=false;
-let state="menu",theme=store.get("gulp_map")||"city",timeLeft=120;
+let state="menu",theme=store.get("gulp_map")||EVENTMAP,timeLeft=120;
 if(!THEMES[theme]||MAPREQ[theme]>totalStars())theme="city";
 const ROUND=150,CAMK=.68;
 
@@ -1219,6 +1254,7 @@ function frame(now){
     menuAng+=dt*.06;camera.position.set(Math.cos(menuAng)*180,140,Math.sin(menuAng)*180);camera.lookAt(0,0,0);
     aimSun(0,0,HALF+10);
   }
+  if(snowPts&&snowPts.visible){const fx=state==="play"?camLook.x:0,fz=state==="play"?camLook.z:0;updateSnow(dt,fx,fz);}
   renderer.render(scene,camera);
   requestAnimationFrame(frame);
 }
@@ -1234,6 +1270,7 @@ function renderMapCards(){
     const st=document.createElement("div");st.className="mstars";for(let i=0;i<3;i++){const e=document.createElement("i");if(i<starsOf(k))e.className="on";st.appendChild(e);}
     const best=document.createElement("small");best.className="bst";best.textContent=t("best")+": "+(store.get("gulp_best_"+k)||0);
     const lk=document.createElement("div");lk.className="lock";lk.textContent=t("locked",{s:MAPREQ[k]});
+    if(k===EVENTMAP){const ev=document.createElement("span");ev.className="evt";ev.textContent=t("evNew");b.appendChild(ev);}
     b.append(c,nm,st,best,lk);
     b.addEventListener("click",()=>{if(locked){blip(200,.12,"square",.05);return;}if(theme===k)return;theme=k;store.set("gulp_map",k);buildWorld(k);
       mapsEl.querySelectorAll(".map").forEach(x=>x.classList.toggle("on",x.id==="map-"+k));blip(700,.06);});
