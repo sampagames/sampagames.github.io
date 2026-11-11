@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Hue Spill: Daily Color Puzzle</title>
+<meta name="description" content="One new color puzzle every day. Flood the whole board with a single color in as few moves as possible, then share your score. Free practice mode too.">
+<meta name="theme-color" content="#151a2e">
+<style>
+:root{
+  --bg:#151a2e;--bg2:#1d2440;--card:#232b4d;--line:#33406e;--ink:#f4f6ff;--mute:#9aa6d1;
+  --acc:#ffcc33;--good:#3ee07f;--bad:#ff5d73;
+  --c0:#ff5d73;--c1:#ffb443;--c2:#ffe14d;--c3:#3ee07f;--c4:#38b6ff;--c5:#a77bff;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:radial-gradient(1200px 800px at 50% -10%,#26305a 0%,var(--bg) 60%) fixed;color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;overflow:hidden;user-select:none}
+button{font:inherit;color:inherit;border:0;cursor:pointer;background:none}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;padding:max(10px,env(safe-area-inset-top)) 12px max(10px,env(safe-area-inset-bottom))}
+header{width:100%;max-width:980px;display:flex;align-items:center;gap:10px;height:52px;flex:none}
+.logo{font-weight:900;font-size:24px;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.logo i{display:inline-grid;grid-template-columns:repeat(2,9px);gap:2px}
+.logo i b{width:9px;height:9px;border-radius:3px;display:block}
+.sp{flex:1}
+.ib{width:42px;height:42px;border-radius:12px;background:var(--card);display:grid;place-items:center;font-size:19px;box-shadow:0 3px 0 #0006}
+.ib:active{transform:translateY(2px);box-shadow:0 1px 0 #0006}
+.tabs{display:flex;background:var(--card);border-radius:14px;padding:4px;gap:4px;box-shadow:0 3px 0 #0006}
+.tab{padding:8px 14px;border-radius:10px;font-weight:800;font-size:14px;color:var(--mute)}
+.tab.on{background:var(--acc);color:#2a2000}
+main{flex:1;width:100%;max-width:980px;display:flex;gap:18px;align-items:center;justify-content:center;min-height:0}
+.board-wrap{position:relative;flex:none}
+#cv{display:block;border-radius:var(--r);box-shadow:0 10px 40px #0008,0 0 0 4px #0003;touch-action:none}
+.side{display:flex;flex-direction:column;gap:12px;width:260px;flex:none}
+.card{background:var(--card);border-radius:var(--r);padding:14px 16px;box-shadow:0 4px 0 #0005}
+.big{font-size:40px;font-weight:900;line-height:1}
+.lbl{font-size:12px;font-weight:800;color:var(--mute);text-transform:uppercase;letter-spacing:1px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.bar{height:10px;border-radius:6px;background:#0004;overflow:hidden;margin-top:8px}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--good),var(--acc));width:0;transition:width .25s}
+.pal{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.sw{aspect-ratio:1;border-radius:14px;box-shadow:inset 0 -6px 0 #0003,0 4px 0 #0006;position:relative;transition:transform .08s}
+.sw:active{transform:translateY(3px) scale(.96);box-shadow:inset 0 -3px 0 #0003,0 1px 0 #0006}
+.sw.cur{outline:3px solid #fff;outline-offset:2px;opacity:.55}
+.sw kbd{position:absolute;right:5px;bottom:3px;font:800 10px/1 system-ui;color:#0007}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;padding:12px 14px;font-weight:900;font-size:16px;background:var(--acc);color:#2a2000;box-shadow:0 4px 0 #b88a00}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #b88a00}
+.btn.sec{background:var(--bg2);color:var(--ink);box-shadow:0 4px 0 #0007}
+.btn.ad::before{content:"▶";font-size:12px;background:#0003;border-radius:6px;padding:2px 5px}
+.hint{font-size:13px;color:var(--mute);line-height:1.35}
+.streak{font-weight:900;color:var(--acc)}
+/* overlays */
+.ov{position:fixed;inset:0;background:#0b0f1fcc;backdrop-filter:blur(4px);display:grid;place-items:center;z-index:20;padding:16px}
+.ov[hidden]{display:none}
+.modal{background:var(--card);border-radius:24px;padding:20px 16px;max-width:400px;width:100%;max-height:calc(100vh - 24px);overflow:auto;box-shadow:0 20px 60px #000a;text-align:center;animation:pop .25s ease-out}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+.modal h2{margin:0 0 6px;font-size:26px;font-weight:900}
+.stars{font-size:38px;letter-spacing:6px;margin:6px 0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.grid3 div{background:var(--bg2);border-radius:12px;padding:10px 4px}
+.grid3 b{display:block;font-size:22px;font-weight:900}
+.grid3 span{font-size:11px;color:var(--mute);font-weight:800;text-transform:uppercase}
+.share-pre{max-width:100%;overflow:hidden;text-overflow:ellipsis;font:700 14px/1.3 ui-monospace,Consolas,monospace;background:#0003;border-radius:12px;padding:10px;white-space:pre;margin:10px 0;text-align:left;display:inline-block}
+.howto{display:grid;gap:10px;text-align:left;margin:12px 0}
+.howto div{display:flex;gap:10px;align-items:center;background:var(--bg2);border-radius:12px;padding:10px}
+.howto em{font-style:normal;font-size:22px}
+.next{font-size:13px;color:var(--mute);margin-top:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,40px);background:#fff;color:#111;font-weight:800;padding:10px 16px;border-radius:12px;opacity:0;transition:.25s;z-index:30}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.langs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.langs button{padding:6px 10px;border-radius:10px;background:var(--bg2);font-weight:800;font-size:13px}
+.langs button.on{background:var(--acc);color:#2a2000}
+/* portrait / phone */
+@media (max-aspect-ratio:1/1){
+  main{flex-direction:column;gap:12px}
+  .side{width:100%;max-width:520px}
+  .side .stats{display:none}
+  .logo span{font-size:20px}
+}
+@media (max-width:420px){.tab{padding:7px 9px;font-size:13px}.logo{font-size:20px}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo"><i><b style="background:var(--c0)"></b><b style="background:var(--c4)"></b><b style="background:var(--c3)"></b><b style="background:var(--c2)"></b></i><span>Hue Spill</span></div>
+    <div class="sp"></div>
+    <div class="tabs"><button class="tab on" id="tDaily"></button><button class="tab" id="tFree"></button></div>
+    <button class="ib" id="bHelp" aria-label="How to play">?</button>
+    <button class="ib" id="bSet" aria-label="Settings">⚙</button>
+  </header>
+  <main>
+    <div class="board-wrap"><canvas id="cv"></canvas></div>
+    <div class="side">
+      <div class="card">
+        <div class="row"><div><div class="lbl" id="lMoves"></div><div class="big"><span id="moves">0</span><small style="font-size:18px;color:var(--mute)"> / <span id="par">0</span></small></div></div>
+          <div style="text-align:right"><div class="lbl" id="lTitle"></div><div style="font-weight:900;font-size:18px" id="title">#1</div></div></div>
+        <div class="bar"><i id="prog"></i></div>
+      </div>
+      <div class="card"><div class="pal" id="pal"></div></div>
+      <div class="row" style="gap:10px">
+        <button class="btn sec" style="flex:1" id="bUndo"></button>
+        <button class="btn sec" style="flex:1" id="bRestart"></button>
+      </div>
+      <div class="card stats">
+        <div class="row"><span class="lbl" id="lStreak"></span><span class="streak" id="streak">🔥 0</span></div>
+        <div class="hint" id="sideHint" style="margin-top:6px"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="ov" id="ovWin" hidden><div class="modal">
+  <h2 id="wTitle"></h2>
+  <div class="stars" id="wStars"></div>
+  <div class="grid3"><div><b id="wMoves"></b><span id="wlMoves"></span></div><div><b id="wPar"></b><span id="wlPar"></span></div><div><b id="wStreak"></b><span id="wlStreak"></span></div></div>
+  <div class="share-pre" id="wShare"></div>
+  <div style="display:grid;gap:10px">
+    <button class="btn" id="bShare"></button>
+    <button class="btn sec" id="bPlayFree"></button>
+  </div>
+  <div class="next" id="wNext"></div>
+</div></div>
+
+<div class="ov" id="ovHelp" hidden><div class="modal">
+  <h2 id="hTitle"></h2>
+  <div class="howto">
+    <div><em>👆</em><span id="h1"></span></div>
+    <div><em>🌊</em><span id="h2"></span></div>
+    <div><em>🏆</em><span id="h3"></span></div>
+    <div><em>📅</em><span id="h4"></span></div>
+  </div>
+  <button class="btn" id="bHelpOk"></button>
+</div></div>
+
+<div class="ov" id="ovSet" hidden><div class="modal">
+  <h2 id="sTitle"></h2>
+  <div style="display:grid;gap:10px;margin:12px 0">
+    <button class="btn sec" id="bSound"></button>
+    <button class="btn sec" id="bCB"></button>
+  </div>
+  <div class="lbl" id="sLang"></div>
+  <div class="langs" id="langs"></div>
+  <div style="margin-top:14px"><button class="btn" id="bSetOk">OK</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="adkit-web.js"></script>
+<script>
+(()=>{"use strict";
+/* ---------- storage (safe) ---------- */
+const store={get(k,d){try{const v=localStorage.getItem("hs_"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("hs_"+k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- i18n ---------- */
+const TXT={
+en:{daily:"Daily",free:"Practice",moves:"Moves",par:"par",puzzle:"Puzzle",undo:"↶ Undo",restart:"⟲ Restart",streak:"Daily streak",
+ sideD:"Same puzzle for everyone today. Beat par and share your score!",sideF:"Endless practice boards. Each win makes the next one harder.",
+ win:"Board filled!",winPar:"Under par — brilliant!",share:"Share result",copied:"Copied to clipboard!",playFree:"Play practice mode",
+ next:"Next daily puzzle in {t}",done:"Daily done ✓ — come back tomorrow!",howTitle:"How to play",
+ h1:"Tap a color. The area from the top-left corner turns that color.",h2:"Touching tiles of the same color join your spill.",
+ h3:"Fill the whole board. Use as few moves as possible — par or less = ⭐⭐⭐",h4:"A new daily puzzle every day. Keep your streak going!",
+ gotIt:"Let's play",settings:"Settings",sound:"Sound",cb:"Color-blind symbols",on:"On",off:"Off",lang:"Language",
+ undoAd:"Undo (watch ad)",noAd:"No ad available right now",level:"Level",best:"Best",streakL:"Streak",movesL:"Moves",parL:"Par",freeWin:"Level cleared!",nextLv:"Next level"},
+tr:{daily:"Günlük",free:"Pratik",moves:"Hamle",par:"par",puzzle:"Bulmaca",undo:"↶ Geri al",restart:"⟲ Baştan",streak:"Günlük seri",
+ sideD:"Bugün herkes aynı bulmacayı çözüyor. Parı geç, skorunu paylaş!",sideF:"Sonsuz pratik. Her galibiyette bir sonraki daha zor.",
+ win:"Tahta doldu!",winPar:"Parın altında — harika!",share:"Sonucu paylaş",copied:"Panoya kopyalandı!",playFree:"Pratik moduna geç",
+ next:"Sonraki günlük bulmaca: {t}",done:"Bugünkü tamam ✓ — yarın görüşürüz!",howTitle:"Nasıl oynanır",
+ h1:"Bir renge dokun. Sol üst köşedeki alan o renge boyanır.",h2:"Değdiği aynı renkteki kareler alana katılır.",
+ h3:"Tüm tahtayı doldur. Ne kadar az hamle o kadar iyi — par veya altı = ⭐⭐⭐",h4:"Her gün yeni bir günlük bulmaca. Serini koru!",
+ gotIt:"Hadi oynayalım",settings:"Ayarlar",sound:"Ses",cb:"Renk körü sembolleri",on:"Açık",off:"Kapalı",lang:"Dil",
+ undoAd:"Geri al (reklam izle)",noAd:"Şu an reklam yok",level:"Seviye",best:"En iyi",streakL:"Seri",movesL:"Hamle",parL:"Par",freeWin:"Seviye tamam!",nextLv:"Sonraki seviye"},
+es:{daily:"Diario",free:"Práctica",moves:"Movimientos",par:"par",puzzle:"Puzle",undo:"↶ Deshacer",restart:"⟲ Reiniciar",streak:"Racha diaria",
+ sideD:"El mismo puzle para todos hoy. ¡Supera el par y comparte!",sideF:"Práctica infinita. Cada victoria sube la dificultad.",
+ win:"¡Tablero lleno!",winPar:"Bajo par — ¡genial!",share:"Compartir",copied:"¡Copiado!",playFree:"Modo práctica",
+ next:"Próximo puzle diario en {t}",done:"Diario completado ✓ — ¡vuelve mañana!",howTitle:"Cómo jugar",
+ h1:"Toca un color. La zona de la esquina superior izquierda cambia a ese color.",h2:"Las casillas del mismo color que toque se unen.",
+ h3:"Llena todo el tablero con los menos movimientos posibles — par o menos = ⭐⭐⭐",h4:"Un puzle nuevo cada día. ¡Mantén tu racha!",
+ gotIt:"¡A jugar!",settings:"Ajustes",sound:"Sonido",cb:"Símbolos daltónicos",on:"Sí",off:"No",lang:"Idioma",
+ undoAd:"Deshacer (ver anuncio)",noAd:"No hay anuncio ahora",level:"Nivel",best:"Mejor",streakL:"Racha",movesL:"Movs",parL:"Par",freeWin:"¡Nivel superado!",nextLv:"Siguiente nivel"},
+pt:{daily:"Diário",free:"Prática",moves:"Jogadas",par:"par",puzzle:"Quebra-cabeça",undo:"↶ Desfazer",restart:"⟲ Reiniciar",streak:"Sequência diária",
+ sideD:"O mesmo desafio para todos hoje. Bata o par e compartilhe!",sideF:"Prática infinita. Cada vitória fica mais difícil.",
+ win:"Tabuleiro cheio!",winPar:"Abaixo do par — incrível!",share:"Compartilhar",copied:"Copiado!",playFree:"Modo prática",
+ next:"Próximo desafio diário em {t}",done:"Diário concluído ✓ — volte amanhã!",howTitle:"Como jogar",
+ h1:"Toque numa cor. A área do canto superior esquerdo muda para essa cor.",h2:"Casas da mesma cor que ela tocar se juntam.",
+ h3:"Encha o tabuleiro todo com o mínimo de jogadas — par ou menos = ⭐⭐⭐",h4:"Um desafio novo todo dia. Mantenha sua sequência!",
+ gotIt:"Bora jogar",settings:"Ajustes",sound:"Som",cb:"Símbolos p/ daltônicos",on:"Ligado",off:"Desligado",lang:"Idioma",
+ undoAd:"Desfazer (ver anúncio)",noAd:"Sem anúncio agora",level:"Nível",best:"Melhor",streakL:"Sequência",movesL:"Jogadas",parL:"Par",freeWin:"Nível concluído!",nextLv:"Próximo nível"},
+de:{daily:"Täglich",free:"Training",moves:"Züge",par:"Par",puzzle:"Rätsel",undo:"↶ Zurück",restart:"⟲ Neustart",streak:"Tagesserie",
+ sideD:"Heute dasselbe Rätsel für alle. Schlag das Par und teile dein Ergebnis!",sideF:"Endloses Training. Jeder Sieg macht es schwerer.",
+ win:"Feld gefüllt!",winPar:"Unter Par — stark!",share:"Ergebnis teilen",copied:"Kopiert!",playFree:"Trainingsmodus",
+ next:"Nächstes Tagesrätsel in {t}",done:"Tagesrätsel geschafft ✓ — bis morgen!",howTitle:"So geht's",
+ h1:"Tippe eine Farbe. Das Feld oben links nimmt diese Farbe an.",h2:"Berührte Felder gleicher Farbe kommen dazu.",
+ h3:"Fülle das ganze Feld mit möglichst wenigen Zügen — Par oder weniger = ⭐⭐⭐",h4:"Jeden Tag ein neues Rätsel. Halte deine Serie!",
+ gotIt:"Los geht's",settings:"Einstellungen",sound:"Ton",cb:"Farbenblind-Symbole",on:"An",off:"Aus",lang:"Sprache",
+ undoAd:"Zurück (Werbung ansehen)",noAd:"Gerade keine Werbung",level:"Level",best:"Bestwert",streakL:"Serie",movesL:"Züge",parL:"Par",freeWin:"Level geschafft!",nextLv:"Nächstes Level"},
+fr:{daily:"Du jour",free:"Entraînement",moves:"Coups",par:"par",puzzle:"Puzzle",undo:"↶ Annuler",restart:"⟲ Recommencer",streak:"Série quotidienne",
+ sideD:"Le même puzzle pour tous aujourd'hui. Bats le par et partage !",sideF:"Entraînement infini. Chaque victoire corse la suite.",
+ win:"Plateau rempli !",winPar:"Sous le par — bravo !",share:"Partager",copied:"Copié !",playFree:"Mode entraînement",
+ next:"Prochain puzzle du jour dans {t}",done:"Puzzle du jour fini ✓ — à demain !",howTitle:"Comment jouer",
+ h1:"Touche une couleur. La zone du coin supérieur gauche prend cette couleur.",h2:"Les cases de même couleur touchées la rejoignent.",
+ h3:"Remplis tout le plateau en un minimum de coups — par ou moins = ⭐⭐⭐",h4:"Un nouveau puzzle chaque jour. Garde ta série !",
+ gotIt:"C'est parti",settings:"Réglages",sound:"Son",cb:"Symboles daltoniens",on:"Oui",off:"Non",lang:"Langue",
+ undoAd:"Annuler (voir pub)",noAd:"Pas de pub dispo",level:"Niveau",best:"Record",streakL:"Série",movesL:"Coups",parL:"Par",freeWin:"Niveau réussi !",nextLv:"Niveau suivant"}
+};
+const LN={en:"English",de:"Deutsch",fr:"Français",es:"Español",pt:"Português",tr:"Türkçe"};
+let lang=store.get("lang",null)||(()=>{const n=(navigator.language||"en").slice(0,2).toLowerCase();return TXT[n]?n:"en"})();
+const t=(k,v)=>{let s=(TXT[lang]&&TXT[lang][k])||TXT.en[k]||k;if(v)for(const a in v)s=s.replace("{"+a+"}",v[a]);return s};
+const $=id=>document.getElementById(id);
+
+/* ---------- audio ---------- */
+let AC=null,sound=store.get("sound",true);
+function tone(f,d=.08,type="sine",v=.12,delay=0){if(!sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),t0=AC.currentTime+delay;o.type=type;o.frequency.setValueAtTime(f,t0);g.gain.setValueAtTime(v,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.connect(g).connect(AC.destination);o.start(t0);o.stop(t0+d+.02)}catch(e){}}
+const sfxPick=n=>{tone(330+n*40,.09,"triangle",.10)};
+const sfxWin=()=>[523,659,784,1046].forEach((f,i)=>tone(f,.18,"triangle",.12,i*.09));
+
+/* ---------- rng / puzzle ---------- */
+function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let r=Math.imul(a^a>>>15,1|a);r=r+Math.imul(r^r>>>7,61|r)^r;return((r^r>>>14)>>>0)/4294967296}}
+const EPOCH=Date.UTC(2026,10,11); // puzzle #1 = 11 Nov 2026
+function dayIndex(d=new Date()){return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-EPOCH)/864e5)+1}
+const NC=6;
+function makeBoard(n,seed){const r=rng(seed),b=new Uint8Array(n*n);for(let i=0;i<b.length;i++)b[i]=Math.floor(r()*NC);
+  // light clustering so boards look designed, not noisy
+  for(let p=0;p<2;p++)for(let i=0;i<b.length;i++){if(r()<.28){const x=i%n,y=(i/n)|0;const nb=[];if(x)nb.push(i-1);if(y)nb.push(i-n);if(nb.length)b[i]=b[nb[Math.floor(r()*nb.length)]]}}
+  return b}
+function region(b,n){const own=new Uint8Array(n*n),st=[0],c=b[0];own[0]=1;while(st.length){const i=st.pop(),x=i%n,y=(i/n)|0;
+  for(const j of [x?i-1:-1,x<n-1?i+1:-1,y?i-n:-1,y<n-1?i+n:-1])if(j>=0&&!own[j]&&b[j]===c){own[j]=1;st.push(j)}}return own}
+function apply(b,n,c){const own=region(b,n),nb=b.slice();for(let i=0;i<nb.length;i++)if(own[i])nb[i]=c;return nb}
+function countOwn(b,n){const o=region(b,n);let k=0;for(let i=0;i<o.length;i++)k+=o[i];return k}
+function solved(b){for(let i=1;i<b.length;i++)if(b[i]!==b[0])return false;return true}
+// greedy with 2-step lookahead → achievable par
+function solve(b0,n){let b=b0.slice(),m=0;while(!solved(b)&&m<200){let best=-1,bc=0;
+  for(let c=0;c<NC;c++){if(c===b[0])continue;const b1=apply(b,n,c);let s=countOwn(b1,n);
+    if(!solved(b1)){let s2=0;for(let c2=0;c2<NC;c2++){if(c2===b1[0])continue;s2=Math.max(s2,countOwn(apply(b1,n,c2),n))}s=s*.4+s2}else s=1e9;
+    if(s>best){best=s;bc=c}}
+  b=apply(b,n,bc);m++}return m}
+
+/* ---------- state ---------- */
+let mode="daily",N=14,board,start,par,moves=0,hist=[],won=false,cb=store.get("cb",false);
+let anim=null; // {from,to,own,t}
+const stats=store.get("stats",{streak:0,best:0,last:-99,played:0,wins:0,freeLv:1,freeBest:{}});
+const today=dayIndex();
+function loadDaily(){mode="daily";N=14;const seed=today*7919+13;start=makeBoard(N,seed);par=solve(start,N);
+  const sv=store.get("d"+today,null);board=start.slice();moves=0;hist=[];won=false;
+  if(sv&&sv.seq){for(const c of sv.seq){hist.push(board);board=apply(board,N,c);moves++}won=solved(board)}
+  refresh();if(won)setTimeout(()=>showWin(),350)}
+function loadFree(){mode="free";const lv=stats.freeLv;N=Math.min(18,8+Math.floor(lv/3));const seed=900001+lv*104729;start=makeBoard(N,seed);par=solve(start,N);board=start.slice();moves=0;hist=[];won=false;refresh()}
+function seqSave(){if(mode!=="daily")return;const seq=[];let b=start.slice();for(const h of hist.concat([board]).slice(1)){seq.push(h[0])}store.set("d"+today,{seq})}
+
+/* ---------- render ---------- */
+const cv=$("cv"),ctx=cv.getContext("2d");let CS=30,DPR=1,SZ=420;
+const COL=()=>{const s=getComputedStyle(document.documentElement);return [0,1,2,3,4,5].map(i=>s.getPropertyValue("--c"+i).trim())};let colors=COL();
+const SYM=["●","▲","■","◆","★","✚"];
+function layout(){const portrait=innerWidth<innerHeight;const availW=Math.min(innerWidth-24,portrait?560:innerWidth-24-260-18),availH=innerHeight-52-24-(portrait?250:0);
+  SZ=Math.max(240,Math.floor(Math.min(availW,availH,640)));DPR=Math.min(2,devicePixelRatio||1);cv.width=SZ*DPR;cv.height=SZ*DPR;cv.style.width=cv.style.height=SZ+"px";draw()}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function draw(){if(!board)return;const W=SZ*DPR,cs=W/N;ctx.clearRect(0,0,W,W);ctx.fillStyle="#0e1226";ctx.fillRect(0,0,W,W);
+  const own=region(board,N);let wave=null;if(anim){wave=anim}
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;let c=board[i];
+    if(wave&&wave.own[i]){const d=(x+y)/(2*N);if(wave.t<d)c=wave.from}
+    const pad=cs*.06;ctx.fillStyle=colors[c];rr(x*cs+pad,y*cs+pad,cs-2*pad,cs-2*pad,cs*.22);ctx.fill();
+    ctx.fillStyle="rgba(255,255,255,.18)";rr(x*cs+pad,y*cs+pad,cs-2*pad,(cs-2*pad)*.42,cs*.22);ctx.fill();
+    if(cb){ctx.fillStyle="rgba(0,0,0,.45)";ctx.font=`900 ${cs*.42}px system-ui`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(SYM[c],x*cs+cs/2,y*cs+cs/2+1)}}
+  // owned outline glow
+  ctx.strokeStyle="rgba(255,255,255,.85)";ctx.lineWidth=Math.max(2,cs*.08);ctx.beginPath();
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(!own[i])continue;const X=x*cs,Y=y*cs;
+    if(!y||!own[i-N]){ctx.moveTo(X,Y);ctx.lineTo(X+cs,Y)}if(y===N-1||!own[i+N]){ctx.moveTo(X,Y+cs);ctx.lineTo(X+cs,Y+cs)}
+    if(!x||!own[i-1]){ctx.moveTo(X,Y);ctx.lineTo(X,Y+cs)}if(x===N-1||!own[i+1]){ctx.moveTo(X+cs,Y);ctx.lineTo(X+cs,Y+cs)}}
+  ctx.stroke()}
+function tick(){if(anim){anim.t+=.07;if(anim.t>=1)anim=null;draw()}requestAnimationFrame(tick)}
+
+/* ---------- UI ---------- */
+function refresh(){if(!board)return;$("moves").textContent=moves;$("par").textContent=par;$("lMoves").textContent=t("moves")+" / "+t("par");
+  $("lTitle").textContent=mode==="daily"?t("puzzle"):t("level");$("title").textContent=mode==="daily"?"#"+today:String(stats.freeLv);
+  $("prog").style.width=(100*countOwn(board,N)/(N*N))+"%";
+  $("moves").style.color=moves>par?"var(--bad)":"";
+  document.querySelectorAll(".sw").forEach((s,i)=>s.classList.toggle("cur",i===board[0]));
+  $("streak").textContent="🔥 "+stats.streak;$("sideHint").textContent=mode==="daily"?t("sideD"):t("sideF");draw()}
+function buildPal(){const p=$("pal");p.innerHTML="";colors.forEach((c,i)=>{const b=document.createElement("button");b.className="sw";b.style.background=c;b.setAttribute("aria-label","color "+(i+1));
+  b.innerHTML=(cb?`<span style="font-size:20px;color:#0008">${SYM[i]}</span>`:"")+`<kbd>${i+1}</kbd>`;b.onclick=()=>pick(i);p.appendChild(b)})}
+function applyLang(){$("tDaily").textContent="📅 "+t("daily");$("tFree").textContent="♾ "+t("free");$("bUndo").textContent=t("undo");$("bRestart").textContent=t("restart");
+  $("lStreak").textContent=t("streak");$("hTitle").textContent=t("howTitle");["h1","h2","h3","h4"].forEach(k=>$(k).textContent=t(k));$("bHelpOk").textContent=t("gotIt");
+  $("sTitle").textContent=t("settings");$("sLang").textContent=t("lang");$("bSound").textContent="🔊 "+t("sound")+": "+(sound?t("on"):t("off"));$("bCB").textContent="👁 "+t("cb")+": "+(cb?t("on"):t("off"));
+  $("wlMoves").textContent=t("movesL");$("wlPar").textContent=t("parL");$("wlStreak").textContent=mode==="daily"?t("streakL"):t("best");$("bShare").textContent="📤 "+t("share");
+  const L=$("langs");L.innerHTML="";for(const k in LN){const b=document.createElement("button");b.textContent=LN[k];b.className=k===lang?"on":"";b.onclick=()=>{lang=k;store.set("lang",k);applyLang();refresh()};L.appendChild(b)}
+  document.documentElement.lang=lang;refresh()}
+function toast(s){const e=$("toast");e.textContent=s;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),1800)}
+
+function pick(c){if(won||anim||c===board[0])return;const own=region(board,N);hist.push(board);anim={from:board[0],own,t:0};board=apply(board,N,c);moves++;sfxPick(c);
+  if(navigator.vibrate)try{navigator.vibrate(8)}catch(e){}
+  seqSave();refresh();if(solved(board)){won=true;setTimeout(onWin,450)}}
+function undo(){if(won||!hist.length)return;const go=()=>{board=hist.pop();moves--;seqSave();refresh()};
+  if(mode==="daily"){go();return} // daily undo is free
+  if(hist.length&&moves%3===0&&window.AdKit&&AdKit.rewarded){AdKit.rewarded("undo").then(ok=>{if(ok)go();else toast(t("noAd"))},()=>toast(t("noAd")))}else go()}
+function restart(){if(won)return;board=start.slice();moves=0;hist=[];seqSave();refresh()}
+
+function starsFor(m,p){return m<=p?3:m<=p+3?2:1}
+function onWin(){sfxWin();confetti();
+  if(mode==="daily"){if(stats.last!==today){stats.streak=(stats.last===today-1)?stats.streak+1:1;stats.last=today;stats.played++;stats.wins++;stats.best=Math.max(stats.best,stats.streak);store.set("stats",stats)}}
+  else{const k=stats.freeLv;stats.freeBest[k]=Math.min(stats.freeBest[k]||999,moves);store.set("stats",stats)}
+  showWin()}
+function shareText(){const s=starsFor(moves,par);const sq=["🟥","🟧","🟨","🟩","🟦","🟪"];
+  const seqC=[];let b=start.slice();for(const h of hist.slice(1).concat([board]))seqC.push(sq[h[0]]);
+  let line="";for(let i=0;i<seqC.length;i++){line+=seqC[i];if((i+1)%10===0&&i<seqC.length-1)line+="\n"}
+  return `Hue Spill #${today} ${moves}/${par} ${"⭐".repeat(s)}\n${line}\n🔥${stats.streak} sampagames.github.io/play/hue-spill/`}
+function showWin(){const s=starsFor(moves,par);$("wTitle").textContent=mode==="daily"?(moves<=par?t("winPar"):t("win")):t("freeWin");
+  $("wStars").textContent="⭐".repeat(s)+"☆".repeat(3-s);$("wMoves").textContent=moves;$("wPar").textContent=par;
+  $("wStreak").textContent=mode==="daily"?"🔥"+stats.streak:(stats.freeBest[stats.freeLv]||moves);
+  $("wShare").textContent=mode==="daily"?shareText():"";$("wShare").hidden=mode!=="daily";$("bShare").hidden=mode!=="daily";
+  $("bPlayFree").textContent=mode==="daily"?"♾ "+t("playFree"):"▶ "+t("nextLv");applyLang();$("ovWin").hidden=false;updNext()}
+function updNext(){if($("ovWin").hidden)return;if(mode!=="daily"){$("wNext").textContent="";return}
+  const n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1)-n,h=Math.floor(m/36e5),mi=Math.floor(m%36e5/6e4),se=Math.floor(m%6e4/1e3);
+  $("wNext").textContent=t("next",{t:`${h}:${String(mi).padStart(2,"0")}:${String(se).padStart(2,"0")}`})}
+setInterval(updNext,1000);
+
+/* confetti */
+const fx=document.createElement("canvas");fx.style.cssText="position:fixed;inset:0;pointer-events:none;z-index:25";document.body.appendChild(fx);const fc=fx.getContext("2d");let parts=[];
+function confetti(){fx.width=innerWidth;fx.height=innerHeight;for(let i=0;i<120;i++)parts.push({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*12,vy:-Math.random()*12-4,c:colors[i%6],r:Math.random()*6+4,a:Math.random()*6});(function f(){fc.clearRect(0,0,fx.width,fx.height);parts.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=.2;fc.save();fc.translate(p.x,p.y);fc.rotate(p.a);fc.fillStyle=p.c;fc.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);fc.restore()});parts=parts.filter(p=>p.y<innerHeight+20);if(parts.length)requestAnimationFrame(f);else fc.clearRect(0,0,fx.width,fx.height)})()}
+
+/* ---------- events ---------- */
+$("tDaily").onclick=()=>{$("tDaily").classList.add("on");$("tFree").classList.remove("on");loadDaily()};
+$("tFree").onclick=()=>{$("tFree").classList.add("on");$("tDaily").classList.remove("on");loadFree()};
+$("bUndo").onclick=undo;$("bRestart").onclick=restart;
+$("bHelp").onclick=()=>$("ovHelp").hidden=false;$("bHelpOk").onclick=()=>{$("ovHelp").hidden=true;store.set("seenHelp",1)};
+$("bSet").onclick=()=>$("ovSet").hidden=false;$("bSetOk").onclick=()=>$("ovSet").hidden=true;
+$("bSound").onclick=()=>{sound=!sound;store.set("sound",sound);applyLang()};
+$("bCB").onclick=()=>{cb=!cb;store.set("cb",cb);buildPal();applyLang()};
+$("bShare").onclick=async()=>{const s=shareText();try{if(navigator.share&&/Mobi|Android|iPhone/i.test(navigator.userAgent)){await navigator.share({text:s});return}}catch(e){}
+  try{await navigator.clipboard.writeText(s);toast(t("copied"))}catch(e){toast(t("copied"))}};
+$("bPlayFree").onclick=()=>{$("ovWin").hidden=true;if(mode==="daily"){$("tFree").click()}else{stats.freeLv++;store.set("stats",stats);
+  const go=()=>loadFree();if(stats.freeLv%3===0&&window.AdKit&&AdKit.levelDone)AdKit.levelDone().then(go,go);else go()}};
+document.querySelectorAll(".ov").forEach(o=>o.addEventListener("click",e=>{if(e.target===o&&o.id!=="ovWin")o.hidden=true}));
+addEventListener("keydown",e=>{const k=+e.key;if(k>=1&&k<=6)pick(k-1);else if(e.key==="z"||e.key==="Backspace")undo();else if(e.key==="r")restart()});
+cv.addEventListener("pointerdown",e=>{const r=cv.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/r.width*N),y=Math.floor((e.clientY-r.top)/r.height*N);if(x>=0&&y>=0&&x<N&&y<N)pick(board[y*N+x])});
+addEventListener("resize",layout);
+
+/* ---------- boot ---------- */
+buildPal();applyLang();loadDaily();layout();tick();
+if(!store.get("seenHelp",0))$("ovHelp").hidden=false;
+})();
+</script>
+</body>
+</html>
