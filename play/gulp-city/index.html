@@ -151,6 +151,10 @@ button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
 .skin{width:44px;height:44px;border-radius:50%;border:0;padding:0;position:relative;box-shadow:inset 0 0 0 7px var(--c),inset 0 0 0 30px #101626,0 4px 0 var(--blue-d)}
 .skin.on{outline:4px solid var(--yellow);outline-offset:2px}
 .skin.locked{opacity:.55;cursor:not-allowed}
+.giftp{margin:10px auto 0;max-width:440px;background:linear-gradient(180deg,#d8323a,#a81e27);color:#fff;font-weight:800;font-size:13px;line-height:1.35;padding:8px 14px;border-radius:14px;box-shadow:0 3px 0 #7a141b;text-align:center}
+.giftcnt{position:absolute;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 58px);background:linear-gradient(180deg,#ffe27a,#ffc21a);color:#5a3a00;font-weight:900;font-size:16px;padding:5px 12px;border-radius:12px;box-shadow:0 3px 0 #c98f00}
+.giftcnt.bump{animation:gbump .45s}
+@keyframes gbump{0%{transform:translateX(-50%) scale(1)}40%{transform:translateX(-50%) scale(1.3)}100%{transform:translateX(-50%) scale(1)}}
 .skin small{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:900;font-size:11px}
 .goal{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 112px);transform:translateX(-50%);width:min(88%,340px);background:rgba(15,24,48,.82);color:#fff;border-radius:20px;padding:14px 16px;text-align:center;box-shadow:0 0 0 3px var(--yellow)}
 .goal b{display:block;font-family:var(--display);font-weight:400;font-size:24px;color:var(--yellow);letter-spacing:.02em}
@@ -177,6 +181,7 @@ button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
   <div class="combo" id="combo"></div>
   <div class="goal" id="goal" hidden><b id="goalT"></b><p id="goalP"></p></div>
   <div class="pop" id="pop"></div>
+  <div class="giftcnt" id="giftCnt" hidden>🎁 0/12</div>
   <div class="msg" id="msg" hidden></div>
   <div class="joy" id="joy"><i></i></div>
 </div>
@@ -191,6 +196,7 @@ button:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
   <div class="maps" id="maps"></div>
   <h2 data-t="holeColor"></h2>
   <div class="skins" id="skins"></div>
+  <p class="giftp" id="giftP" hidden></p>
   <button class="play" id="playBtn" data-t="play"></button>
   <p class="hint" data-t="hint"></p>
 </div>
@@ -251,6 +257,7 @@ const TXT={
  ar:{"reviveT": "لقد ابتُلعت!", "reviveP": "شاهد إعلانًا وعُد فورًا بنفس الحجم.", "reviveB": "عودة", "extT": "اقتربت!", "extP": "شاهد إعلانًا واحصل على 30+ ثانية لإكمال أهدافك.", "extB": "30+ ثانية", "bigT": "ابدأ كبيرًا!", "bigP": "شاهد إعلانًا وابدأ الجولة التالية من المستوى 3.", "bigR": "بداية من المستوى 3", "holeColor": "لون الحفرة", "mPct": "ابتلع {p}% من المدينة", "mFirst": "احتل المركز الأول", "mBoss": "ابتلع {n}", "goalT": "الهدف: {n}", "goalP": "اكبر حتى المستوى {l} وابتلع الهدف العملاق قبل منافسيك! السهم الأصفر يرشدك إليه.", "bossYou": "تم ابتلاع الهدف العملاق!", "bossBot": "{n} أخذ الهدف العملاق!", "combo": "كومبو x{c}", "frenzy": "جنون!", "frenzySub": "آخر 20 ثانية: نقاط مضاعفة", "starsTot": "نجوم", "locked": "تحتاج {s}★", "unlocked": "خريطة جديدة: {n}!", "skinUnlocked": "لون حفرة جديد!", "lm_city": "برج الساعة", "lm_beach": "المنارة", "lm_snow": "قلعة الجليد", "lm_farm": "طاحونة الهواء", "lm_desert": "الهرم", "lm_night": "برج التلفاز", "pctNow": "{p}%", "rankNow": "الآن #{r}", "tagline": "كبّر الحفرة وابتلع المدينة!", "chooseMap": "اختر خريطتك", "play": "العب", "hint": "المس واسحب. ابتلع كل ما هو أصغر منك. عندما تكبر يمكنك ابتلاع حفر المنافسين أيضًا!", "best": "الأفضل", "city": "المدينة الكبرى", "beach": "الساحل", "snow": "قرية الثلج", "farm": "المزرعة", "desert": "بلدة الصحراء", "night": "مدينة الليل", "you": "أنت", "eatenBy": "{n} ابتلعك!", "back": "العودة بعد {s} ث", "ate": "ابتلعت {n}!", "levelUp": "المستوى {l}!", "timeUp": "انتهى الوقت!", "place": "حللت في المركز {p}", "pts": "نقطة", "again": "العب مجددًا", "menu": "اختر الخريطة", "newBest": "رقم قياسي جديد!", "go": "انطلق!"}
 };
 for(const [l,v] of Object.entries({"en": {"xmas": "Christmas Town", "lm_xmas": "Giant Christmas Tree", "evNew": "Event"}, "tr": {"xmas": "Noel Kasabası", "lm_xmas": "Dev Noel Ağacı", "evNew": "Etkinlik"}, "es": {"xmas": "Pueblo Navideño", "lm_xmas": "Árbol de Navidad Gigante", "evNew": "Evento"}, "pt": {"xmas": "Vila de Natal", "lm_xmas": "Árvore de Natal Gigante", "evNew": "Evento"}, "de": {"xmas": "Weihnachtsdorf", "lm_xmas": "Riesiger Weihnachtsbaum", "evNew": "Event"}, "fr": {"xmas": "Village de Noël", "lm_xmas": "Sapin de Noël géant", "evNew": "Événement"}, "it": {"xmas": "Città del Natale", "lm_xmas": "Albero di Natale Gigante", "evNew": "Evento"}, "ru": {"xmas": "Рождественский город", "lm_xmas": "Гигантская ёлка", "evNew": "Событие"}, "id": {"xmas": "Kota Natal", "lm_xmas": "Pohon Natal Raksasa", "evNew": "Event"}, "ja": {"xmas": "クリスマスタウン", "lm_xmas": "巨大クリスマスツリー", "evNew": "イベント"}, "ko": {"xmas": "크리스마스 마을", "lm_xmas": "거대한 크리스마스 트리", "evNew": "이벤트"}, "zh": {"xmas": "圣诞小镇", "lm_xmas": "巨型圣诞树", "evNew": "活动"}, "hi": {"xmas": "क्रिसमस टाउन", "lm_xmas": "विशाल क्रिसमस ट्री", "evNew": "इवेंट"}, "ar": {"xmas": "بلدة الميلاد", "lm_xmas": "شجرة الميلاد العملاقة", "evNew": "حدث"}}))if(TXT[l])Object.assign(TXT[l],v);
+for(const [l,v] of Object.entries({"en": {"giftSub": "{n}/{m} gifts → Candy Cane hole", "giftProg": "🎁 Gift Hunt: find golden gifts! {n}/{m} → Candy Cane hole", "giftDone": "Candy Cane hole unlocked!", "evEnds": "Event ends in {d} days"}, "tr": {"giftSub": "{n}/{m} hediye → Şeker Kamışı delik", "giftProg": "🎁 Hediye Avı: altın hediyeleri bul! {n}/{m} → Şeker Kamışı delik", "giftDone": "Şeker Kamışı delik açıldı!", "evEnds": "Etkinliğin bitmesine {d} gün"}, "es": {"giftSub": "{n}/{m} regalos → agujero Bastón de Caramelo", "giftProg": "🎁 Caza de regalos: ¡encuentra regalos dorados! {n}/{m} → agujero Bastón de Caramelo", "giftDone": "¡Agujero Bastón de Caramelo desbloqueado!", "evEnds": "El evento termina en {d} días"}, "pt": {"giftSub": "{n}/{m} presentes → buraco Bengala Doce", "giftProg": "🎁 Caça aos presentes: ache os presentes dourados! {n}/{m} → buraco Bengala Doce", "giftDone": "Buraco Bengala Doce liberado!", "evEnds": "O evento termina em {d} dias"}, "de": {"giftSub": "{n}/{m} Geschenke → Zuckerstangen-Loch", "giftProg": "🎁 Geschenkejagd: finde goldene Geschenke! {n}/{m} → Zuckerstangen-Loch", "giftDone": "Zuckerstangen-Loch freigeschaltet!", "evEnds": "Event endet in {d} Tagen"}, "fr": {"giftSub": "{n}/{m} cadeaux → trou Sucre d'orge", "giftProg": "🎁 Chasse aux cadeaux : trouve les cadeaux dorés ! {n}/{m} → trou Sucre d'orge", "giftDone": "Trou Sucre d'orge débloqué !", "evEnds": "L'événement se termine dans {d} jours"}, "it": {"giftSub": "{n}/{m} regali → buco Bastoncino di zucchero", "giftProg": "🎁 Caccia ai regali: trova i regali d'oro! {n}/{m} → buco Bastoncino di zucchero", "giftDone": "Buco Bastoncino di zucchero sbloccato!", "evEnds": "L'evento finisce tra {d} giorni"}, "ru": {"giftSub": "{n}/{m} подарков → дыра «Леденец»", "giftProg": "🎁 Охота за подарками: найди золотые подарки! {n}/{m} → дыра «Леденец»", "giftDone": "Дыра «Леденец» открыта!", "evEnds": "До конца события {d} дн."}, "id": {"giftSub": "{n}/{m} hadiah → lubang Permen Tongkat", "giftProg": "🎁 Berburu hadiah: temukan hadiah emas! {n}/{m} → lubang Permen Tongkat", "giftDone": "Lubang Permen Tongkat terbuka!", "evEnds": "Event berakhir dalam {d} hari"}, "ja": {"giftSub": "プレゼント {n}/{m} → キャンディケインの穴", "giftProg": "🎁 プレゼント探し：金色のプレゼントを見つけよう！ {n}/{m} → キャンディケインの穴", "giftDone": "キャンディケインの穴を解放！", "evEnds": "イベント終了まであと{d}日"}, "ko": {"giftSub": "선물 {n}/{m} → 사탕지팡이 구멍", "giftProg": "🎁 선물 찾기: 황금 선물을 찾아라! {n}/{m} → 사탕지팡이 구멍", "giftDone": "사탕지팡이 구멍 열림!", "evEnds": "이벤트 종료까지 {d}일"}, "zh": {"giftSub": "礼物 {n}/{m} → 拐杖糖黑洞", "giftProg": "🎁 寻礼活动：找到金色礼物！{n}/{m} → 拐杖糖黑洞", "giftDone": "拐杖糖黑洞已解锁！", "evEnds": "活动还剩 {d} 天"}, "hi": {"giftSub": "{n}/{m} उपहार → कैंडी केन छेद", "giftProg": "🎁 उपहार खोज: सुनहरे उपहार ढूँढें! {n}/{m} → कैंडी केन छेद", "giftDone": "कैंडी केन छेद खुला!", "evEnds": "इवेंट {d} दिन में खत्म"}, "ar": {"giftSub": "{n}/{m} هدايا ← حفرة عصا الحلوى", "giftProg": "🎁 صيد الهدايا: اعثر على الهدايا الذهبية! {n}/{m} ← حفرة عصا الحلوى", "giftDone": "فُتحت حفرة عصا الحلوى!", "evEnds": "ينتهي الحدث بعد {d} يوم"}}))if(TXT[l])Object.assign(TXT[l],v);
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 let lang=store.get("gulp_lang")||((navigator.language||"en").slice(0,2).toLowerCase());if(lang==="in")lang="id";
 if(!TXT[lang])lang="en";
@@ -535,6 +542,8 @@ function giantTree(){const b=new Bld();b.add(G.cyl,0xd9e3ee,6.6,.5,6.6,0,.25,0).
   for(let k=0;k<8;k++){const a=k/8*PI*2+.2,s=rr(1,1.5),c=pick([0xe23d3d,0x2e7dd1,0x2fb36a,0xb06cff,0xffd23f]),x=Math.cos(a)*7.4,z=Math.sin(a)*7.4;
     b.add(G.box,c,s,s,s,x,s/2,z,0,a,0).add(G.box,c===0xffd23f?0xe23d3d:0xffd23f,s+.03,s+.03,.18,x,s/2,z,0,a,0).add(G.box,c===0xffd23f?0xe23d3d:0xffd23f,.18,s+.03,s+.03,x,s/2,z,0,a,0);}
   return{b,r:7,h:20};}
+function goldGift(){const b=new Bld();b.add(G.box,0xffc21a,1.05,.95,1.05,0,.48,0).add(G.box,0xe23d3d,1.07,.97,.2,0,.48,0).add(G.box,0xe23d3d,.2,.97,1.07,0,.48,0)
+  .add(G.sph,0xe23d3d,.32,.24,.2,-.2,1.08,0).add(G.sph,0xe23d3d,.32,.24,.2,.2,1.08,0).add(G.sph,0xfff2b0,.17,.17,.17,0,1.08,0);return{b,r:.72,h:1.2};}
 function present(){const b=new Bld(),c=pick([0xe23d3d,0x2e7dd1,0x2fb36a,0xb06cff]),s=rr(.5,.8);b.add(G.box,c,s,s,s,0,s/2,0).add(G.box,0xffd23f,s+.02,s+.02,.1,0,s/2,0).add(G.box,0xffd23f,.1,s+.02,s+.02,0,s/2,0);return{b,r:s*.7,h:s};}
 function fountain(){const b=new Bld();b.add(G.cyl,TH===THEMES.beach?0xffffff:0xc9c3b5,2.8,.6,2.8,0,.3,0).add(G.cyl,0x3fb4f0,2.5,.62,2.5,0,.32,0)
   .add(G.cyl,0xc9c3b5,.35,1.8,.35,0,.9,0).add(G.cyl,0xc9c3b5,1,.2,1,0,1.8,0).add(G.cyl,0x7fd3ff,.85,.22,.85,0,1.82,0).add(G.cone,0xbfeaff,.35,1,.35,0,2.4,0);return{b,r:2.8,h:2.9};}
@@ -794,6 +803,7 @@ function buildWorld(key){
   decorate(gk);
   R=Math.random;
   groundMeshes(gk);
+  if(TH.xmas)placeGifts();
   totalArea=objs.reduce((a,o)=>a+o.r*o.r,0);
 }
 
@@ -939,6 +949,14 @@ function decorate(gk){
   const m=new THREE.Mesh(d.geo(),MAT);m.castShadow=true;m.receiveShadow=true;m.userData.own=true;world.add(m);
 }
 
+const GIFTN=12,GIFT_SKIN=25,EVENT_END=new Date(2027,0,7);
+let giftRun=0,giftStart=0;const giftTotal=()=>+(store.get("gulp_gifts")||0);
+function placeGifts(){let n=0,tries=0;
+  while(n<GIFTN&&tries<600){tries++;const i=(Math.random()*(N+1))|0,along=-HALF+4+Math.random()*(S-8),onX=Math.random()<.5;
+    const x=onX?roadCenter(i):along,z=onX?along:roadCenter(i);
+    if(Math.hypot(x,z)<14)continue;
+    if(objs.some(o=>Math.hypot(o.x-x,o.z-z)<o.r+2.2))continue;
+    const o=add(goldGift(),x,z,Math.random()*6);o.gold=true;n++;}}
 /* ---------- holes ---------- */
 const discGeo=new THREE.CircleGeometry(1,56);
 const discMat=new THREE.MeshBasicMaterial({colorWrite:false,depthWrite:false,stencilWrite:true,stencilRef:1,
@@ -1052,12 +1070,13 @@ function updateBoard(){
 
 /* ---------- progression ---------- */
 const MAPREQ={xmas:0,city:0,beach:1,snow:3,farm:5,desert:8,night:11};
-const SKINS_=[["#ff3d7f",0],["#ffc21a",2],["#18d4e8",4],["#7be33a",7],["#a35cff",10],["rainbow",14]];
+const SKINS_=[["#ff3d7f",0],["#ffc21a",2],["#18d4e8",4],["#7be33a",7],["#a35cff",10],["rainbow",14],["candy",0]];
 const PCT_GOAL=20,FRENZY=20;
 const starsOf=k=>+(store.get("gulp_stars_"+k)||0);
 const totalStars=()=>MAPKEYS.reduce((a,k)=>a+starsOf(k),0);
-let skin=+(store.get("gulp_skin")||0);if(!SKINS_[skin]||SKINS_[skin][1]>totalStars())skin=0;
-const skinColor=i=>SKINS_[i][0]==="rainbow"?"#ff3d7f":SKINS_[i][0];
+let skin=+(store.get("gulp_skin")||0);const skinLocked=i=>SKINS_[i][0]==="candy"?giftTotal()<GIFT_SKIN:SKINS_[i][1]>totalStars();
+if(!SKINS_[skin]||skinLocked(skin))skin=0;
+const skinColor=i=>SKINS_[i][0]==="rainbow"?"#ff3d7f":SKINS_[i][0]==="candy"?"#e23d3d":SKINS_[i][0];
 let ateArea=0,bossDone=false,bossLost=false,combo=0,comboT=0,frenzy=false;
 
 /* ---------- game state ---------- */
@@ -1069,7 +1088,7 @@ const ROUND=150,CAMK=.68;
 function startGame(){
   ensureAudio();
   buildWorld(theme);clearHoles();
-  holes.push(makeHole("me",skinColor(skin),true));holes[0].rainbow=SKINS_[skin][0]==="rainbow";
+  holes.push(makeHole("me",skinColor(skin),true));holes[0].rainbow=SKINS_[skin][0]==="rainbow";holes[0].candy=SKINS_[skin][0]==="candy";giftRun=0;giftStart=giftTotal();
   BOTS.forEach(([n,c])=>holes.push(makeHole(n,c,false)));
   const spots=[];for(let i=1;i<N;i++)for(let j=1;j<N;j++)spots.push([roadCenter(i),roadCenter(j)]);
   spots.sort(()=>Math.random()-.5);
@@ -1086,10 +1105,11 @@ function startGame(){
   const lmName=t("lm_"+theme),need=lvlOf(landmarkObj.r/.92+.01);
   $("goalT").textContent=t("goalT",{n:lmName});$("goalP").textContent=t("goalP",{l:need});$("goal").hidden=false;goalT=4.5;
   $("lmTag").textContent="★ "+lmName+" · Lv "+need;updateMissions(true);
+  const gc=$("giftCnt");gc.hidden=!TH.xmas;gc.textContent="🎁 0/"+GIFTN;
 }
 
 function endGame(){
-  state="over";hud.hidden=true;joy.on=false;joyEl.style.display="none";
+  state="over";hud.hidden=true;$("giftCnt").hidden=true;joy.on=false;joyEl.style.display="none";
   objs.forEach(o=>{if(o.faded){o.faded=false;o.g.material=MAT;}});
   const sorted=[...holes].sort((a,b)=>b.r-a.r),p=holes[0],place=sorted.indexOf(p)+1;
   $("placeTxt").textContent=t("place",{p:place});
@@ -1102,7 +1122,8 @@ function endGame(){
   [t("mPct",{p:PCT_GOAL})+" ("+t("pctNow",{p:pct})+")",t("mFirst"),t("mBoss",{n:t("lm_"+theme)})].forEach((x,i)=>{const li=document.createElement("li");li.textContent=x;if(ms[i])li.className="ok";ml.appendChild(li);});
   const ut=$("unlockTxt");ut.innerHTML="";
   MAPKEYS.forEach(k=>{if(MAPREQ[k]>before&&MAPREQ[k]<=after){const d=document.createElement("div");d.className="unlock";d.textContent=t("unlocked",{n:t(k)});ut.appendChild(d);}});
-  if(SKINS_.some(([c,q])=>q>before&&q<=after)){const d=document.createElement("div");d.className="unlock";d.textContent=t("skinUnlocked");ut.appendChild(d);}
+  if(giftStart<GIFT_SKIN&&giftTotal()>=GIFT_SKIN){const d=document.createElement("div");d.className="unlock";d.textContent=t("giftDone");ut.appendChild(d);}
+  if(SKINS_.some(([c,q])=>c!=="candy"&&q>before&&q<=after)){const d=document.createElement("div");d.className="unlock";d.textContent=t("skinUnlocked");ut.appendChild(d);}
   const list=$("resList");list.innerHTML="";
   sorted.forEach((h,i)=>{const li=document.createElement("li");if(h.isPlayer)li.className="me-row";
     li.innerHTML=`<span>${i+1}.</span><span class="dot" style="background:${h.color}"></span><span class="nm"></span><span class="lv">Lv ${lvlOf(h.r)}</span><span>${h.points}</span>`;
@@ -1137,6 +1158,10 @@ function capture(o,h){
   if(h.isPlayer){ateArea+=o.r*o.r;combo=comboT>0?combo+1:1;comboT=.9;pts=Math.round(pts*(1+Math.min(2,combo*.05))*(frenzy?2:1));}
   if(o.landmark){pts+=600;if(h.isPlayer){bossDone=true;showMsg(t("bossYou"),"+600",2.2);chord([523,659,784,1046,1318]);shake=1.4;}
     else{bossLost=true;showMsg(t("bossBot",{n:h.name}),"",2);chord([392,330,262]);}updateMissions();}
+  if(o.gold&&h.isPlayer){giftRun++;const tot=giftTotal()+1;store.set("gulp_gifts",String(tot));pts+=50;
+    const gc=$("giftCnt");gc.textContent="🎁 "+giftRun+"/"+GIFTN;gc.classList.remove("bump");void gc.offsetWidth;gc.classList.add("bump");
+    if(tot===GIFT_SKIN){showMsg(t("giftDone"),"🍬",2.4);chord([523,659,784,1046,1318]);}
+    else{showMsg("🎁 +50",t("giftSub",{n:Math.min(tot,GIFT_SKIN),m:GIFT_SKIN}),1.1);chord([784,988,1175]);}}
   h.points+=pts;
   if(h.isPlayer){popSum+=pts;blip(900-Math.min(600,o.r*90),.09,o.r>2?"triangle":"sine",o.r>2?.1:.06);if(o.r>2.5)shake=Math.min(.9,shake+o.r*.08);}
 }
@@ -1232,6 +1257,7 @@ function frame(now){
     if(goalT>0){goalT-=dt;if(goalT<=0)$("goal").hidden=true;}
     misT-=dt;if(misT<=0){misT=.4;updateMissions();}
     if(p.rainbow){const c=new THREE.Color().setHSL((clock*.25)%1,.9,.58);p.ring.material.color.copy(c);p.xr.material.color.copy(c);p.el.style.background="#"+c.getHexString();}
+    if(p.candy){const k=(Math.sin(clock*5)+1)/2,c=new THREE.Color(0xe23d3d).lerp(new THREE.Color(0xffffff),k*.85);p.ring.material.color.copy(c);p.xr.material.color.copy(c);p.el.style.background="#"+c.getHexString();}
     updateLandmarkUI(p);
     boardT-=dt;if(boardT<=0){boardT=.3;updateBoard();}
     if(msgT>0){msgT-=dt;if(msgT<=0)msgEl.hidden=true;}
@@ -1254,6 +1280,7 @@ function frame(now){
     menuAng+=dt*.06;camera.position.set(Math.cos(menuAng)*180,140,Math.sin(menuAng)*180);camera.lookAt(0,0,0);
     aimSun(0,0,HALF+10);
   }
+  if(TH.xmas)for(const o of objs){if(!o.gold||o.fall||o.dead)continue;o.g.rotation.y+=dt*1.4;o.g.position.y=.1+Math.abs(Math.sin(clock*2.6+o.ph))*.35;}
   if(snowPts&&snowPts.visible){const fx=state==="play"?camLook.x:0,fz=state==="play"?camLook.z:0;updateSnow(dt,fx,fz);}
   renderer.render(scene,camera);
   requestAnimationFrame(frame);
@@ -1276,12 +1303,15 @@ function renderMapCards(){
       mapsEl.querySelectorAll(".map").forEach(x=>x.classList.toggle("on",x.id==="map-"+k));blip(700,.06);});
     mapsEl.appendChild(b);});
   const sk=$("skins");sk.innerHTML="";
-  SKINS_.forEach(([c,q],i)=>{const b=document.createElement("button"),locked=q>tot;b.className="skin"+(i===skin?" on":"")+(locked?" locked":"");
+  SKINS_.forEach(([c,q],i)=>{const b=document.createElement("button"),locked=skinLocked(i);b.className="skin"+(i===skin?" on":"")+(locked?" locked":"");
     b.style.setProperty("--c",c==="rainbow"?"#ff3d7f":c);if(c==="rainbow")b.style.background="conic-gradient(#ff3d7f,#ffc21a,#7be33a,#18d4e8,#a35cff,#ff3d7f)";
+    if(c==="candy"){b.style.background="repeating-linear-gradient(45deg,#e23d3d 0 7px,#fff 7px 14px)";b.style.setProperty("--c","transparent");}
     b.setAttribute("aria-label",locked?t("locked",{s:q}):"skin "+(i+1));
-    if(locked){const m=document.createElement("small");m.textContent="★"+q;b.appendChild(m);}
+    if(locked){const m=document.createElement("small");m.textContent=c==="candy"?"🎁"+GIFT_SKIN:"★"+q;b.appendChild(m);}
     b.addEventListener("click",()=>{if(locked){blip(200,.12,"square",.05);return;}skin=i;store.set("gulp_skin",i);renderMapCards();blip(800,.06);});
     sk.appendChild(b);});
+  const gp=$("giftP"),days=Math.ceil((EVENT_END-new Date())/864e5);
+  if(days>0){gp.hidden=false;const g=giftTotal();gp.textContent=(g>=GIFT_SKIN?"🍬 "+t("giftDone"):t("giftProg",{n:g,m:GIFT_SKIN}))+" · "+t("evEnds",{d:days});}else gp.hidden=true;
 }
 $("langSel").addEventListener("change",e=>{lang=e.target.value;store.set("gulp_lang",lang);applyLang();});
 $("playBtn").addEventListener("click",startGame);
