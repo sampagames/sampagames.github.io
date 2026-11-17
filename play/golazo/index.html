@@ -2199,6 +2199,9 @@ function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
 addEventListener('resize',resize);resize();
 if(location.hash==="#test")window.__T={addXP,openPack,misToday,openAlbum,openMissions,openPlayer,get streak(){return streak},proj,genLevel,modeOf,makeShot,simulate,isSuccess,startLevel,get G(){return G},get ST(){return ST},get S(){return S},swipeToShot,setCam,toMenu,kick,matchStart,get mphase(){return G&&G.mphase},cupStart,dailyStart,penSpot,newShotState,shoot,stepShot,openCup,openDaily,openTeam,openAch,openSocial,startReplay,leagueTable,leagueState,dailyState,cupState,achCheck,keepTap,PALS,CLUBS,get REC(){return REC},unproject,aiPenShot,survStart,openSurv,openWheel,spinWheel,openCal,openShop,loginState,wheelState,get state(){return state}};
 renderMenu();requestAnimationFrame(loop);
+/* hızlı başlangıç: ilk kez gelen oyuncu menüyü atlar, doğrudan Bölüm 1 (CrazyGames: ilk 10 sn içinde oyun) */
+const FIRST_RUN=S.max<=1&&!Object.keys(S.stars||{}).length&&location.hash!=='#test'&&location.hash!=='#menu';
+if(FIRST_RUN)setTimeout(()=>{try{if(state==='menu'&&$('#modal').hidden){S.seen['st'+genLevel(1).st]=1;save();startLevel(1,true)}}catch(e){}},450);
 setTimeout(()=>{if(state==='menu'&&$('#modal').hidden&&calClaimable()&&S.max>1)openCal()},700);
 })();
 </script>
